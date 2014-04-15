@@ -1,12 +1,15 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Xml.Linq;
-
-namespace AppUpdater.Runner
+﻿namespace AppUpdater.Runner
 {
+    #region Imports
+
+    using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Xml.Linq;
+
+    #endregion
 
     static class Program
     {
