@@ -8,7 +8,7 @@ namespace AppUpdater.Runner
 {
     static class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             var dir = Path.GetDirectoryName(typeof(Program).Assembly.Location); // ReSharper disable once AssignNullToNotNullAttribute
             var config = XDocument.Load(Path.Combine(dir, "config.xml")).Root;  // ReSharper disable once PossibleNullReferenceException
@@ -24,20 +24,18 @@ namespace AppUpdater.Runner
                 runLast = false;
             }
 
-            if (runLast)
-            {
-                ExecuteApplication(dir, lastVersion, executable, args);
-            }
-            else
-            {
-                ExecuteApplication(dir, version, executable, args);
-            }
+            return ExecuteApplication(dir, runLast ? lastVersion : version, executable, args);
         }
 
-        private static void ExecuteApplication(string baseDir, string version, string executable, string[] args)
+        static int ExecuteApplication(string baseDir, string version, string executable, string[] args)
         {
-            string path = Path.Combine(baseDir, Path.Combine(version, executable));
-            Process.Start(path, String.Join(" ", args));
+            var path = Path.Combine(baseDir, Path.Combine(version, executable));
+            using (var process = Process.Start(path, string.Join(" ", args)))
+            {
+                // ReSharper disable once PossibleNullReferenceException
+                process.WaitForExit();
+                return process.ExitCode;
+            }
         }
     }
 }
