@@ -43,7 +43,7 @@ namespace AppUpdater.Runner
 
         private static void ExecuteApplication(string baseDir, string version, string executable, string[] args)
         {
-            string path = Path.Combine(baseDir, version, executable);
+            string path = Path.Combine(baseDir, Path.Combine(version, executable));
             Process.Start(path, String.Join(" ", args));
         }
     }
