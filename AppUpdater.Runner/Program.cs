@@ -6,6 +6,8 @@ using System.Xml.Linq;
 
 namespace AppUpdater.Runner
 {
+    using System.Collections.Generic;
+
     static class Program
     {
         static int Main(string[] args)
@@ -21,9 +23,10 @@ namespace AppUpdater.Runner
             }
         }
  
-        static int Run(string[] args)
+        static int Run(IEnumerable<string> args)
         {
-            var dir = Path.GetDirectoryName(typeof(Program).Assembly.Location); // ReSharper disable once AssignNullToNotNullAttribute
+            var dir = Path.GetDirectoryName(typeof(Program).Assembly.Location);
+            Debug.Assert(dir != null);
             var config = XDocument.Load(Path.Combine(dir, "config.xml")).Root;  // ReSharper disable once PossibleNullReferenceException
 
             var version     = (string) config.Element("version");
@@ -37,18 +40,31 @@ namespace AppUpdater.Runner
                 runLast = false;
             }
 
-            return ExecuteApplication(dir, runLast ? lastVersion : version, executable, args);
-        }
+            var commandLine = Environment.CommandLine;
+            var commandLineArgs = GetCommandLineArguments(commandLine);
+            var path = Path.Combine(dir, Path.Combine(runLast ? lastVersion : version, executable));
 
-        static int ExecuteApplication(string baseDir, string version, string executable, string[] args)
-        {
-            var path = Path.Combine(baseDir, Path.Combine(version, executable));
-            using (var process = Process.Start(path, string.Join(" ", args)))
+            using (var process = Process.Start(path, commandLineArgs))
             {
                 // ReSharper disable once PossibleNullReferenceException
                 process.WaitForExit();
                 return process.ExitCode;
             }
+        }
+
+        static string GetCommandLineArguments(string commandLine)
+        {
+            Debug.Assert(commandLine != null);
+            Debug.Assert(commandLine.Length > 0);
+
+            int spaceIndex;
+            var argsIndex = 1 + (commandLine[0] == '\"'         // quoted?
+                                 ? commandLine.IndexOf('\"', 1)
+                                 : (spaceIndex = commandLine.IndexOf(' ')) < 0
+                                 ? commandLine.Length - 1
+                                 : spaceIndex);
+
+            return commandLine.Substring(argsIndex + 1).TrimStart();
         }
     }
 }
