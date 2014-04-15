@@ -33,7 +33,7 @@ namespace AppUpdater.Runner
             var runLast = args.Any(x => x.Equals("-last", StringComparison.CurrentCultureIgnoreCase));
             if (runLast && lastVersion == null)
             {
-                Console.WriteLine("Last version is not defined.");
+                Trace.TraceWarning("Last version is not defined.");
                 runLast = false;
             }
 
