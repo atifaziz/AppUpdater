@@ -10,6 +10,19 @@ namespace AppUpdater.Runner
     {
         static int Main(string[] args)
         {
+            try
+            {
+                return Run(args);
+            }
+            catch (Exception e)
+            {
+                Trace.TraceError(e.ToString());
+                return 0xbad;
+            }
+        }
+ 
+        static int Run(string[] args)
+        {
             var dir = Path.GetDirectoryName(typeof(Program).Assembly.Location); // ReSharper disable once AssignNullToNotNullAttribute
             var config = XDocument.Load(Path.Combine(dir, "config.xml")).Root;  // ReSharper disable once PossibleNullReferenceException
 
