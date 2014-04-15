@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Linq;
-using System.Xml;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace AppUpdater.Runner
 {
@@ -10,15 +10,14 @@ namespace AppUpdater.Runner
     {
         static void Main(string[] args)
         {
-            string dir = Path.GetDirectoryName(typeof(Program).Assembly.Location);
-            XmlDocument doc = new XmlDocument();
-            doc.Load(Path.Combine(dir, "config.xml"));
+            var dir = Path.GetDirectoryName(typeof(Program).Assembly.Location); // ReSharper disable once AssignNullToNotNullAttribute
+            var config = XDocument.Load(Path.Combine(dir, "config.xml")).Root;  // ReSharper disable once PossibleNullReferenceException
 
-            string version = GetConfigValue(doc, "version");
-            string lastVersion = GetConfigValue(doc, "last_version");
-            string executable = GetConfigValue(doc, "executable");
+            var version     = (string) config.Element("version");
+            var lastVersion = (string) config.Element("last_version");
+            var executable  = (string) config.Element("executable");
 
-            bool runLast = args.Any(x => x.Equals("-last", StringComparison.CurrentCultureIgnoreCase));
+            var runLast = args.Any(x => x.Equals("-last", StringComparison.CurrentCultureIgnoreCase));
             if (runLast && lastVersion == null)
             {
                 Console.WriteLine("Last version is not defined.");
@@ -33,12 +32,6 @@ namespace AppUpdater.Runner
             {
                 ExecuteApplication(dir, version, executable, args);
             }
-        }
-
-        private static string GetConfigValue(XmlDocument doc, string name)
-        {
-            var node = doc.SelectSingleNode("config/" + name);
-            return node == null ? null : node.InnerText;
         }
 
         private static void ExecuteApplication(string baseDir, string version, string executable, string[] args)
