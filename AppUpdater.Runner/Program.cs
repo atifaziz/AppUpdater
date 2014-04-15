@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace AppUpdater.Runner
 {
-    class Program
+    static class Program
     {
         static void Main(string[] args)
         {
