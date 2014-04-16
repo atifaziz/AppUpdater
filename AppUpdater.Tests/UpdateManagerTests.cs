@@ -70,7 +70,7 @@ namespace AppUpdater.Tests
             {
                 updateServer.Stub(x => x.GetCurrentVersion()).Return(initialVersion);
 
-                UpdateInfo updateInfo = updateManager.CheckForUpdate();
+                var updateInfo = updateManager.CheckForUpdate();
 
                 Assert.That(updateInfo.HasUpdate, Is.False);
             }
@@ -80,7 +80,7 @@ namespace AppUpdater.Tests
             {
                 updateServer.Stub(x => x.GetCurrentVersion()).Return(initialVersion);
 
-                UpdateInfo updateInfo = updateManager.CheckForUpdate();
+                var updateInfo = updateManager.CheckForUpdate();
 
                 Assert.That(updateInfo.Version, Is.EqualTo(initialVersion));
             }
@@ -90,7 +90,7 @@ namespace AppUpdater.Tests
             {
                 updateServer.Stub(x => x.GetCurrentVersion()).Return("2.6.8");
 
-                UpdateInfo updateInfo = updateManager.CheckForUpdate();
+                var updateInfo = updateManager.CheckForUpdate();
 
                 Assert.That(updateInfo.HasUpdate, Is.True);
             }
@@ -98,10 +98,10 @@ namespace AppUpdater.Tests
             [Test]
             public void CheckForUpdate_WithUpdate_ReturnsTheNewVersionNumber()
             {
-                string newVersion = "2.6.8";
+                var newVersion = "2.6.8";
                 updateServer.Stub(x => x.GetCurrentVersion()).Return(newVersion);
 
-                UpdateInfo updateInfo = updateManager.CheckForUpdate();
+                var updateInfo = updateManager.CheckForUpdate();
 
                 Assert.That(updateInfo.Version, Is.EqualTo(newVersion));
             }
@@ -109,8 +109,8 @@ namespace AppUpdater.Tests
             [Test]
             public void DoUpdate_ChangesTheCurrentVersion()
             {
-                string newVersion = "2.6.8";
-                UpdateInfo updateInfo = new UpdateInfo(true, newVersion);
+                var newVersion = "2.6.8";
+                var updateInfo = new UpdateInfo(true, newVersion);
                 updateServer.Stub(x => x.GetManifest(newVersion)).Return(new VersionManifest(newVersion, new VersionManifestFile[0]));
                 localStructureManager.Stub(x => x.LoadManifest(initialVersion)).Return(new VersionManifest(initialVersion, new VersionManifestFile[0]));
 
@@ -122,8 +122,8 @@ namespace AppUpdater.Tests
             [Test]
             public void DoUpdate_SavesTheCurrentVersion()
             {
-                string newVersion = "2.6.8";
-                UpdateInfo updateInfo = new UpdateInfo(true, newVersion);
+                var newVersion = "2.6.8";
+                var updateInfo = new UpdateInfo(true, newVersion);
                 updateServer.Stub(x => x.GetManifest(newVersion)).Return(new VersionManifest(newVersion, new VersionManifestFile[0]));
                 localStructureManager.Stub(x => x.LoadManifest(initialVersion)).Return(new VersionManifest(initialVersion, new VersionManifestFile[0]));
 
@@ -135,9 +135,9 @@ namespace AppUpdater.Tests
             [Test]
             public void DoUpdate_SavesTheLastValidVersionAsTheExecutingBeingExecuted()
             {
-                string versionBeingExecuted = initialVersion;
-                string newVersion = "2.6.8";
-                UpdateInfo updateInfo = new UpdateInfo(true, newVersion);
+                var versionBeingExecuted = initialVersion;
+                var newVersion = "2.6.8";
+                var updateInfo = new UpdateInfo(true, newVersion);
                 updateServer.Stub(x => x.GetManifest(newVersion)).Return(new VersionManifest(newVersion, new VersionManifestFile[0]));
                 localStructureManager.Stub(x => x.GetCurrentVersion()).Return("2.0.0");
                 localStructureManager.Stub(x => x.LoadManifest(initialVersion)).Return(new VersionManifest(initialVersion, new VersionManifestFile[0]));
@@ -150,8 +150,8 @@ namespace AppUpdater.Tests
             [Test]
             public void DoUpdate_ExecutesTheUpdate()
             {
-                string newVersion = "2.6.8";
-                UpdateInfo updateInfo = new UpdateInfo(true, newVersion);
+                var newVersion = "2.6.8";
+                var updateInfo = new UpdateInfo(true, newVersion);
                 updateServer.Stub(x => x.GetManifest(newVersion)).Return(new VersionManifest(newVersion, new VersionManifestFile[0]));
                 localStructureManager.Stub(x => x.LoadManifest(initialVersion)).Return(new VersionManifest(initialVersion, new VersionManifestFile[0]));
 
@@ -203,7 +203,7 @@ namespace AppUpdater.Tests
 
             private UpdateInfo SetupUpdateToVersion(string newVersion)
             {
-                UpdateInfo updateInfo = new UpdateInfo(true, newVersion);
+                var updateInfo = new UpdateInfo(true, newVersion);
                 updateServer.Stub(x => x.GetManifest(newVersion)).Return(new VersionManifest(newVersion, new VersionManifestFile[0]));
                 localStructureManager.Stub(x => x.LoadManifest(initialVersion)).Return(new VersionManifest(initialVersion, new VersionManifestFile[0]));
                 return updateInfo;

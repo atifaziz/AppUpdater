@@ -13,9 +13,9 @@ namespace AppUpdater.Tests.Utils
         [Test]
         public void AddTrailingSlash_WithAPathThatContainsTheSlash_DoNotAddAnotherSlash()
         {
-            string path = @"C:\teste\";
+            var path = @"C:\teste\";
 
-            string processedPath = PathUtils.AddTrailingSlash(path);
+            var processedPath = PathUtils.AddTrailingSlash(path);
 
             Assert.That(processedPath, Is.EqualTo(@"C:\teste\"));
         }
@@ -23,9 +23,9 @@ namespace AppUpdater.Tests.Utils
         [Test]
         public void AddTrailingSlash_WithAPathThatDoesNOTContainTheSlash_AddTheSlash()
         {
-            string path = @"C:\teste\";
+            var path = @"C:\teste\";
 
-            string processedPath = PathUtils.AddTrailingSlash(path);
+            var processedPath = PathUtils.AddTrailingSlash(path);
 
             Assert.That(processedPath, Is.EqualTo(@"C:\teste\"));
         }

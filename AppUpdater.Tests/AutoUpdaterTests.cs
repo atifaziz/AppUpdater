@@ -97,8 +97,8 @@ namespace AppUpdater.Tests
         [Test]
         public void Updated_IsCalledAfterUpdate()
         {
-            bool called = false;
-            UpdateInfo info = new UpdateInfo(true, "2.0.0");
+            var called = false;
+            var info = new UpdateInfo(true, "2.0.0");
             updateManager.Stub(x => x.CheckForUpdate()).Return(info);
             autoUpdater.Updated += (sender, e) => called = true;
 

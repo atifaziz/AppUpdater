@@ -19,7 +19,7 @@ namespace AppUpdater.Tests
         [Test]
         public void For_ReturnsTheLoggerForTheType()
         {
-            ILog log = Logger.For(typeof(LoggerTests));
+            var log = Logger.For(typeof(LoggerTests));
 
             Assert.That(log, Is.InstanceOf<TestLog>());
             Assert.That((log as TestLog).Type, Is.EqualTo(typeof(LoggerTests)));
@@ -28,7 +28,7 @@ namespace AppUpdater.Tests
         [Test]
         public void ForT_ReturnsTheLoggerForTheType()
         {
-            ILog log = Logger.For<LoggerTests>();
+            var log = Logger.For<LoggerTests>();
 
             Assert.That(log, Is.InstanceOf<TestLog>());
             Assert.That((log as TestLog).Type, Is.EqualTo(typeof(LoggerTests)));
@@ -39,7 +39,7 @@ namespace AppUpdater.Tests
         {
             Logger.LoggerProvider = (type) => { throw new Exception("Error"); };
 
-            ILog log = Logger.For(typeof(LoggerTests));
+            var log = Logger.For(typeof(LoggerTests));
 
             Assert.That(log, Is.InstanceOf<EmptyLog>());
         }
@@ -49,7 +49,7 @@ namespace AppUpdater.Tests
         {
             Logger.LoggerProvider = (type) => { throw new Exception("Error"); };
 
-            ILog log = Logger.For<LoggerTests>();
+            var log = Logger.For<LoggerTests>();
 
             Assert.That(log, Is.InstanceOf<EmptyLog>());
         }

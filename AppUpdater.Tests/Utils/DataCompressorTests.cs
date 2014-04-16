@@ -14,9 +14,9 @@ namespace AppUpdater.Tests.Utils
         [Test]
         public void Compress_ValidData_ReturnsSmallerData()
         {
-            byte[] data = Encoding.UTF8.GetBytes(new string('a', 1000));
+            var data = Encoding.UTF8.GetBytes(new string('a', 1000));
 
-            byte[] compressedData = DataCompressor.Compress(data);
+            var compressedData = DataCompressor.Compress(data);
 
             Assert.That(compressedData.Length, Is.LessThan(data.Length));
         }
@@ -24,10 +24,10 @@ namespace AppUpdater.Tests.Utils
         [Test]
         public void Decompress_ValidData_ReturnsTheOriginalData()
         {
-            byte[] originalData = Encoding.UTF8.GetBytes(new string('a', 1000));
-            byte[] compressedData = DataCompressor.Compress(originalData);
+            var originalData = Encoding.UTF8.GetBytes(new string('a', 1000));
+            var compressedData = DataCompressor.Compress(originalData);
 
-            byte[] decompressedData = DataCompressor.Decompress(compressedData);
+            var decompressedData = DataCompressor.Decompress(compressedData);
 
             Assert.That(decompressedData, Is.EqualTo(originalData));
         }
@@ -37,7 +37,7 @@ namespace AppUpdater.Tests.Utils
         {
             byte[] data = null;
 
-            byte[] compressedData = DataCompressor.Compress(data);
+            var compressedData = DataCompressor.Compress(data);
 
             Assert.That(compressedData, Is.Null);
         }
@@ -47,7 +47,7 @@ namespace AppUpdater.Tests.Utils
         {
             byte[] compressedData = null;
 
-            byte[] decompressedData = DataCompressor.Decompress(compressedData);
+            var decompressedData = DataCompressor.Decompress(compressedData);
 
             Assert.That(decompressedData, Is.Null);
         }

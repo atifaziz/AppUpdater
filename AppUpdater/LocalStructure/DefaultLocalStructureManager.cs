@@ -31,7 +31,7 @@ namespace AppUpdater.LocalStructure
 
         public string[] GetInstalledVersions()
         {
-            string baseDirectory = PathUtils.AddTrailingSlash(baseDir);
+            var baseDirectory = PathUtils.AddTrailingSlash(baseDir);
 
             return Directory.EnumerateDirectories(baseDirectory)
                             .Select(x => x.Remove(0, baseDirectory.Length))
@@ -40,7 +40,7 @@ namespace AppUpdater.LocalStructure
 
         public VersionManifest LoadManifest(string version)
         {
-            string versionDir = GetVersionDir(version);
+            var versionDir = GetVersionDir(version);
             return VersionManifest.GenerateFromDirectory(version, versionDir);
         }
 
@@ -76,23 +76,23 @@ namespace AppUpdater.LocalStructure
 
         public void CopyFile(string originVersion, string destinationVersion, string filename)
         {
-            string originFilename = Path.Combine(GetVersionDir(originVersion), filename);
-            string destinationFilename = Path.Combine(GetVersionDir(destinationVersion), filename);
+            var originFilename = Path.Combine(GetVersionDir(originVersion), filename);
+            var destinationFilename = Path.Combine(GetVersionDir(destinationVersion), filename);
 
             File.Copy(originFilename, destinationFilename, true);
         }
 
         public void SaveFile(string version, string filename, byte[] data)
         {
-            string destinationFilename = Path.Combine(GetVersionDir(version), filename);
+            var destinationFilename = Path.Combine(GetVersionDir(version), filename);
             File.WriteAllBytes(destinationFilename, data);
         }
 
         public void ApplyDelta(string originalVersion, string newVersion, string filename, byte[] deltaData)
         {
-            string originalFile = GetFilename(originalVersion, filename);
-            string newFile = GetFilename(newVersion, filename);
-            string deltaFile = Path.GetTempFileName();
+            var originalFile = GetFilename(originalVersion, filename);
+            var newFile = GetFilename(newVersion, filename);
+            var deltaFile = Path.GetTempFileName();
             File.WriteAllBytes(deltaFile, deltaData);
 
             DeltaAPI.ApplyDelta(originalFile, newFile, deltaFile);
@@ -100,8 +100,8 @@ namespace AppUpdater.LocalStructure
 
         public Uri GetUpdateServerUri()
         {
-            string configFilename = Path.Combine(baseDir, "config.xml");
-            XmlDocument doc = new XmlDocument();
+            var configFilename = Path.Combine(baseDir, "config.xml");
+            var doc = new XmlDocument();
             doc.Load(configFilename);
 
             return new Uri(doc.SelectSingleNode("config/updateServer").InnerText);
@@ -124,20 +124,20 @@ namespace AppUpdater.LocalStructure
 
         private string GetConfigValue(string name)
         {
-            string configFilename = Path.Combine(baseDir, "config.xml");
-            XmlDocument doc = new XmlDocument();
+            var configFilename = Path.Combine(baseDir, "config.xml");
+            var doc = new XmlDocument();
             doc.Load(configFilename);
 
-            XmlNode configValue = doc.SelectSingleNode("config/" + name);
+            var configValue = doc.SelectSingleNode("config/" + name);
             return configValue == null ? string.Empty : configValue.InnerText;
         }
 
         private void SetConfigValue(string name, string value)
         {
-            string configFilename = Path.Combine(baseDir, "config.xml");
-            XmlDocument doc = new XmlDocument();
+            var configFilename = Path.Combine(baseDir, "config.xml");
+            var doc = new XmlDocument();
             doc.Load(configFilename);
-            XmlNode lastVersionNode = doc.SelectSingleNode("config/" + name);
+            var lastVersionNode = doc.SelectSingleNode("config/" + name);
             if (lastVersionNode == null)
             {
                 lastVersionNode = doc.CreateElement(name);

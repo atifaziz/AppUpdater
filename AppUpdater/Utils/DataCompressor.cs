@@ -11,7 +11,7 @@ namespace AppUpdater.Utils
     {
         public static void Compress(Stream inputStream, Stream outputStream)
         {
-            using (GZipStream zip = new GZipStream(outputStream, CompressionMode.Compress))
+            using (var zip = new GZipStream(outputStream, CompressionMode.Compress))
             {
                 inputStream.CopyTo(zip);
             }
@@ -24,12 +24,12 @@ namespace AppUpdater.Utils
                 return null;
             }
 
-            using (MemoryStream msInput = new MemoryStream())
+            using (var msInput = new MemoryStream())
             {
                 msInput.Write(data, 0, data.Length);
                 msInput.Position = 0;
 
-                using (MemoryStream msOutput = new MemoryStream())
+                using (var msOutput = new MemoryStream())
                 {
                     Compress(msInput, msOutput);
 
@@ -40,7 +40,7 @@ namespace AppUpdater.Utils
 
         public static void Decompress(Stream inputStream, Stream outputStream)
         {
-            using (GZipStream zip = new GZipStream(inputStream, CompressionMode.Decompress))
+            using (var zip = new GZipStream(inputStream, CompressionMode.Decompress))
             {
                 zip.CopyTo(outputStream);
             }
@@ -53,12 +53,12 @@ namespace AppUpdater.Utils
                 return null;
             }
 
-            using (MemoryStream msInput = new MemoryStream())
+            using (var msInput = new MemoryStream())
             {
                 msInput.Write(data, 0, data.Length);
                 msInput.Position = 0;
 
-                using (MemoryStream msOutput = new MemoryStream())
+                using (var msOutput = new MemoryStream())
                 {
                     Decompress(msInput, msOutput);
 

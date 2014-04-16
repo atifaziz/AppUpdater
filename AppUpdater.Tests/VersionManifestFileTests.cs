@@ -23,7 +23,7 @@ namespace AppUpdater.Tests
         [Test]
         public void GetDeltaFrom_WithValidChecksum_ReturnsTheItem()
         {
-            VersionManifestDeltaFile delta = file.GetDeltaFrom("AAA");
+            var delta = file.GetDeltaFrom("AAA");
 
             Assert.That(delta, Is.Not.Null);
             Assert.That(delta.Filename, Is.EqualTo("aa.bb"));
@@ -32,7 +32,7 @@ namespace AppUpdater.Tests
         [Test]
         public void GetDeltaFrom_WithInvalidChecksum_ReturnsNull()
         {
-            VersionManifestDeltaFile delta = file.GetDeltaFrom("MMMMM");
+            var delta = file.GetDeltaFrom("MMMMM");
 
             Assert.That(delta, Is.Null);
         }

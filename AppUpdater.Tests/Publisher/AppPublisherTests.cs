@@ -42,7 +42,7 @@ namespace AppUpdater.Tests.Publisher
         {
             appPublisher.Publish(sourceDir, destinationDir, "1.0.0", 0);
 
-            bool directoryExists = Directory.Exists(Path.Combine(destinationDir, "1.0.0"));
+            var directoryExists = Directory.Exists(Path.Combine(destinationDir, "1.0.0"));
             Assert.That(directoryExists, Is.True);
         }
 
@@ -60,18 +60,18 @@ namespace AppUpdater.Tests.Publisher
         {
             appPublisher.Publish(sourceDir, destinationDir, "1.1.0", 0);
 
-            string destinationFile = Path.Combine(destinationDir, "1.1.0\\test1.txt.deploy");
-            string sourceFile = Path.Combine(sourceDir, "test1.txt");
-            byte[] originalData = File.ReadAllBytes(sourceFile);
-            byte[] compressedData = File.ReadAllBytes(destinationFile);
-            byte[] decompressedData = DataCompressor.Decompress(compressedData);
+            var destinationFile = Path.Combine(destinationDir, "1.1.0\\test1.txt.deploy");
+            var sourceFile = Path.Combine(sourceDir, "test1.txt");
+            var originalData = File.ReadAllBytes(sourceFile);
+            var compressedData = File.ReadAllBytes(destinationFile);
+            var decompressedData = DataCompressor.Decompress(compressedData);
             Assert.That(decompressedData, Is.EqualTo(originalData));
         }
 
         [Test]
         public void Publish_WithValidInfo_GeneratesTheManifest()
         {
-            string manifestFilename = Path.Combine(destinationDir, "1.1.0\\manifest.xml");
+            var manifestFilename = Path.Combine(destinationDir, "1.1.0\\manifest.xml");
 
             appPublisher.Publish(sourceDir, destinationDir, "1.1.0", 0);
 
@@ -81,11 +81,11 @@ namespace AppUpdater.Tests.Publisher
         [Test]
         public void Publish_WithValidInfo_SetsTheManifestData()
         {
-            string manifestFilename = Path.Combine(destinationDir, "1.1.0\\manifest.xml");
+            var manifestFilename = Path.Combine(destinationDir, "1.1.0\\manifest.xml");
 
             appPublisher.Publish(sourceDir, destinationDir, "1.1.0", 0);
 
-            VersionManifest manifest = VersionManifest.LoadVersionData("1.1.0", File.ReadAllText(manifestFilename));
+            var manifest = VersionManifest.LoadVersionData("1.1.0", File.ReadAllText(manifestFilename));
             Assert.That(manifest.Files.Count(), Is.EqualTo(2));
             Assert.That(manifest.Files.ElementAt(0).Name, Is.EqualTo("test1.txt"));
             Assert.That(manifest.Files.ElementAt(0).Checksum, Is.EqualTo("A475EC7E8BDCC9B7F017B29A760A9010C8A9B6F2A9E1550A58BF77783F5C9319"));
@@ -100,9 +100,9 @@ namespace AppUpdater.Tests.Publisher
         {
             appPublisher.Publish(sourceDir, destinationDir, "1.1.0", 0);
 
-            XmlDocument doc = new XmlDocument();
+            var doc = new XmlDocument();
             doc.Load(Path.Combine(destinationDir, "version.xml"));
-            string version = doc.SelectSingleNode("config/version").InnerText;
+            var version = doc.SelectSingleNode("config/version").InnerText;
             Assert.That(version, Is.EqualTo("1.1.0"));
         }
 
@@ -128,7 +128,7 @@ namespace AppUpdater.Tests.Publisher
         [Test]
         public void Publish_WithTwoDelta_SavesTheInfoInTheManifest()
         {
-            string manifestFilename = Path.Combine(destinationDir, "4.0.0\\manifest.xml");
+            var manifestFilename = Path.Combine(destinationDir, "4.0.0\\manifest.xml");
             CreateVersionFiles(1);
             appPublisher.Publish(sourceDir, destinationDir, "1.0.0", 0);
             CreateVersionFiles(2);
@@ -139,7 +139,7 @@ namespace AppUpdater.Tests.Publisher
 
             appPublisher.Publish(sourceDir, destinationDir, "4.0.0", 2);
 
-            VersionManifest manifest = VersionManifest.LoadVersionData("4.0.0", File.ReadAllText(manifestFilename));
+            var manifest = VersionManifest.LoadVersionData("4.0.0", File.ReadAllText(manifestFilename));
             Assert.That(manifest.Files.ElementAt(0).Deltas.Count(), Is.EqualTo(2));
             Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).Checksum, Is.EqualTo("B21A7D77034B2A1120A5E7E803AFACB52F14D6BF7C833A3F0E5B1FD10380AF3D"));
             Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).Size, Is.EqualTo(23));

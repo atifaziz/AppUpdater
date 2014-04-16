@@ -50,8 +50,8 @@ namespace TestApp
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            UpdateManager manager = UpdateManager.Default;
-            UpdateInfo info = manager.CheckForUpdate();
+            var manager = UpdateManager.Default;
+            var info = manager.CheckForUpdate();
             if (info.HasUpdate)
             {
                 manager.DoUpdate(info);
@@ -71,7 +71,7 @@ namespace TestApp
             }
             else
             {
-                string msg = String.Format(message, values);
+                var msg = String.Format(message, values);
                 msg = String.Format("{0:HH:mm:ss} - [{1}] - {2} - {3}\r\n", DateTime.Now, logLevel, type.FullName, msg);
                 txtLog.AppendText(msg);
             }

@@ -16,10 +16,10 @@ namespace AppUpdater.Utils
                 throw new ArgumentNullException("stream");
             }
 
-            SHA256Managed sha = new SHA256Managed();
-            byte[] checksum = sha.ComputeHash(stream);
-            StringBuilder sb = new StringBuilder();
-            foreach (byte b in checksum)
+            var sha = new SHA256Managed();
+            var checksum = sha.ComputeHash(stream);
+            var sb = new StringBuilder();
+            foreach (var b in checksum)
             {
                 sb.Append(b.ToString("X2"));
             }

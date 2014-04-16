@@ -9,9 +9,9 @@ namespace AppUpdater.Delta
 
         public static void CreateDelta(string originalFile, string newFile, string deltaFile, bool isExecutable)
         {
-            DELTA_INPUT options = new DELTA_INPUT();
+            var options = new DELTA_INPUT();
 
-            long fileType = isExecutable ? NativeConstants.DELTA_FILE_TYPE_SET_EXECUTABLES : NativeConstants.DELTA_FILE_TYPE_RAW;
+            var fileType = isExecutable ? NativeConstants.DELTA_FILE_TYPE_SET_EXECUTABLES : NativeConstants.DELTA_FILE_TYPE_RAW;
             
             NativeMethods.CreateDeltaW(
                    NativeConstants.DELTA_FILE_TYPE_SET_EXECUTABLES,
@@ -59,7 +59,7 @@ namespace AppUpdater.Delta
             try
             {
                 // Try to call the API.
-                DELTA_INPUT options = new DELTA_INPUT();
+                var options = new DELTA_INPUT();
                 NativeMethods.CreateDeltaW(
                    NativeConstants.DELTA_FILE_TYPE_SET_EXECUTABLES,
                    NativeConstants.DELTA_FLAG_NONE,

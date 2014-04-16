@@ -69,9 +69,9 @@ namespace AppUpdater.Publisher
                     throw new Exception("Invalid argument: " + arg);
                 }
 
-                string[] argValues = arg.Split(new []{':'}, 2);
-                string commandName = argValues[0].Remove(0, 1);
-                string commandValue = argValues.Length == 1 ? null : argValues[1];
+                var argValues = arg.Split(new []{':'}, 2);
+                var commandName = argValues[0].Remove(0, 1);
+                var commandValue = argValues.Length == 1 ? null : argValues[1];
 
                 switch (commandName.ToLower())
                 {
@@ -100,7 +100,7 @@ namespace AppUpdater.Publisher
 
         private void ValidateArgs()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             if (String.IsNullOrWhiteSpace(sourceDirectory))
             {
                 sb.AppendLine("The 'source' argument is required.");

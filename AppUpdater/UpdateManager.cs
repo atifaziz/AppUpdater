@@ -27,7 +27,7 @@ namespace AppUpdater
             {
                 if (defaultInstance == null)
                 {
-                    string baseDir = Path.Combine(Path.GetDirectoryName(typeof(UpdateManager).Assembly.Location), "..\\");
+                    var baseDir = Path.Combine(Path.GetDirectoryName(typeof(UpdateManager).Assembly.Location), "..\\");
                     ILocalStructureManager manager = new DefaultLocalStructureManager(baseDir);
                     IUpdateServer updateServer = new DefaultUpdateServer(manager.GetUpdateServerUri());
                     defaultInstance = new UpdateManager(updateServer, manager, new UpdaterChef(manager, updateServer));
@@ -52,16 +52,16 @@ namespace AppUpdater
 
         public UpdateInfo CheckForUpdate()
         {
-            string serverCurrentVersion = updateServer.GetCurrentVersion();
-            bool hasUpdate = CurrentVersion != serverCurrentVersion;
+            var serverCurrentVersion = updateServer.GetCurrentVersion();
+            var hasUpdate = CurrentVersion != serverCurrentVersion;
             return new UpdateInfo(hasUpdate, serverCurrentVersion);
         }
 
         public void DoUpdate(UpdateInfo updateInfo)
         {
-            VersionManifest currentVersionManifest = localStructureManager.LoadManifest(this.CurrentVersion);
-            VersionManifest newVersionManifest = updateServer.GetManifest(updateInfo.Version);
-            UpdateRecipe recipe = currentVersionManifest.UpdateTo(newVersionManifest);
+            var currentVersionManifest = localStructureManager.LoadManifest(this.CurrentVersion);
+            var newVersionManifest = updateServer.GetManifest(updateInfo.Version);
+            var recipe = currentVersionManifest.UpdateTo(newVersionManifest);
 
             updaterChef.Cook(recipe);
 
@@ -74,9 +74,9 @@ namespace AppUpdater
 
         private void DeleteOldVersions()
         {
-            string executingVersion = localStructureManager.GetExecutingVersion();
-            string[] installedVersions = localStructureManager.GetInstalledVersions();
-            string[] versionsInUse = new string[] { executingVersion, CurrentVersion };
+            var executingVersion = localStructureManager.GetExecutingVersion();
+            var installedVersions = localStructureManager.GetInstalledVersions();
+            var versionsInUse = new string[] { executingVersion, CurrentVersion };
 
             foreach (var version in installedVersions.Except(versionsInUse))
             {

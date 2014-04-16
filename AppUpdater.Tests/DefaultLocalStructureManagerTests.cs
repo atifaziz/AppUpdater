@@ -30,7 +30,7 @@ namespace AppUpdater.Tests
         {
             structureManager.CreateVersionDir("1.0.0");
 
-            bool exists = Directory.Exists(Path.Combine(baseDir, "1.0.0"));
+            var exists = Directory.Exists(Path.Combine(baseDir, "1.0.0"));
 
             Assert.That(exists, Is.True);
         }
@@ -43,7 +43,7 @@ namespace AppUpdater.Tests
             structureManager.CreateVersionDir("2.0.0");
             structureManager.CreateVersionDir("3.1.1");
 
-            string[] versions = structureManager.GetInstalledVersions();
+            var versions = structureManager.GetInstalledVersions();
 
             Assert.That(versions, Is.EqualTo(expectedVersions));
         }
@@ -51,26 +51,26 @@ namespace AppUpdater.Tests
         [Test]
         public void DeleteVersionDir_DeletesTheDirectory()
         {
-            string dir = Path.Combine(baseDir, "1.0.0");
+            var dir = Path.Combine(baseDir, "1.0.0");
             Directory.CreateDirectory(dir);
             File.WriteAllText(Path.Combine(dir, "a.txt"), "test");
 
             structureManager.DeleteVersionDir("1.0.0");
 
-            bool exists = Directory.Exists(Path.Combine(baseDir, "1.0.0"));
+            var exists = Directory.Exists(Path.Combine(baseDir, "1.0.0"));
             Assert.That(exists, Is.False);
         }
 
         [Test]
         public void LoadManifest_GeneratesTheManifest()
         {
-            string dir = Path.Combine(baseDir, "1.0.0");
+            var dir = Path.Combine(baseDir, "1.0.0");
             Directory.CreateDirectory(dir);
             Directory.CreateDirectory(Path.Combine(dir, "abc")); 
             File.WriteAllText(Path.Combine(dir, "test1.txt"), "some text");
             File.WriteAllText(Path.Combine(dir, "abc\\test2.txt"), "another text");
 
-            VersionManifest manifest = structureManager.LoadManifest("1.0.0");
+            var manifest = structureManager.LoadManifest("1.0.0");
 
             Assert.That(manifest, Is.Not.Null);
             Assert.That(manifest.Version, Is.EqualTo("1.0.0"));
@@ -86,10 +86,10 @@ namespace AppUpdater.Tests
         [Test]
         public void GetCurrentVersion_ReturnsTheVersion()
         {
-            string data = @"<config><version>1.2.3</version></config>";
+            var data = @"<config><version>1.2.3</version></config>";
             File.WriteAllText(Path.Combine(baseDir, "config.xml"), data);
 
-            string currentVersion = structureManager.GetCurrentVersion();
+            var currentVersion = structureManager.GetCurrentVersion();
 
             Assert.That(currentVersion, Is.EqualTo("1.2.3"));
         }
@@ -97,10 +97,10 @@ namespace AppUpdater.Tests
         [Test]
         public void GetCurrentVersion_WithoutCurrentVersionDefined_ReturnsEmpty()
         {
-            string data = @"<config></config>";
+            var data = @"<config></config>";
             File.WriteAllText(Path.Combine(baseDir, "config.xml"), data);
 
-            string version = structureManager.GetCurrentVersion();
+            var version = structureManager.GetCurrentVersion();
 
             Assert.That(version, Is.Empty);
         }
@@ -108,28 +108,28 @@ namespace AppUpdater.Tests
         [Test]
         public void SetCurrentVersion_UpdatesTheConfigFile()
         {
-            string data = @"<config><version>1.2.3</version></config>";
-            string configFilename = Path.Combine(baseDir, "config.xml");
+            var data = @"<config><version>1.2.3</version></config>";
+            var configFilename = Path.Combine(baseDir, "config.xml");
             File.WriteAllText(configFilename, data);
 
             structureManager.SetCurrentVersion("3.4.5");
 
-            XmlDocument doc = new XmlDocument();
+            var doc = new XmlDocument();
             doc.Load(configFilename);
-            string version = doc.SelectSingleNode("config/version").InnerText;
+            var version = doc.SelectSingleNode("config/version").InnerText;
             Assert.That(version, Is.EqualTo("3.4.5"));
         }
 
         [Test]
         public void SetCurrentVersion_KeepsTheLastVersion()
         {
-            string data = @"<config><version>1.2.3</version><last_version>3.0.1</last_version></config>";
-            string configFilename = Path.Combine(baseDir, "config.xml");
+            var data = @"<config><version>1.2.3</version><last_version>3.0.1</last_version></config>";
+            var configFilename = Path.Combine(baseDir, "config.xml");
             File.WriteAllText(configFilename, data);
 
             structureManager.SetCurrentVersion("3.4.5");
 
-            XmlDocument doc = new XmlDocument();
+            var doc = new XmlDocument();
             doc.Load(configFilename);
             var lastVersion = doc.SelectSingleNode("config/last_version");
             Assert.That(lastVersion, Is.Not.Null);
@@ -139,10 +139,10 @@ namespace AppUpdater.Tests
         [Test]
         public void GetLastValidVersion_WithoutLastVersionDefined_ReturnsEmpty()
         {
-            string data = @"<config><version>1.2.3</version></config>";
+            var data = @"<config><version>1.2.3</version></config>";
             File.WriteAllText(Path.Combine(baseDir, "config.xml"), data);
 
-            string lastVersion = structureManager.GetLastValidVersion();
+            var lastVersion = structureManager.GetLastValidVersion();
 
             Assert.That(lastVersion, Is.Empty);
         }
@@ -150,10 +150,10 @@ namespace AppUpdater.Tests
         [Test]
         public void GetLastValidVersion_ReturnsTheVersion()
         {
-            string data = @"<config><version>1.2.3</version><last_version>3.1.1</last_version></config>";
+            var data = @"<config><version>1.2.3</version><last_version>3.1.1</last_version></config>";
             File.WriteAllText(Path.Combine(baseDir, "config.xml"), data);
 
-            string lastVersion = structureManager.GetLastValidVersion();
+            var lastVersion = structureManager.GetLastValidVersion();
 
             Assert.That(lastVersion, Is.EqualTo("3.1.1"));
         }
@@ -161,13 +161,13 @@ namespace AppUpdater.Tests
         [Test]
         public void SetLastValidVersion_WithAnUndefinedVersion_UpdatesTheConfigFile()
         {
-            string data = @"<config><version>1.2.3</version></config>";
-            string configFilename = Path.Combine(baseDir, "config.xml");
+            var data = @"<config><version>1.2.3</version></config>";
+            var configFilename = Path.Combine(baseDir, "config.xml");
             File.WriteAllText(configFilename, data);
 
             structureManager.SetLastValidVersion("3.3.4");
 
-            XmlDocument doc = new XmlDocument();
+            var doc = new XmlDocument();
             doc.Load(configFilename);
             var lastVersion = doc.SelectSingleNode("config/last_version");
             Assert.That(lastVersion, Is.Not.Null);
@@ -177,13 +177,13 @@ namespace AppUpdater.Tests
         [Test]
         public void SetLastValidVersion_UpdatesTheConfigFile()
         {
-            string data = @"<config><version>1.2.3</version><last_version>1.2.0</last_version></config>";
-            string configFilename = Path.Combine(baseDir, "config.xml");
+            var data = @"<config><version>1.2.3</version><last_version>1.2.0</last_version></config>";
+            var configFilename = Path.Combine(baseDir, "config.xml");
             File.WriteAllText(configFilename, data);
 
             structureManager.SetLastValidVersion("3.3.4");
 
-            XmlDocument doc = new XmlDocument();
+            var doc = new XmlDocument();
             doc.Load(configFilename);
             var lastVersion = doc.SelectSingleNode("config/last_version");
             Assert.That(lastVersion, Is.Not.Null);
@@ -193,13 +193,13 @@ namespace AppUpdater.Tests
         [Test]
         public void SetLastValidVersion_KeepsTheVersion()
         {
-            string data = @"<config><version>1.2.3</version><last_version>3.0.1</last_version></config>";
-            string configFilename = Path.Combine(baseDir, "config.xml");
+            var data = @"<config><version>1.2.3</version><last_version>3.0.1</last_version></config>";
+            var configFilename = Path.Combine(baseDir, "config.xml");
             File.WriteAllText(configFilename, data);
 
             structureManager.SetLastValidVersion("3.4.5");
 
-            XmlDocument doc = new XmlDocument();
+            var doc = new XmlDocument();
             doc.Load(configFilename);
             var version = doc.SelectSingleNode("config/version");
             Assert.That(version, Is.Not.Null);
@@ -211,7 +211,7 @@ namespace AppUpdater.Tests
         {
             DefaultLocalStructureManager.GetExecutablePath = () => @"C:\Test\AppRoot\1.4.5\app.exe";
 
-            string executingVersion = structureManager.GetExecutingVersion();
+            var executingVersion = structureManager.GetExecutingVersion();
 
             Assert.That(executingVersion, Is.EqualTo("1.4.5"));
         }
@@ -221,7 +221,7 @@ namespace AppUpdater.Tests
         {
             Directory.CreateDirectory(Path.Combine(baseDir, "4.5.6"));
 
-            bool hasFolder = structureManager.HasVersionFolder("4.5.6");
+            var hasFolder = structureManager.HasVersionFolder("4.5.6");
 
             Assert.That(hasFolder, Is.True);
         }
@@ -229,7 +229,7 @@ namespace AppUpdater.Tests
         [Test]
         public void HasVersionFolder_WithoutTheFolder_ReturnsFalse()
         {
-            bool hasFolder = structureManager.HasVersionFolder("9.9.9");
+            var hasFolder = structureManager.HasVersionFolder("9.9.9");
 
             Assert.That(hasFolder, Is.False);
         }
@@ -243,7 +243,7 @@ namespace AppUpdater.Tests
 
             structureManager.CopyFile("1.2.3", "4.5.6", "test.txt");
 
-            string destinationFile = Path.Combine(baseDir, "4.5.6\\test.txt");
+            var destinationFile = Path.Combine(baseDir, "4.5.6\\test.txt");
             Assert.That(File.Exists(destinationFile), Is.True);
             Assert.That(File.ReadAllText(destinationFile), Is.EqualTo("some value"));
         }
@@ -251,12 +251,12 @@ namespace AppUpdater.Tests
         [Test]
         public void SaveFile_SavesTheFileInTheVersionDirectory()
         {
-            byte[] data = new byte[] { 4, 5, 6 };
+            var data = new byte[] { 4, 5, 6 };
             Directory.CreateDirectory(Path.Combine(baseDir, "1.2.3"));
 
             structureManager.SaveFile("1.2.3", "test.txt", data);
 
-            string destinationFile = Path.Combine(baseDir, "1.2.3\\test.txt");
+            var destinationFile = Path.Combine(baseDir, "1.2.3\\test.txt");
             Assert.That(File.Exists(destinationFile), Is.True);
             Assert.That(File.ReadAllBytes(destinationFile), Is.EqualTo(data));
         }
@@ -266,32 +266,32 @@ namespace AppUpdater.Tests
         {
             Directory.CreateDirectory(Path.Combine(baseDir, "1.2.3"));
             Directory.CreateDirectory(Path.Combine(baseDir, "2.0.0"));
-            byte[] originalData = new byte[] { 4, 5, 6, 5, 4 };
-            byte[] newData = new byte[] { 4, 5, 6, 5, 4 };
-            string originalFile = Path.Combine(baseDir, "1.2.3\\test1.dat");
-            string newFile = Path.GetTempFileName();
-            string deltaFile = Path.GetTempFileName();
-            string patchedFile = Path.GetTempFileName();
+            var originalData = new byte[] { 4, 5, 6, 5, 4 };
+            var newData = new byte[] { 4, 5, 6, 5, 4 };
+            var originalFile = Path.Combine(baseDir, "1.2.3\\test1.dat");
+            var newFile = Path.GetTempFileName();
+            var deltaFile = Path.GetTempFileName();
+            var patchedFile = Path.GetTempFileName();
             File.WriteAllBytes(originalFile, originalData);
             File.WriteAllBytes(newFile, newData);
             DeltaAPI.CreateDelta(originalFile, newFile, deltaFile, true);
-            byte[] deltaData = File.ReadAllBytes(deltaFile);
+            var deltaData = File.ReadAllBytes(deltaFile);
 
             structureManager.ApplyDelta("1.2.3", "2.0.0", "test1.dat", deltaData);
 
             Assert.That(File.Exists(Path.Combine(baseDir, "2.0.0\\test1.dat")), Is.True);
-            byte[] patchedData = File.ReadAllBytes(Path.Combine(baseDir, "2.0.0\\test1.dat"));
+            var patchedData = File.ReadAllBytes(Path.Combine(baseDir, "2.0.0\\test1.dat"));
             Assert.That(patchedData, Is.EqualTo(newData));
         }
 
         [Test]
         public void GetUpdateServerUri_ReturnsTheUri()
         {
-            string data = @"<config><version>1.2.3</version><updateServer>http://localhost:8080/update/</updateServer></config>";
-            string configFilename = Path.Combine(baseDir, "config.xml");
+            var data = @"<config><version>1.2.3</version><updateServer>http://localhost:8080/update/</updateServer></config>";
+            var configFilename = Path.Combine(baseDir, "config.xml");
             File.WriteAllText(configFilename, data);
             
-            Uri uri = structureManager.GetUpdateServerUri();
+            var uri = structureManager.GetUpdateServerUri();
 
             Assert.That(uri.ToString(), Is.EqualTo("http://localhost:8080/update/"));
         }

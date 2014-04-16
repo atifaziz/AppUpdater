@@ -54,7 +54,7 @@ namespace AppUpdater
                 try
                 {
                     log.Debug("Checking for updates.");
-                    UpdateInfo updateInfo = updateManager.CheckForUpdate();
+                    var updateInfo = updateManager.CheckForUpdate();
                     if (updateInfo.HasUpdate)
                     {
                         log.Debug("Updates found. Installing new files.");
@@ -82,7 +82,7 @@ namespace AppUpdater
 
         private void RaiseUpdated()
         {
-            EventHandler updated = Updated;
+            var updated = Updated;
             if (updated != null)
             {
                 updated(this, EventArgs.Empty);

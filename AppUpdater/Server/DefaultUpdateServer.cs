@@ -19,16 +19,16 @@ namespace AppUpdater.Server
 
         public string GetCurrentVersion()
         {
-            string xmlData = DownloadString("version.xml");
+            var xmlData = DownloadString("version.xml");
 
-            XmlDocument doc = new XmlDocument();
+            var doc = new XmlDocument();
             doc.LoadXml(xmlData);
             return doc.SelectSingleNode("config/version").InnerText;
         }
 
         public VersionManifest GetManifest(string version)
         {
-            string xmlData = DownloadString(GetVersionFilename(version, "manifest.xml"));
+            var xmlData = DownloadString(GetVersionFilename(version, "manifest.xml"));
             return VersionManifest.LoadVersionData(version, xmlData);
         }
 
@@ -39,16 +39,16 @@ namespace AppUpdater.Server
 
         private string DownloadString(string filename)
         {
-            Uri versionUrl = new Uri(updateServerUrl, filename);
-            WebClient client = new WebClient();
+            var versionUrl = new Uri(updateServerUrl, filename);
+            var client = new WebClient();
             log.Debug("Downloading from url: {0}", versionUrl);
             return client.DownloadString(versionUrl);
         }
 
         private byte[] DownloadBinary(string filename)
         {
-            Uri versionUrl = new Uri(updateServerUrl, filename);
-            WebClient client = new WebClient();
+            var versionUrl = new Uri(updateServerUrl, filename);
+            var client = new WebClient();
             log.Debug("Downloading from url: {0}", versionUrl);
             return client.DownloadData(versionUrl);
         }

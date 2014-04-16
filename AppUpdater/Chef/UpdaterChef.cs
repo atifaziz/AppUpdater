@@ -39,7 +39,7 @@ namespace AppUpdater.Chef
                 else if (file.Action == FileUpdateAction.Download)
                 {
                     log.Debug("Downloading file \"{0}\".", file.FileToDownload);
-                    byte[] data = updateServer.DownloadFile(recipe.NewVersion, file.FileToDownload);
+                    var data = updateServer.DownloadFile(recipe.NewVersion, file.FileToDownload);
                     log.Debug("Decompressing the file.");
                     data = DataCompressor.Decompress(data);
                     log.Debug("Saving the file \"{0}\".", file.Name);
@@ -48,7 +48,7 @@ namespace AppUpdater.Chef
                 else if (file.Action == FileUpdateAction.DownloadDelta)
                 {
                     log.Debug("Downloading patch file \"{0}\".", file.FileToDownload);
-                    byte[] data = updateServer.DownloadFile(recipe.NewVersion, file.FileToDownload);
+                    var data = updateServer.DownloadFile(recipe.NewVersion, file.FileToDownload);
                     log.Debug("Applying patch file.");
                     localStructureManager.ApplyDelta(recipe.CurrentVersion, recipe.NewVersion, file.Name, data);
                 }

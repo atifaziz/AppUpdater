@@ -16,10 +16,10 @@ namespace AppUpdater.Publisher
         {
             sourceDirectory = PathUtils.AddTrailingSlash(sourceDirectory);
             destionationDirectory = PathUtils.AddTrailingSlash(destionationDirectory);
-            string destinationVersionDirectory = PathUtils.AddTrailingSlash(Path.Combine(destionationDirectory, version));
+            var destinationVersionDirectory = PathUtils.AddTrailingSlash(Path.Combine(destionationDirectory, version));
 
             CopyFiles(sourceDirectory, destinationVersionDirectory);
-            VersionManifest manifest = VersionManifest.GenerateFromDirectory(version, sourceDirectory);
+            var manifest = VersionManifest.GenerateFromDirectory(version, sourceDirectory);
             GenerateDeltas(manifest, sourceDirectory, destionationDirectory, version, numberOfVersionsAsDelta);
             manifest.SaveToFile(Path.Combine(destinationVersionDirectory, "manifest.xml"));
             SaveConfigFile(destionationDirectory, version);
@@ -27,7 +27,7 @@ namespace AppUpdater.Publisher
 
         private void GenerateDeltas(VersionManifest manifest, string sourceDirectory, string destionationDirectory, string newVersion, int numberOfVersionsAsDelta)
         {
-            string newVersionDirectory = Path.Combine(destionationDirectory, newVersion);
+            var newVersionDirectory = Path.Combine(destionationDirectory, newVersion);
             var publishedVersions = Directory.EnumerateDirectories(destionationDirectory)
                                              .Select(x => x.Remove(0, destionationDirectory.Length))
                                              .Except(new[] { newVersion })
@@ -36,30 +36,30 @@ namespace AppUpdater.Publisher
 
             foreach (var version in publishedVersions)
             {
-                string versionDirectory = Path.Combine(destionationDirectory, version);
-                string manifestFile = Path.Combine(versionDirectory, "manifest.xml");
-                VersionManifest versionManifest = VersionManifest.LoadVersionFile(version, manifestFile);
+                var versionDirectory = Path.Combine(destionationDirectory, version);
+                var manifestFile = Path.Combine(versionDirectory, "manifest.xml");
+                var versionManifest = VersionManifest.LoadVersionFile(version, manifestFile);
                 foreach (var file in manifest.Files)
                 {
-                    VersionManifestFile fileInVersion = versionManifest.Files.FirstOrDefault(x => x.Name.Equals(file.Name, StringComparison.CurrentCultureIgnoreCase));
+                    var fileInVersion = versionManifest.Files.FirstOrDefault(x => x.Name.Equals(file.Name, StringComparison.CurrentCultureIgnoreCase));
                     if (fileInVersion != null && fileInVersion.Checksum != file.Checksum)
                     {
                         if (file.GetDeltaFrom(fileInVersion.Checksum) == null)
                         {
-                            string oldFile = Path.Combine(versionDirectory, fileInVersion.Name + ".deploy");
-                            string decompressedOldFile = Path.GetTempFileName();
-                            byte[] data = File.ReadAllBytes(oldFile);
+                            var oldFile = Path.Combine(versionDirectory, fileInVersion.Name + ".deploy");
+                            var decompressedOldFile = Path.GetTempFileName();
+                            var data = File.ReadAllBytes(oldFile);
                             data = DataCompressor.Decompress(data);
                             File.WriteAllBytes(decompressedOldFile, data);
 
-                            string decompressedNewFile = Path.Combine(sourceDirectory, fileInVersion.Name);
-                            string deltaFilename = String.Format("deltas\\{0}.{1}.deploy", fileInVersion.Name, GetShortChecksum(fileInVersion.Checksum));
-                            string deltaFile = Path.Combine(newVersionDirectory, deltaFilename);
+                            var decompressedNewFile = Path.Combine(sourceDirectory, fileInVersion.Name);
+                            var deltaFilename = String.Format("deltas\\{0}.{1}.deploy", fileInVersion.Name, GetShortChecksum(fileInVersion.Checksum));
+                            var deltaFile = Path.Combine(newVersionDirectory, deltaFilename);
                             Directory.CreateDirectory(Path.GetDirectoryName(deltaFile));
                             DeltaAPI.CreateDelta(decompressedOldFile, decompressedNewFile, deltaFile, true);
                             File.Delete(decompressedOldFile);
 
-                            VersionManifestDeltaFile deltaInfo = new VersionManifestDeltaFile(deltaFilename, fileInVersion.Checksum, new FileInfo(deltaFile).Length);
+                            var deltaInfo = new VersionManifestDeltaFile(deltaFilename, fileInVersion.Checksum, new FileInfo(deltaFile).Length);
                             file.Deltas.Add(deltaInfo);
                         }
                     }
@@ -82,10 +82,10 @@ namespace AppUpdater.Publisher
         {
             Directory.CreateDirectory(destinationVersionDirectory);
 
-            foreach (string sourceFile in Directory.EnumerateFiles(sourceDirectory, "*", SearchOption.AllDirectories))
+            foreach (var sourceFile in Directory.EnumerateFiles(sourceDirectory, "*", SearchOption.AllDirectories))
             {
-                string sourceFileRelativePath = sourceFile.Remove(0, sourceDirectory.Length);
-                string destinationFile = Path.Combine(destinationVersionDirectory, sourceFileRelativePath + ".deploy");
+                var sourceFileRelativePath = sourceFile.Remove(0, sourceDirectory.Length);
+                var destinationFile = Path.Combine(destinationVersionDirectory, sourceFileRelativePath + ".deploy");
 
                 Directory.CreateDirectory(Path.GetDirectoryName(destinationFile));
                 CreateDeployFile(sourceFile, destinationFile);
@@ -94,7 +94,7 @@ namespace AppUpdater.Publisher
 
         private static void SaveConfigFile(string destionationDirectory, string version)
         {
-            XmlDocument doc = new XmlDocument();
+            var doc = new XmlDocument();
             doc.LoadXml("<config><version></version></config>");
             doc.SelectSingleNode("config/version").InnerText = version;
             doc.Save(Path.Combine(destionationDirectory, "version.xml"));
@@ -102,9 +102,9 @@ namespace AppUpdater.Publisher
 
         private static void CreateDeployFile(string sourceFile, string destinationFile)
         {
-            using (FileStream streamSource = File.OpenRead(sourceFile))
+            using (var streamSource = File.OpenRead(sourceFile))
             {
-                using (FileStream streamDestination = File.OpenWrite(destinationFile))
+                using (var streamDestination = File.OpenWrite(destinationFile))
                 {
                     DataCompressor.Compress(streamSource, streamDestination);
                 }
