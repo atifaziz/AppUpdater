@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30110.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppUpdater", "AppUpdater\AppUpdater.csproj", "{AC95E782-8C9F-4381-A043-6D8A65806743}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppUpdater.Tests", "AppUpdater.Tests\AppUpdater.Tests.csproj", "{BAFC5860-5821-4D99-8E75-B5EC88F6F360}"
@@ -10,6 +12,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppUpdater.Runner", "AppUpdater.Runner\AppUpdater.Runner.csproj", "{C8673FC7-F9A6-48A2-878B-1A8C204A532E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppUpdater.Publisher", "AppUpdater.Publisher\AppUpdater.Publisher.csproj", "{04FFADC2-61CF-4D6B-B70B-4466C18BC575}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7140CE03-A621-4E8A-BD93-C37BB26E247A}"
+	ProjectSection(SolutionItems) = preProject
+		build.cmd = build.cmd
+		buildw.cmd = buildw.cmd
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
