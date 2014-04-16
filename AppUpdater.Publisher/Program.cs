@@ -19,7 +19,9 @@ namespace AppUpdater.Publisher
         {
             if (args.Length == 0)
             {
-                Console.WriteLine("Usage:\r\n\tAppUpdate.Publisher.exe -source:source_dir -target:target_dir -version:1.0.0 -deltas:2");
+                Console.WriteLine("Usage:");
+                Console.WriteLine("  {0} -source:source_dir -target:target_dir -version:1.0.0 -deltas:2",
+                    Path.GetFileName(Environment.GetCommandLineArgs()[0]));
             }
             else
             {
