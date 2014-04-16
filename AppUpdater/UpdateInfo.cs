@@ -1,5 +1,4 @@
-﻿
-namespace AppUpdater
+﻿namespace AppUpdater
 {
     using System;
 
@@ -10,8 +9,8 @@ namespace AppUpdater
 
         public UpdateInfo(bool hasUpdate, Version version)
         {
-            this.HasUpdate = hasUpdate;
-            this.Version = version;
+            HasUpdate = hasUpdate;
+            Version = version;
         }
     }
 }

@@ -19,10 +19,10 @@ namespace AppUpdater.Manifest
 
         public VersionManifestFile(string name, string checksum, long size, IEnumerable<VersionManifestDeltaFile> deltas = null)
         {
-            this.Name = name;
-            this.Checksum = checksum;
-            this.Size = size;
-            this.Deltas = new List<VersionManifestDeltaFile>(deltas ?? new VersionManifestDeltaFile[0]);
+            Name = name;
+            Checksum = checksum;
+            Size = size;
+            Deltas = new List<VersionManifestDeltaFile>(deltas ?? new VersionManifestDeltaFile[0]);
         }
 
         public VersionManifestDeltaFile GetDeltaFrom(string checksum)

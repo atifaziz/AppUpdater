@@ -11,9 +11,9 @@ namespace AppUpdater.Recipe
 
         public UpdateRecipe(Version newVersion, Version currentVersion, IEnumerable<UpdateRecipeFile> files)
         {
-            this.NewVersion = newVersion;
-            this.CurrentVersion = currentVersion;
-            this.Files = files;
+            NewVersion = newVersion;
+            CurrentVersion = currentVersion;
+            Files = files;
         }
     }
 }

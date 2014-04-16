@@ -16,8 +16,8 @@ namespace AppUpdater.Manifest
 
         public VersionManifest(Version version, IEnumerable<VersionManifestFile> files)
         {
-            this.Version = version;
-            this.Files = files;
+            Version = version;
+            Files = files;
         }
 
         public static VersionManifest LoadVersionFile(Version version, string filename)
@@ -64,7 +64,7 @@ namespace AppUpdater.Manifest
             var recipeFiles = new List<UpdateRecipeFile>();
             foreach (var file in newVersionManifest.Files)
             {
-                var originalFile = this.Files.FirstOrDefault(x => x.Name.Equals(file.Name, StringComparison.CurrentCultureIgnoreCase));
+                var originalFile = Files.FirstOrDefault(x => x.Name.Equals(file.Name, StringComparison.CurrentCultureIgnoreCase));
                 var action = FileUpdateAction.Download;
                 var fileToDownload = file.DeployedName;
                 var size = file.Size;
@@ -89,7 +89,7 @@ namespace AppUpdater.Manifest
                 recipeFiles.Add(new UpdateRecipeFile(file.Name, file.Checksum, size, action, fileToDownload));
             }
 
-            return new UpdateRecipe(newVersionManifest.Version, this.Version, recipeFiles);
+            return new UpdateRecipe(newVersionManifest.Version, Version, recipeFiles);
         }
 
         public static VersionManifest GenerateFromDirectory(Version version, string directory)

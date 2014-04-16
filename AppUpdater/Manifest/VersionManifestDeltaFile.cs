@@ -13,9 +13,9 @@ namespace AppUpdater.Manifest
 
         public VersionManifestDeltaFile(string filename, string checksum, long size)
         {
-            this.Filename = filename;
-            this.Checksum = checksum;
-            this.Size = size;
+            Filename = filename;
+            Checksum = checksum;
+            Size = size;
         }
     }
 }

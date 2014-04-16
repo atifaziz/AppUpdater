@@ -18,11 +18,11 @@ namespace AppUpdater.Recipe
 
         public UpdateRecipeFile(string name, string checksum, long size, FileUpdateAction action, string fileToDownload)
         {
-            this.Name = name;
-            this.Checksum = checksum;
-            this.Size = size;
-            this.Action = action;
-            this.FileToDownload = fileToDownload;
+            Name = name;
+            Checksum = checksum;
+            Size = size;
+            Action = action;
+            FileToDownload = fileToDownload;
         }
     }
 }
