@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
 using AppUpdater.Delta;
 using AppUpdater.Manifest;
-using AppUpdater.Utils;
 
 namespace AppUpdater.LocalStructure
 {
@@ -19,62 +20,61 @@ namespace AppUpdater.LocalStructure
             this.baseDir = baseDir;
         }
 
-        public void CreateVersionDir(string version)
+        public void CreateVersionDir(Version version)
         {
             Directory.CreateDirectory(GetVersionDir(version));
         }
 
-        public void DeleteVersionDir(string version)
+        public void DeleteVersionDir(Version version)
         {
             Directory.Delete(GetVersionDir(version), true);
         }
 
-        public string[] GetInstalledVersions()
+        public IEnumerable<Version> GetInstalledVersions()
         {
-            var baseDirectory = PathUtils.AddTrailingSlash(baseDir);
-
-            return Directory.EnumerateDirectories(baseDirectory)
-                            .Select(x => x.Remove(0, baseDirectory.Length))
-                            .ToArray();
+            return from dir in new DirectoryInfo(baseDir).EnumerateDirectories()
+                   select new Version(dir.Name);
         }
 
-        public VersionManifest LoadManifest(string version)
+        public VersionManifest LoadManifest(Version version)
         {
             var versionDir = GetVersionDir(version);
             return VersionManifest.GenerateFromDirectory(version, versionDir);
         }
 
-        public string GetCurrentVersion()
+        public Version GetCurrentVersion()
         {
-            return GetConfigValue("version");
+            var value = GetConfigValue("version");
+            return !string.IsNullOrEmpty(value) ? new Version(value) : null;
         }
 
-        public void SetCurrentVersion(string version)
+        public void SetCurrentVersion(Version version)
         {
             SetConfigValue("version", version);
         }
 
-        public string GetLastValidVersion()
+        public Version GetLastValidVersion()
         {
-            return GetConfigValue("last_version");
+            var value = GetConfigValue("last_version");
+            return !string.IsNullOrEmpty(value) ? new Version(value) : null;
         }
 
-        public void SetLastValidVersion(string version)
+        public void SetLastValidVersion(Version version)
         {
             SetConfigValue("last_version", version);
         }
 
-        public string GetExecutingVersion()
+        public Version GetExecutingVersion()
         {
-            return Directory.GetParent(GetExecutablePath()).Name;
+            return new Version(Directory.GetParent(GetExecutablePath()).Name);
         }
 
-        public bool HasVersionFolder(string version)
+        public bool HasVersionFolder(Version version)
         {
             return Directory.Exists(GetVersionDir(version));
         }
 
-        public void CopyFile(string originVersion, string destinationVersion, string filename)
+        public void CopyFile(Version originVersion, Version destinationVersion, string filename)
         {
             var originFilename = Path.Combine(GetVersionDir(originVersion), filename);
             var destinationFilename = Path.Combine(GetVersionDir(destinationVersion), filename);
@@ -82,13 +82,13 @@ namespace AppUpdater.LocalStructure
             File.Copy(originFilename, destinationFilename, true);
         }
 
-        public void SaveFile(string version, string filename, byte[] data)
+        public void SaveFile(Version version, string filename, byte[] data)
         {
             var destinationFilename = Path.Combine(GetVersionDir(version), filename);
             File.WriteAllBytes(destinationFilename, data);
         }
 
-        public void ApplyDelta(string originalVersion, string newVersion, string filename, byte[] deltaData)
+        public void ApplyDelta(Version originalVersion, Version newVersion, string filename, byte[] deltaData)
         {
             var originalFile = GetFilename(originalVersion, filename);
             var newFile = GetFilename(newVersion, filename);
@@ -107,12 +107,12 @@ namespace AppUpdater.LocalStructure
             return new Uri(doc.SelectSingleNode("config/updateServer").InnerText);
         }
 
-        private string GetVersionDir(string version)
+        private string GetVersionDir(Version version)
         {
-            return Path.Combine(baseDir, version);
+            return Path.Combine(baseDir, version.ToString());
         }
 
-        private string GetFilename(string version, string filename)
+        private string GetFilename(Version version, string filename)
         {
             return Path.Combine(GetVersionDir(version), filename);
         }
@@ -132,7 +132,7 @@ namespace AppUpdater.LocalStructure
             return configValue == null ? string.Empty : configValue.InnerText;
         }
 
-        private void SetConfigValue(string name, string value)
+        private void SetConfigValue(string name, object value)
         {
             var configFilename = Path.Combine(baseDir, "config.xml");
             var doc = new XmlDocument();
@@ -144,7 +144,7 @@ namespace AppUpdater.LocalStructure
                 doc.SelectSingleNode("config").AppendChild(lastVersionNode);
             }
 
-            lastVersionNode.InnerText = value;
+            lastVersionNode.InnerText = string.Format(CultureInfo.InvariantCulture, "{0}", value);
             doc.Save(configFilename);
         }
     }

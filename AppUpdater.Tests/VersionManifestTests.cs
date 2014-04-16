@@ -6,6 +6,8 @@ using System.IO;
 
 namespace AppUpdater.Tests
 {
+    using System;
+
     [TestFixture]
     public class VersionManifestTests
     {
@@ -22,10 +24,10 @@ namespace AppUpdater.Tests
                                 </files>
                             </manifest>";
 
-            var manifest = VersionManifest.LoadVersionData("1.2.3", data);
+            var manifest = VersionManifest.LoadVersionData(new Version("1.2.3"), data);
 
             Assert.That(manifest, Is.Not.Null);
-            Assert.That(manifest.Version, Is.EqualTo("1.2.3"));
+            Assert.That(manifest.Version, Is.EqualTo(new Version("1.2.3")));
             Assert.That(manifest.Files, Has.Count.EqualTo(2));
             Assert.That(manifest.Files.ElementAt(0).Name, Is.EqualTo("teste1.txt"));
             Assert.That(manifest.Files.ElementAt(0).Checksum, Is.EqualTo("algo111"));
@@ -52,10 +54,10 @@ namespace AppUpdater.Tests
                             </manifest>";
             File.WriteAllText(filename, data);
 
-            var manifest = VersionManifest.LoadVersionFile("1.2.3", filename);
+            var manifest = VersionManifest.LoadVersionFile(new Version("1.2.3"), filename);
 
             Assert.That(manifest, Is.Not.Null);
-            Assert.That(manifest.Version, Is.EqualTo("1.2.3"));
+            Assert.That(manifest.Version, Is.EqualTo(new Version("1.2.3")));
             Assert.That(manifest.Files, Has.Count.EqualTo(2));
             Assert.That(manifest.Files.ElementAt(0).Name, Is.EqualTo("teste1.txt"));
             Assert.That(manifest.Files.ElementAt(0).Checksum, Is.EqualTo("algo111"));
@@ -71,14 +73,14 @@ namespace AppUpdater.Tests
         public void UpdateTo_ReturnsARecipe()
         {
             var fileUpdate = new VersionManifestFile("arquivo1.txt", "123", 1000);
-            var currentManifest = new VersionManifest("1.0.0", new VersionManifestFile[] {  });
-            var updateManifest = new VersionManifest("2.0.0", new VersionManifestFile[] { fileUpdate });
+            var currentManifest = new VersionManifest(new Version("1.0.0"), new VersionManifestFile[] {  });
+            var updateManifest = new VersionManifest(new Version("2.0.0"), new VersionManifestFile[] { fileUpdate });
 
             var recipe = currentManifest.UpdateTo(updateManifest);
 
             Assert.That(recipe, Is.Not.Null);
-            Assert.That(recipe.CurrentVersion, Is.EqualTo("1.0.0"));
-            Assert.That(recipe.NewVersion, Is.EqualTo("2.0.0"));
+            Assert.That(recipe.CurrentVersion, Is.EqualTo(new Version("1.0.0")));
+            Assert.That(recipe.NewVersion, Is.EqualTo(new Version("2.0.0")));
             Assert.That(recipe.Files, Has.Count.EqualTo(1));
         }
 
@@ -86,8 +88,8 @@ namespace AppUpdater.Tests
         public void UpdateTo_VersionWithEqualFile_SetTheActionAsCopy()
         {
             var fileUpdate = new VersionManifestFile("arquivo1.txt", "123", 1000);
-            var currentManifest = new VersionManifest("1.0.0", new VersionManifestFile[] { fileUpdate });
-            var updateManifest = new VersionManifest("2.0.0", new VersionManifestFile[] { fileUpdate });
+            var currentManifest = new VersionManifest(new Version("1.0.0"), new VersionManifestFile[] { fileUpdate });
+            var updateManifest = new VersionManifest(new Version("2.0.0"), new VersionManifestFile[] { fileUpdate });
 
             var recipe = currentManifest.UpdateTo(updateManifest);
 
@@ -99,8 +101,8 @@ namespace AppUpdater.Tests
         public void UpdateTo_VersionWithoutTheFile_SetTheActionAsDownload()
         {
             var fileUpdate = new VersionManifestFile("arquivo1.txt", "123", 1000);
-            var currentManifest = new VersionManifest("1.0.0", new VersionManifestFile[] {  });
-            var updateManifest = new VersionManifest("2.0.0", new VersionManifestFile[] { fileUpdate });
+            var currentManifest = new VersionManifest(new Version("1.0.0"), new VersionManifestFile[] {  });
+            var updateManifest = new VersionManifest(new Version("2.0.0"), new VersionManifestFile[] { fileUpdate });
 
             var recipe = currentManifest.UpdateTo(updateManifest);
 
@@ -113,8 +115,8 @@ namespace AppUpdater.Tests
         {
             var fileOriginal = new VersionManifestFile("arquivo1.txt", "333", 1000);
             var fileUpdate = new VersionManifestFile("arquivo1.txt", "123", 1000);
-            var currentManifest = new VersionManifest("1.0.0", new VersionManifestFile[] { fileOriginal });
-            var updateManifest = new VersionManifest("2.0.0", new VersionManifestFile[] { fileUpdate });
+            var currentManifest = new VersionManifest(new Version("1.0.0"), new VersionManifestFile[] { fileOriginal });
+            var updateManifest = new VersionManifest(new Version("2.0.0"), new VersionManifestFile[] { fileUpdate });
 
             var recipe = currentManifest.UpdateTo(updateManifest);
 
@@ -128,8 +130,8 @@ namespace AppUpdater.Tests
             var fileOriginal = new VersionManifestFile("arquivo1.txt", "333", 1000);
             var fileUpdate = new VersionManifestFile("arquivo1.txt", "123", 1000);
             fileUpdate.Deltas.Add(new VersionManifestDeltaFile("deltas\\arquivo1.txt", "444", 10));
-            var currentManifest = new VersionManifest("1.0.0", new VersionManifestFile[] { fileOriginal });
-            var updateManifest = new VersionManifest("2.0.0", new VersionManifestFile[] { fileUpdate });
+            var currentManifest = new VersionManifest(new Version("1.0.0"), new VersionManifestFile[] { fileOriginal });
+            var updateManifest = new VersionManifest(new Version("2.0.0"), new VersionManifestFile[] { fileUpdate });
 
             var recipe = currentManifest.UpdateTo(updateManifest);
 
@@ -143,8 +145,8 @@ namespace AppUpdater.Tests
             var fileOriginal = new VersionManifestFile("arquivo1.txt", "333", 1000);
             var fileUpdate = new VersionManifestFile("arquivo1.txt", "123", 1000);
             fileUpdate.Deltas.Add(new VersionManifestDeltaFile("deltas\\arquivo1.txt", "333", 10));
-            var currentManifest = new VersionManifest("1.0.0", new VersionManifestFile[] { fileOriginal });
-            var updateManifest = new VersionManifest("2.0.0", new VersionManifestFile[] { fileUpdate });
+            var currentManifest = new VersionManifest(new Version("1.0.0"), new VersionManifestFile[] { fileOriginal });
+            var updateManifest = new VersionManifest(new Version("2.0.0"), new VersionManifestFile[] { fileUpdate });
 
             var recipe = currentManifest.UpdateTo(updateManifest);
 
@@ -161,10 +163,10 @@ namespace AppUpdater.Tests
             File.WriteAllText(Path.Combine(dir, "test1.txt"), "some text");
             File.WriteAllText(Path.Combine(dir, "abc\\test2.txt"), "another text");
 
-            var manifest = VersionManifest.GenerateFromDirectory("1.0.0", dir);
+            var manifest = VersionManifest.GenerateFromDirectory(new Version("1.0.0"), dir);
 
             Assert.That(manifest, Is.Not.Null);
-            Assert.That(manifest.Version, Is.EqualTo("1.0.0"));
+            Assert.That(manifest.Version, Is.EqualTo(new Version("1.0.0")));
             Assert.That(manifest.Files, Has.Count.EqualTo(2));
             Assert.That(manifest.Files.ElementAt(0).Name, Is.EqualTo("test1.txt"));
             Assert.That(manifest.Files.ElementAt(0).Checksum, Is.EqualTo("B94F6F125C79E3A5FFAA826F584C10D52ADA669E6762051B826B55776D05AED2"));
@@ -180,7 +182,7 @@ namespace AppUpdater.Tests
             var filename = Path.GetTempFileName();
             var data = @"<manifest></manifest>";
 
-            var manifest = VersionManifest.LoadVersionData("1.0.0", data);
+            var manifest = VersionManifest.LoadVersionData(new Version("1.0.0"), data);
             manifest.SaveToFile(filename);
 
             Assert.That(File.Exists(filename), Is.True);
@@ -200,10 +202,10 @@ namespace AppUpdater.Tests
                                 </files>
                             </manifest>";
 
-            var originalManifest = VersionManifest.LoadVersionData("1.0.0", data);
+            var originalManifest = VersionManifest.LoadVersionData(new Version("1.0.0"), data);
             originalManifest.SaveToFile(filename);
 
-            var savedManifest = VersionManifest.LoadVersionData("1.0.0", File.ReadAllText(filename));
+            var savedManifest = VersionManifest.LoadVersionData(new Version("1.0.0"), File.ReadAllText(filename));
             Assert.That(savedManifest, Is.Not.Null);
             Assert.That(savedManifest.Files, Has.Count.EqualTo(2));
             Assert.That(savedManifest.Files.ElementAt(0).Name, Is.EqualTo("test1.txt"));

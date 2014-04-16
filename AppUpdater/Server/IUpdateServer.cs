@@ -2,10 +2,12 @@
 
 namespace AppUpdater.Server
 {
+    using System;
+
     public interface IUpdateServer
     {
-        string GetCurrentVersion();
-        VersionManifest GetManifest(string version);
-        byte[] DownloadFile(string version, string filename);
+        Version GetCurrentVersion();
+        VersionManifest GetManifest(Version version);
+        byte[] DownloadFile(Version version, string filename);
     }
 }

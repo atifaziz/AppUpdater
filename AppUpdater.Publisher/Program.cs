@@ -12,7 +12,7 @@ namespace AppUpdater.Publisher
         private string targetDirectory;
         private string sourceDirectoryPath;
         private string targetDirectoryPath;
-        private string version = null;
+        private Version version;
         private int? numberOfVersionsAsDelta = null;
 
         static void Main(string[] args)
@@ -84,7 +84,7 @@ namespace AppUpdater.Publisher
                         targetDirectory = commandValue;
                         break;
                     case "version":
-                        version = commandValue;
+                        version = commandValue != null ? new Version(commandValue) : null;
                         break;
                     case "deltas":
                         int deltas;
@@ -129,7 +129,7 @@ namespace AppUpdater.Publisher
                 }
             }
 
-            if (String.IsNullOrWhiteSpace(version))
+            if (version == null)
             {
                 sb.AppendLine("The 'version' argument is required.");
             }

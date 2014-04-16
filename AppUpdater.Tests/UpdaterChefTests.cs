@@ -1,4 +1,5 @@
-﻿using AppUpdater.LocalStructure;
+﻿using System;
+using AppUpdater.LocalStructure;
 using AppUpdater.Recipe;
 using AppUpdater.Server;
 using AppUpdater.Chef;
@@ -14,6 +15,8 @@ namespace AppUpdater.Tests
         private UpdaterChef updaterChef;
         private ILocalStructureManager localStructureManager;
         private IUpdateServer updateServer;
+        static readonly Version v1 = new Version("1.0.0");
+        static readonly Version v2 = new Version("2.0.0");
 
         [SetUp]
         public void Setup()
@@ -26,20 +29,20 @@ namespace AppUpdater.Tests
         [Test]
         public void Cook_WithAVersionAlreadyDownloaded_CreatesTheVersionDirectory()
         {
-            localStructureManager.Stub(x => x.HasVersionFolder("2.0.0")).Return(true);
-            var updateRecipe = new UpdateRecipe("2.0.0", "1.0.0", new UpdateRecipeFile[0]);
+            localStructureManager.Stub(x => x.HasVersionFolder(v2)).Return(true);
+            var updateRecipe = new UpdateRecipe(v2, v1, new UpdateRecipeFile[0]);
             updaterChef.Cook(updateRecipe);
 
-            localStructureManager.AssertWasCalled(x => x.DeleteVersionDir("2.0.0"));
+            localStructureManager.AssertWasCalled(x => x.DeleteVersionDir(v2));
         }
 
         [Test]
         public void Cook_CreatesTheVersionDirectory()
         {
-            var updateRecipe = new UpdateRecipe("2.0.0", "1.0.0", new UpdateRecipeFile[0]);
+            var updateRecipe = new UpdateRecipe(v2, v1, new UpdateRecipeFile[0]);
             updaterChef.Cook(updateRecipe);
 
-            localStructureManager.AssertWasCalled(x => x.CreateVersionDir("2.0.0"));
+            localStructureManager.AssertWasCalled(x => x.CreateVersionDir(v2));
         }
 
         [Test]
@@ -47,38 +50,38 @@ namespace AppUpdater.Tests
         {
             var file1 = new UpdateRecipeFile("test1.txt", "123", 100, FileUpdateAction.Copy, null);
             var file2 = new UpdateRecipeFile("test2.txt", "123", 100, FileUpdateAction.Download, "test2.txt.deploy");
-            var updateRecipe = new UpdateRecipe("2.0.0", "1.0.0", new UpdateRecipeFile[] { file1, file2 });
+            var updateRecipe = new UpdateRecipe(v2, v1, new UpdateRecipeFile[] { file1, file2 });
             updaterChef.Cook(updateRecipe);
 
-            localStructureManager.AssertWasCalled(x => x.CopyFile("1.0.0", "2.0.0", "test1.txt"));
+            localStructureManager.AssertWasCalled(x => x.CopyFile(v1, v2, "test1.txt"));
         }
 
         [Test]
         public void Cook_SavesNewFiles()
         {
             var data = new byte[]{1,2,3,4,5};
-            updateServer.Stub(x => x.DownloadFile("2.0.0", "test2.txt.deploy")).Return(DataCompressor.Compress(data));
+            updateServer.Stub(x => x.DownloadFile(v2, "test2.txt.deploy")).Return(DataCompressor.Compress(data));
             var file1 = new UpdateRecipeFile("test1.txt", "123", 100, FileUpdateAction.Copy, null);
             var file2 = new UpdateRecipeFile("test2.txt", "123", 100, FileUpdateAction.Download, "test2.txt.deploy");
-            var updateRecipe = new UpdateRecipe("2.0.0", "1.0.0", new UpdateRecipeFile[] { file1, file2 });
+            var updateRecipe = new UpdateRecipe(v2, v1, new UpdateRecipeFile[] { file1, file2 });
 
             updaterChef.Cook(updateRecipe);
 
-            localStructureManager.AssertWasCalled(x => x.SaveFile("2.0.0", "test2.txt", data));
+            localStructureManager.AssertWasCalled(x => x.SaveFile(v2, "test2.txt", data));
         }
 
         [Test]
         public void Cook_ApplyDeltaInModifiedFiles()
         {
             var data = new byte[] { 1, 2, 3, 4, 5 };
-            updateServer.Stub(x => x.DownloadFile("2.0.0", "test2.txt.deploy")).Return(data);
+            updateServer.Stub(x => x.DownloadFile(v2, "test2.txt.deploy")).Return(data);
             var file1 = new UpdateRecipeFile("test1.txt", "123", 100, FileUpdateAction.Copy, null);
             var file2 = new UpdateRecipeFile("test2.txt", "123", 100, FileUpdateAction.DownloadDelta, "test2.txt.deploy");
-            var updateRecipe = new UpdateRecipe("2.0.0", "1.0.0", new UpdateRecipeFile[] { file1, file2 });
+            var updateRecipe = new UpdateRecipe(v2, v1, new UpdateRecipeFile[] { file1, file2 });
 
             updaterChef.Cook(updateRecipe);
 
-            localStructureManager.AssertWasCalled(x => x.ApplyDelta("1.0.0", "2.0.0", "test2.txt", data));
+            localStructureManager.AssertWasCalled(x => x.ApplyDelta(v1, v2, "test2.txt", data));
         }
     }
 }

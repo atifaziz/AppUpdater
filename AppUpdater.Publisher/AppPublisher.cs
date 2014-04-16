@@ -10,11 +10,11 @@ namespace AppUpdater.Publisher
 {
     static class AppPublisher
     {
-        public static void Publish(string sourceDirectory, string destionationDirectory, string version, int numberOfVersionsAsDelta)
+        public static void Publish(string sourceDirectory, string destionationDirectory, Version version, int numberOfVersionsAsDelta)
         {
             sourceDirectory = PathUtils.AddTrailingSlash(sourceDirectory);
             destionationDirectory = PathUtils.AddTrailingSlash(destionationDirectory);
-            var destinationVersionDirectory = PathUtils.AddTrailingSlash(Path.Combine(destionationDirectory, version));
+            var destinationVersionDirectory = PathUtils.AddTrailingSlash(Path.Combine(destionationDirectory, version.ToString()));
 
             CopyFiles(sourceDirectory, destinationVersionDirectory);
             var manifest = VersionManifest.GenerateFromDirectory(version, sourceDirectory);
@@ -23,18 +23,19 @@ namespace AppUpdater.Publisher
             SaveConfigFile(destionationDirectory, version);
         }
 
-        private static void GenerateDeltas(VersionManifest manifest, string sourceDirectory, string destionationDirectory, string newVersion, int numberOfVersionsAsDelta)
+        private static void GenerateDeltas(VersionManifest manifest, string sourceDirectory, string destionationDirectory, Version newVersion, int numberOfVersionsAsDelta)
         {
-            var newVersionDirectory = Path.Combine(destionationDirectory, newVersion);
-            var publishedVersions = Directory.EnumerateDirectories(destionationDirectory)
-                                             .Select(x => x.Remove(0, destionationDirectory.Length))
+            var newVersionDirectory = Path.Combine(destionationDirectory, newVersion.ToString());
+            var publishedVersions = new DirectoryInfo(destionationDirectory)
+                                             .EnumerateDirectories()
+                                             .Select(dir => new Version(dir.Name))
                                              .Except(new[] { newVersion })
                                              .OrderByDescending(x => x)
                                              .Take(numberOfVersionsAsDelta);
 
             foreach (var version in publishedVersions)
             {
-                var versionDirectory = Path.Combine(destionationDirectory, version);
+                var versionDirectory = Path.Combine(destionationDirectory, version.ToString());
                 var manifestFile = Path.Combine(versionDirectory, "manifest.xml");
                 var versionManifest = VersionManifest.LoadVersionFile(version, manifestFile);
                 foreach (var file in manifest.Files)
@@ -90,7 +91,7 @@ namespace AppUpdater.Publisher
             }
         }
 
-        private static void SaveConfigFile(string destionationDirectory, string version)
+        private static void SaveConfigFile(string destionationDirectory, Version version)
         {
             var doc = new XElement("config", new XElement("version", version));
             doc.Save(Path.Combine(destionationDirectory, "version.xml"));

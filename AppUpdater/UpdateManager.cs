@@ -17,7 +17,7 @@ namespace AppUpdater
         private readonly ILocalStructureManager localStructureManager;
         private readonly IUpdaterChef updaterChef;
 
-        public string CurrentVersion { get; private set; }
+        public Version CurrentVersion { get; private set; }
 
         private static UpdateManager defaultInstance;
 
@@ -76,7 +76,7 @@ namespace AppUpdater
         {
             var executingVersion = localStructureManager.GetExecutingVersion();
             var installedVersions = localStructureManager.GetInstalledVersions();
-            var versionsInUse = new string[] { executingVersion, CurrentVersion };
+            var versionsInUse = new[] { executingVersion, CurrentVersion };
 
             foreach (var version in installedVersions.Except(versionsInUse))
             {

@@ -11,16 +11,16 @@ namespace AppUpdater.Manifest
 {
     public class VersionManifest
     {
-        public string Version { get; private set; }
+        public Version Version { get; private set; }
         public IEnumerable<VersionManifestFile> Files { get; private set; }
 
-        public VersionManifest(string version, IEnumerable<VersionManifestFile> files)
+        public VersionManifest(Version version, IEnumerable<VersionManifestFile> files)
         {
             this.Version = version;
             this.Files = files;
         }
 
-        public static VersionManifest LoadVersionFile(string version, string filename)
+        public static VersionManifest LoadVersionFile(Version version, string filename)
         {
             var doc = new XmlDocument();
             doc.Load(filename);
@@ -28,7 +28,7 @@ namespace AppUpdater.Manifest
             return LoadData(version, doc);
         }
 
-        public static VersionManifest LoadVersionData(string version, string data)
+        public static VersionManifest LoadVersionData(Version version, string data)
         {
             var doc = new XmlDocument();
             doc.LoadXml(data);
@@ -36,7 +36,7 @@ namespace AppUpdater.Manifest
             return LoadData(version, doc);
         }
 
-        private static VersionManifest LoadData(string version, XmlDocument doc)
+        private static VersionManifest LoadData(Version version, XmlDocument doc)
         {
             var files = new List<VersionManifestFile>();
             foreach (XmlNode fileNode in doc.SelectNodes("manifest/files/file"))
@@ -92,7 +92,7 @@ namespace AppUpdater.Manifest
             return new UpdateRecipe(newVersionManifest.Version, this.Version, recipeFiles);
         }
 
-        public static VersionManifest GenerateFromDirectory(string version, string directory)
+        public static VersionManifest GenerateFromDirectory(Version version, string directory)
         {
             directory = PathUtils.AddTrailingSlash(directory);
 

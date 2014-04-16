@@ -9,6 +9,8 @@ using System;
 
 namespace AppUpdater.Tests
 {
+    using System.Linq;
+
     public class UpdateManagerTests
     {
         [TestFixture]
@@ -30,11 +32,11 @@ namespace AppUpdater.Tests
             [Test]
             public void Initialize_LoadsTheCurrentVersion()
             {
-                localStructureManager.Stub(x => x.GetCurrentVersion()).Return("1.3.4");
+                localStructureManager.Stub(x => x.GetCurrentVersion()).Return(new Version("1.3.4"));
 
                 updateManager.Initialize();
 
-                Assert.That(updateManager.CurrentVersion, Is.EqualTo("1.3.4"));
+                Assert.That(updateManager.CurrentVersion, Is.EqualTo(new Version("1.3.4")));
             }
         }
 
@@ -45,8 +47,8 @@ namespace AppUpdater.Tests
             private IUpdateServer updateServer;
             private ILocalStructureManager localStructureManager;
             private IUpdaterChef updaterChef;
-            private string initialVersion;
-            private string[] installedVersions;
+            private Version initialVersion;
+            private Version[] installedVersions;
 
             [SetUp]
             public void Setup()
@@ -55,12 +57,12 @@ namespace AppUpdater.Tests
                 localStructureManager = MockRepository.GenerateStub<ILocalStructureManager>();
                 updaterChef = MockRepository.GenerateStub<IUpdaterChef>();
                 updateManager = new UpdateManager(updateServer, localStructureManager, updaterChef);
-
-                initialVersion = "1.2.3";
-                installedVersions = new string[] { "1.0.0", "1.1.1", "1.2.3" };
+                
+                initialVersion = new Version("1.2.3");
+                installedVersions = new[] { new Version("1.0.0"), new Version("1.1.1"), new Version("1.2.3"), };
                 localStructureManager.Stub(x => x.GetCurrentVersion()).Return(initialVersion);
                 localStructureManager.Stub(x => x.GetExecutingVersion()).Return(initialVersion);
-                localStructureManager.Stub(x => x.GetInstalledVersions()).Do(new Func<string[]>(()=>installedVersions));
+                localStructureManager.Stub(x => x.GetInstalledVersions()).Do(new Func<Version[]>(()=>installedVersions));
                 updateManager.Initialize();
             }
 
@@ -88,7 +90,7 @@ namespace AppUpdater.Tests
             [Test]
             public void CheckForUpdate_WithUpdate_HasUpdateIsTrue()
             {
-                updateServer.Stub(x => x.GetCurrentVersion()).Return("2.6.8");
+                updateServer.Stub(x => x.GetCurrentVersion()).Return(new Version("2.6.8"));
 
                 var updateInfo = updateManager.CheckForUpdate();
 
@@ -98,7 +100,7 @@ namespace AppUpdater.Tests
             [Test]
             public void CheckForUpdate_WithUpdate_ReturnsTheNewVersionNumber()
             {
-                var newVersion = "2.6.8";
+                var newVersion = new Version("2.6.8");
                 updateServer.Stub(x => x.GetCurrentVersion()).Return(newVersion);
 
                 var updateInfo = updateManager.CheckForUpdate();
@@ -109,7 +111,7 @@ namespace AppUpdater.Tests
             [Test]
             public void DoUpdate_ChangesTheCurrentVersion()
             {
-                var newVersion = "2.6.8";
+                var newVersion = new Version("2.6.8");
                 var updateInfo = new UpdateInfo(true, newVersion);
                 updateServer.Stub(x => x.GetManifest(newVersion)).Return(new VersionManifest(newVersion, new VersionManifestFile[0]));
                 localStructureManager.Stub(x => x.LoadManifest(initialVersion)).Return(new VersionManifest(initialVersion, new VersionManifestFile[0]));
@@ -122,7 +124,7 @@ namespace AppUpdater.Tests
             [Test]
             public void DoUpdate_SavesTheCurrentVersion()
             {
-                var newVersion = "2.6.8";
+                var newVersion = new Version("2.6.8");
                 var updateInfo = new UpdateInfo(true, newVersion);
                 updateServer.Stub(x => x.GetManifest(newVersion)).Return(new VersionManifest(newVersion, new VersionManifestFile[0]));
                 localStructureManager.Stub(x => x.LoadManifest(initialVersion)).Return(new VersionManifest(initialVersion, new VersionManifestFile[0]));
@@ -136,10 +138,10 @@ namespace AppUpdater.Tests
             public void DoUpdate_SavesTheLastValidVersionAsTheExecutingBeingExecuted()
             {
                 var versionBeingExecuted = initialVersion;
-                var newVersion = "2.6.8";
+                var newVersion = new Version("2.6.8");
                 var updateInfo = new UpdateInfo(true, newVersion);
                 updateServer.Stub(x => x.GetManifest(newVersion)).Return(new VersionManifest(newVersion, new VersionManifestFile[0]));
-                localStructureManager.Stub(x => x.GetCurrentVersion()).Return("2.0.0");
+                localStructureManager.Stub(x => x.GetCurrentVersion()).Return(new Version("2.0.0"));
                 localStructureManager.Stub(x => x.LoadManifest(initialVersion)).Return(new VersionManifest(initialVersion, new VersionManifestFile[0]));
 
                 updateManager.DoUpdate(updateInfo);
@@ -150,7 +152,7 @@ namespace AppUpdater.Tests
             [Test]
             public void DoUpdate_ExecutesTheUpdate()
             {
-                var newVersion = "2.6.8";
+                var newVersion = new Version("2.6.8");
                 var updateInfo = new UpdateInfo(true, newVersion);
                 updateServer.Stub(x => x.GetManifest(newVersion)).Return(new VersionManifest(newVersion, new VersionManifestFile[0]));
                 localStructureManager.Stub(x => x.LoadManifest(initialVersion)).Return(new VersionManifest(initialVersion, new VersionManifestFile[0]));
@@ -163,18 +165,18 @@ namespace AppUpdater.Tests
             [Test]
             public void DoUpdate_RemovesOldVersions()
             {
-                var updateInfo = SetupUpdateToVersion("3.1");
+                var updateInfo = SetupUpdateToVersion(new Version("3.1"));
 
                 updateManager.DoUpdate(updateInfo);
 
-                localStructureManager.AssertWasCalled(x => x.DeleteVersionDir("1.0.0"));
-                localStructureManager.AssertWasCalled(x => x.DeleteVersionDir("1.1.1"));
+                localStructureManager.AssertWasCalled(x => x.DeleteVersionDir(new Version("1.0.0")));
+                localStructureManager.AssertWasCalled(x => x.DeleteVersionDir(new Version("1.1.1")));
             }
 
             [Test]
             public void DoUpdate_DoesNotRemoveTheExecutingVersion()
             {
-                var updateInfo = SetupUpdateToVersion("3.1");
+                var updateInfo = SetupUpdateToVersion(new Version("3.1"));
 
                 updateManager.DoUpdate(updateInfo);
 
@@ -184,24 +186,24 @@ namespace AppUpdater.Tests
             [Test]
             public void DoUpdate_DoesNotRemoveTheNewVersion()
             {
-                installedVersions = new string[] { "1.0.0", "1.1.1", "1.2.3", "3.1"};
-                var updateInfo = SetupUpdateToVersion("3.1");
+                installedVersions = new[] { "1.0.0", "1.1.1", "1.2.3", "3.1" }.Select(v => new Version(v)).ToArray();
+                var updateInfo = SetupUpdateToVersion(new Version("3.1"));
 
                 updateManager.DoUpdate(updateInfo);
 
-                localStructureManager.AssertWasNotCalled(x => x.DeleteVersionDir("3.1"));
+                localStructureManager.AssertWasNotCalled(x => x.DeleteVersionDir(new Version("3.1")));
             }
 
             [Test]
             public void DoUpdate_WithAnErrorWhileDeletingTheOldVersion_IgnoresTheError()
             {
-                localStructureManager.Stub(x => x.DeleteVersionDir("1.0.0")).Throw(new Exception("Error deliting version."));
-                var updateInfo = SetupUpdateToVersion("3.1");
+                localStructureManager.Stub(x => x.DeleteVersionDir(new Version("1.0.0"))).Throw(new Exception("Error deliting version."));
+                var updateInfo = SetupUpdateToVersion(new Version("3.1"));
 
                 updateManager.DoUpdate(updateInfo);
             }
 
-            private UpdateInfo SetupUpdateToVersion(string newVersion)
+            private UpdateInfo SetupUpdateToVersion(Version newVersion)
             {
                 var updateInfo = new UpdateInfo(true, newVersion);
                 updateServer.Stub(x => x.GetManifest(newVersion)).Return(new VersionManifest(newVersion, new VersionManifestFile[0]));

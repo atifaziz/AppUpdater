@@ -7,6 +7,9 @@ using AppUpdater.Log;
 
 namespace AppUpdater.Server
 {
+    using System.Linq;
+    using System.Xml.Linq;
+
     public class DefaultUpdateServer : IUpdateServer
     {
         private readonly Uri updateServerUrl;
@@ -17,22 +20,20 @@ namespace AppUpdater.Server
             this.updateServerUrl = updateServerUrl;
         }
 
-        public string GetCurrentVersion()
+        public Version GetCurrentVersion()
         {
             var xmlData = DownloadString("version.xml");
-
-            var doc = new XmlDocument();
-            doc.LoadXml(xmlData);
-            return doc.SelectSingleNode("config/version").InnerText;
+            var doc = XDocument.Parse(xmlData);
+            return new Version((string) doc.Elements("config").Single().Element("version"));
         }
 
-        public VersionManifest GetManifest(string version)
+        public VersionManifest GetManifest(Version version)
         {
             var xmlData = DownloadString(GetVersionFilename(version, "manifest.xml"));
             return VersionManifest.LoadVersionData(version, xmlData);
         }
 
-        public byte[] DownloadFile(string version, string filename)
+        public byte[] DownloadFile(Version version, string filename)
         {
             return DownloadBinary(GetVersionFilename(version, filename));
         }
@@ -53,9 +54,9 @@ namespace AppUpdater.Server
             return client.DownloadData(versionUrl);
         }
 
-        private string GetVersionFilename(string version, string filename)
+        private string GetVersionFilename(Version version, string filename)
         {
-            return new Uri(updateServerUrl, Path.Combine(version, filename)).ToString();
+            return new Uri(updateServerUrl, /*TODO*/ Path.Combine(version.ToString(), filename)).ToString();
         }
     }
 }
