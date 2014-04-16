@@ -1,15 +1,17 @@
-﻿using System.IO;
-using AppUpdater.LocalStructure;
-using AppUpdater.Manifest;
-using AppUpdater.Recipe;
-using AppUpdater.Server;
-using AppUpdater.Chef;
-using AppUpdater.Log;
-using System.Linq;
-using System;
-
-namespace AppUpdater
+﻿namespace AppUpdater
 {
+    #region Imports
+
+    using System;
+    using System.IO;
+    using System.Linq;
+    using Chef;
+    using LocalStructure;
+    using Log;
+    using Server;
+
+    #endregion
+
     public class UpdateManager : IUpdateManager
     {
         readonly ILog log = Logger.For<UpdateManager>();
