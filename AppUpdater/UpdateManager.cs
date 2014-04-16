@@ -12,14 +12,15 @@ namespace AppUpdater
 {
     public class UpdateManager : IUpdateManager
     {
-        private ILog log = Logger.For<UpdateManager>();
+        readonly ILog log = Logger.For<UpdateManager>();
+
         protected IUpdateServer UpdateServer { get; private set; }
         protected ILocalStructureManager LocalStructureManager { get; private set; }
         protected IUpdaterChef UpdaterChef { get; private set; }
 
         public Version CurrentVersion { get; private set; }
 
-        private static UpdateManager defaultInstance;
+        static UpdateManager defaultInstance;
 
         public static UpdateManager Default
         {
@@ -40,14 +41,14 @@ namespace AppUpdater
 
         public UpdateManager(IUpdateServer updateServer, ILocalStructureManager localStructureManager, IUpdaterChef updaterChef)
         {
-            this.UpdateServer = updateServer;
-            this.LocalStructureManager = localStructureManager;
-            this.UpdaterChef = updaterChef;
+            UpdateServer = updateServer;
+            LocalStructureManager = localStructureManager;
+            UpdaterChef = updaterChef;
         }
 
         public virtual void Initialize()
         {
-            this.CurrentVersion = LocalStructureManager.GetCurrentVersion();
+            CurrentVersion = LocalStructureManager.GetCurrentVersion();
         }
 
         public virtual UpdateInfo CheckForUpdate()
@@ -72,7 +73,7 @@ namespace AppUpdater
             DeleteOldVersions();
         }
 
-        private void DeleteOldVersions()
+        void DeleteOldVersions()
         {
             var executingVersion = LocalStructureManager.GetExecutingVersion();
             var installedVersions = LocalStructureManager.GetInstalledVersions();
