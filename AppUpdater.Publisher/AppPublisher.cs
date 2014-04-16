@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using AppUpdater.Utils;
-using AppUpdater.Manifest;
-using System.Xml;
+using System.Linq;
+using System.Xml.Linq;
 using AppUpdater.Delta;
+using AppUpdater.Manifest;
+using AppUpdater.Utils;
 
 namespace AppUpdater.Publisher
 {
-    using System.Xml.Linq;
-
     public class AppPublisher
     {
         public void Publish(string sourceDirectory, string destionationDirectory, string version, int numberOfVersionsAsDelta)
@@ -27,7 +23,7 @@ namespace AppUpdater.Publisher
             SaveConfigFile(destionationDirectory, version);
         }
 
-        private void GenerateDeltas(VersionManifest manifest, string sourceDirectory, string destionationDirectory, string newVersion, int numberOfVersionsAsDelta)
+        private static void GenerateDeltas(VersionManifest manifest, string sourceDirectory, string destionationDirectory, string newVersion, int numberOfVersionsAsDelta)
         {
             var newVersionDirectory = Path.Combine(destionationDirectory, newVersion);
             var publishedVersions = Directory.EnumerateDirectories(destionationDirectory)
