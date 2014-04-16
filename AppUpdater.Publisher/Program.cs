@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-
-namespace AppUpdater.Publisher
+﻿namespace AppUpdater.Publisher
 {
+    #region Imports
+
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+
+    #endregion
+
     static class Program
     {
         static int Main(string[] args)
