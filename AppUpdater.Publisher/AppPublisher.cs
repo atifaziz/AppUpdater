@@ -10,6 +10,8 @@ using AppUpdater.Delta;
 
 namespace AppUpdater.Publisher
 {
+    using System.Xml.Linq;
+
     public class AppPublisher
     {
         public void Publish(string sourceDirectory, string destionationDirectory, string version, int numberOfVersionsAsDelta)
@@ -94,9 +96,7 @@ namespace AppUpdater.Publisher
 
         private static void SaveConfigFile(string destionationDirectory, string version)
         {
-            var doc = new XmlDocument();
-            doc.LoadXml("<config><version></version></config>");
-            doc.SelectSingleNode("config/version").InnerText = version;
+            var doc = new XElement("config", new XElement("version", version));
             doc.Save(Path.Combine(destionationDirectory, "version.xml"));
         }
 
