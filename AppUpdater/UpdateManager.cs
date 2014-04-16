@@ -43,6 +43,10 @@
 
         public UpdateManager(IUpdateServer updateServer, ILocalStructureManager localStructureManager, IUpdaterChef updaterChef)
         {
+            if (updateServer == null) throw new ArgumentNullException("updateServer");
+            if (localStructureManager == null) throw new ArgumentNullException("localStructureManager");
+            if (updaterChef == null) throw new ArgumentNullException("updaterChef");
+
             UpdateServer = updateServer;
             LocalStructureManager = localStructureManager;
             UpdaterChef = updaterChef;
