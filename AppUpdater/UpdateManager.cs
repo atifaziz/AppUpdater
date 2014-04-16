@@ -13,9 +13,9 @@ namespace AppUpdater
     public class UpdateManager : IUpdateManager
     {
         private ILog log = Logger.For<UpdateManager>();
-        private readonly IUpdateServer updateServer;
-        private readonly ILocalStructureManager localStructureManager;
-        private readonly IUpdaterChef updaterChef;
+        protected IUpdateServer UpdateServer { get; private set; }
+        protected ILocalStructureManager LocalStructureManager { get; private set; }
+        protected IUpdaterChef UpdaterChef { get; private set; }
 
         public Version CurrentVersion { get; private set; }
 
@@ -40,33 +40,33 @@ namespace AppUpdater
 
         public UpdateManager(IUpdateServer updateServer, ILocalStructureManager localStructureManager, IUpdaterChef updaterChef)
         {
-            this.updateServer = updateServer;
-            this.localStructureManager = localStructureManager;
-            this.updaterChef = updaterChef;
+            this.UpdateServer = updateServer;
+            this.LocalStructureManager = localStructureManager;
+            this.UpdaterChef = updaterChef;
         }
 
-        public void Initialize()
+        public virtual void Initialize()
         {
-            this.CurrentVersion = localStructureManager.GetCurrentVersion();
+            this.CurrentVersion = LocalStructureManager.GetCurrentVersion();
         }
 
-        public UpdateInfo CheckForUpdate()
+        public virtual UpdateInfo CheckForUpdate()
         {
-            var serverCurrentVersion = updateServer.GetCurrentVersion();
+            var serverCurrentVersion = UpdateServer.GetCurrentVersion();
             var hasUpdate = CurrentVersion != serverCurrentVersion;
             return new UpdateInfo(hasUpdate, serverCurrentVersion);
         }
 
-        public void DoUpdate(UpdateInfo updateInfo)
+        public virtual void DoUpdate(UpdateInfo updateInfo)
         {
-            var currentVersionManifest = localStructureManager.LoadManifest(this.CurrentVersion);
-            var newVersionManifest = updateServer.GetManifest(updateInfo.Version);
+            var currentVersionManifest = LocalStructureManager.LoadManifest(this.CurrentVersion);
+            var newVersionManifest = UpdateServer.GetManifest(updateInfo.Version);
             var recipe = currentVersionManifest.UpdateTo(newVersionManifest);
 
-            updaterChef.Cook(recipe);
+            UpdaterChef.Cook(recipe);
 
-            localStructureManager.SetLastValidVersion(localStructureManager.GetExecutingVersion());
-            localStructureManager.SetCurrentVersion(updateInfo.Version);
+            LocalStructureManager.SetLastValidVersion(LocalStructureManager.GetExecutingVersion());
+            LocalStructureManager.SetCurrentVersion(updateInfo.Version);
             CurrentVersion = updateInfo.Version;
 
             DeleteOldVersions();
@@ -74,15 +74,15 @@ namespace AppUpdater
 
         private void DeleteOldVersions()
         {
-            var executingVersion = localStructureManager.GetExecutingVersion();
-            var installedVersions = localStructureManager.GetInstalledVersions();
+            var executingVersion = LocalStructureManager.GetExecutingVersion();
+            var installedVersions = LocalStructureManager.GetInstalledVersions();
             var versionsInUse = new[] { executingVersion, CurrentVersion };
 
             foreach (var version in installedVersions.Except(versionsInUse))
             {
                 try
                 {
-                    localStructureManager.DeleteVersionDir(version);
+                    LocalStructureManager.DeleteVersionDir(version);
                 }
                 catch (Exception err)
                 {
