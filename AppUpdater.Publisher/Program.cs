@@ -16,7 +16,22 @@ namespace AppUpdater.Publisher
         private Version version;
         private int? numberOfVersionsAsDelta = null;
 
-        static void Main(string[] args)
+        static int Main(string[] args)
+        {
+            try
+            {
+                new Program().Run(args);
+                return 0;
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e.GetBaseException().Message);
+                Trace.TraceError(e.ToString());
+                return 0xbad;
+            }
+        }
+
+        public void Run(string[] args)
         {
             if (args.Length == 0)
             {
@@ -26,22 +41,9 @@ namespace AppUpdater.Publisher
             }
             else
             {
-                new Program().Execute(args);
-            }
-        }
-
-        public void Execute(string[] args)
-        {
-            try
-            {
                 ProcessArgs(args);
                 ValidateArgs();
                 PublishVersion();
-            }
-            catch (Exception e)
-            {
-                Console.Error.WriteLine(e.GetBaseException().Message);
-                Trace.TraceError(e.ToString());
             }
         }
 
