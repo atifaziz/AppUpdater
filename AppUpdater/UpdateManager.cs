@@ -16,6 +16,7 @@
     {
         readonly ILog log = Logger.For<UpdateManager>();
 
+        protected bool Initialized { get; private set; }
         protected IUpdateServer UpdateServer { get; private set; }
         protected ILocalStructureManager LocalStructureManager { get; private set; }
         protected IUpdaterChef UpdaterChef { get; private set; }
@@ -55,10 +56,12 @@
         public virtual void Initialize()
         {
             CurrentVersion = LocalStructureManager.GetCurrentVersion();
+            Initialized = true;
         }
 
         public virtual UpdateInfo CheckForUpdate()
         {
+            CheckInitialized();            
             var serverCurrentVersion = UpdateServer.GetCurrentVersion();
             var hasUpdate = CurrentVersion != serverCurrentVersion;
             return new UpdateInfo(hasUpdate, serverCurrentVersion);
@@ -66,7 +69,8 @@
 
         public virtual void DoUpdate(UpdateInfo updateInfo)
         {
-            var currentVersionManifest = LocalStructureManager.LoadManifest(this.CurrentVersion);
+            CheckInitialized();
+            var currentVersionManifest = LocalStructureManager.LoadManifest(CurrentVersion);
             var newVersionManifest = UpdateServer.GetManifest(updateInfo.Version);
             var recipe = currentVersionManifest.UpdateTo(newVersionManifest);
 
@@ -96,6 +100,13 @@
                     log.Error("Error deleting old version ({0}). {1}", version, err.Message);
                 }
             }
+        }
+
+        void CheckInitialized()
+        {
+            if (Initialized) return;
+            var message = string.Format("{0} has not been initialzed.", GetType().FullName);
+            throw new InvalidOperationException(message);
         }
     }
 }
