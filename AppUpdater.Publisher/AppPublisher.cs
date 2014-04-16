@@ -8,7 +8,7 @@ using AppUpdater.Utils;
 
 namespace AppUpdater.Publisher
 {
-    public static class AppPublisher
+    static class AppPublisher
     {
         public static void Publish(string sourceDirectory, string destionationDirectory, string version, int numberOfVersionsAsDelta)
         {
