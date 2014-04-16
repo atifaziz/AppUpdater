@@ -17,7 +17,10 @@ namespace AppUpdater.Manifest
             }
         }
 
-        public VersionManifestFile(string name, string checksum, long size, IEnumerable<VersionManifestDeltaFile> deltas = null)
+        public VersionManifestFile(string name, string checksum, long size) : 
+            this(name, checksum, size, null) {}
+
+        public VersionManifestFile(string name, string checksum, long size, IEnumerable<VersionManifestDeltaFile> deltas)
         {
             Name = name;
             Checksum = checksum;
