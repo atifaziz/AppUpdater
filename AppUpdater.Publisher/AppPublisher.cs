@@ -8,9 +8,9 @@ using AppUpdater.Utils;
 
 namespace AppUpdater.Publisher
 {
-    public class AppPublisher
+    public static class AppPublisher
     {
-        public void Publish(string sourceDirectory, string destionationDirectory, string version, int numberOfVersionsAsDelta)
+        public static void Publish(string sourceDirectory, string destionationDirectory, string version, int numberOfVersionsAsDelta)
         {
             sourceDirectory = PathUtils.AddTrailingSlash(sourceDirectory);
             destionationDirectory = PathUtils.AddTrailingSlash(destionationDirectory);

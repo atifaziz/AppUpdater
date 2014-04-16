@@ -55,7 +55,7 @@ namespace AppUpdater.Publisher
             }
             Console.WriteLine();
 
-            new AppPublisher().Publish(sourceDirectory, targetDirectoryPath, version, numberOfVersionsAsDelta ?? 0);
+            AppPublisher.Publish(sourceDirectory, targetDirectoryPath, version, numberOfVersionsAsDelta ?? 0);
 
             Console.WriteLine("Publish succeeded.");
         }

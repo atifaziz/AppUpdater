@@ -14,7 +14,6 @@ namespace AppUpdater.Tests.Publisher
     [TestFixture]
     public class AppPublisherTests
     {
-        private AppPublisher appPublisher;
         private string sourceDir;
         private string destinationDir;
 
@@ -26,8 +25,6 @@ namespace AppUpdater.Tests.Publisher
             Directory.CreateDirectory(sourceDir);
             Directory.CreateDirectory(destinationDir);
             CreateVersionFiles();
-
-            appPublisher = new AppPublisher();
         }
 
         [TearDown]
@@ -40,7 +37,7 @@ namespace AppUpdater.Tests.Publisher
         [Test]
         public void Publish_CreatesADirectoryToTheNewVersion()
         {
-            appPublisher.Publish(sourceDir, destinationDir, "1.0.0", 0);
+            AppPublisher.Publish(sourceDir, destinationDir, "1.0.0", 0);
 
             var directoryExists = Directory.Exists(Path.Combine(destinationDir, "1.0.0"));
             Assert.That(directoryExists, Is.True);
@@ -49,7 +46,7 @@ namespace AppUpdater.Tests.Publisher
         [Test]
         public void Publish_WithValidInfo_CopiesTheFilesToTargetDirWithDeployExtension()
         {
-            appPublisher.Publish(sourceDir, destinationDir, "1.1.0", 0);
+            AppPublisher.Publish(sourceDir, destinationDir, "1.1.0", 0);
 
             Assert.That(File.Exists(Path.Combine(destinationDir, "1.1.0\\test1.txt.deploy")), Is.True);
             Assert.That(File.Exists(Path.Combine(destinationDir, "1.1.0\\another\\test2.txt.deploy")), Is.True);
@@ -58,7 +55,7 @@ namespace AppUpdater.Tests.Publisher
         [Test]
         public void Publish_WithValidInfo_CompressTheDeployFiles()
         {
-            appPublisher.Publish(sourceDir, destinationDir, "1.1.0", 0);
+            AppPublisher.Publish(sourceDir, destinationDir, "1.1.0", 0);
 
             var destinationFile = Path.Combine(destinationDir, "1.1.0\\test1.txt.deploy");
             var sourceFile = Path.Combine(sourceDir, "test1.txt");
@@ -73,7 +70,7 @@ namespace AppUpdater.Tests.Publisher
         {
             var manifestFilename = Path.Combine(destinationDir, "1.1.0\\manifest.xml");
 
-            appPublisher.Publish(sourceDir, destinationDir, "1.1.0", 0);
+            AppPublisher.Publish(sourceDir, destinationDir, "1.1.0", 0);
 
             Assert.That(File.Exists(manifestFilename), Is.True);
         }
@@ -83,7 +80,7 @@ namespace AppUpdater.Tests.Publisher
         {
             var manifestFilename = Path.Combine(destinationDir, "1.1.0\\manifest.xml");
 
-            appPublisher.Publish(sourceDir, destinationDir, "1.1.0", 0);
+            AppPublisher.Publish(sourceDir, destinationDir, "1.1.0", 0);
 
             var manifest = VersionManifest.LoadVersionData("1.1.0", File.ReadAllText(manifestFilename));
             Assert.That(manifest.Files.Count(), Is.EqualTo(2));
@@ -98,7 +95,7 @@ namespace AppUpdater.Tests.Publisher
         [Test]
         public void Publish_ChangesTheCurrentVersion()
         {
-            appPublisher.Publish(sourceDir, destinationDir, "1.1.0", 0);
+            AppPublisher.Publish(sourceDir, destinationDir, "1.1.0", 0);
 
             var doc = new XmlDocument();
             doc.Load(Path.Combine(destinationDir, "version.xml"));
@@ -110,14 +107,14 @@ namespace AppUpdater.Tests.Publisher
         public void Publish_WithTwoDelta_GeneratesTheDeltaForTheLatestTwoVersion()
         {
             CreateVersionFiles(1);
-            appPublisher.Publish(sourceDir, destinationDir, "1.0.0", 0);
+            AppPublisher.Publish(sourceDir, destinationDir, "1.0.0", 0);
             CreateVersionFiles(2);
-            appPublisher.Publish(sourceDir, destinationDir, "2.0.0", 0);
+            AppPublisher.Publish(sourceDir, destinationDir, "2.0.0", 0);
             CreateVersionFiles(3);
-            appPublisher.Publish(sourceDir, destinationDir, "3.0.0", 0);
+            AppPublisher.Publish(sourceDir, destinationDir, "3.0.0", 0);
             CreateVersionFiles(4);
 
-            appPublisher.Publish(sourceDir, destinationDir, "4.0.0", 2);
+            AppPublisher.Publish(sourceDir, destinationDir, "4.0.0", 2);
 
             Assert.That(File.Exists(Path.Combine(destinationDir, "4.0.0\\deltas\\test1.txt.B21A7.deploy")), Is.True);
             Assert.That(File.Exists(Path.Combine(destinationDir, "4.0.0\\deltas\\another\\test2.txt.C031C.deploy")), Is.True);
@@ -130,14 +127,14 @@ namespace AppUpdater.Tests.Publisher
         {
             var manifestFilename = Path.Combine(destinationDir, "4.0.0\\manifest.xml");
             CreateVersionFiles(1);
-            appPublisher.Publish(sourceDir, destinationDir, "1.0.0", 0);
+            AppPublisher.Publish(sourceDir, destinationDir, "1.0.0", 0);
             CreateVersionFiles(2);
-            appPublisher.Publish(sourceDir, destinationDir, "2.0.0", 0);
+            AppPublisher.Publish(sourceDir, destinationDir, "2.0.0", 0);
             CreateVersionFiles(3);
-            appPublisher.Publish(sourceDir, destinationDir, "3.0.0", 0);
+            AppPublisher.Publish(sourceDir, destinationDir, "3.0.0", 0);
             CreateVersionFiles(4);
 
-            appPublisher.Publish(sourceDir, destinationDir, "4.0.0", 2);
+            AppPublisher.Publish(sourceDir, destinationDir, "4.0.0", 2);
 
             var manifest = VersionManifest.LoadVersionData("4.0.0", File.ReadAllText(manifestFilename));
             Assert.That(manifest.Files.ElementAt(0).Deltas.Count(), Is.EqualTo(2));
