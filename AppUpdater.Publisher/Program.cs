@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.IO;
@@ -37,11 +38,10 @@ namespace AppUpdater.Publisher
                 ValidateArgs();
                 PublishVersion();
             }
-            catch (Exception err)
+            catch (Exception e)
             {
-                Console.WriteLine();
-                Console.WriteLine("Error: ");
-                Console.WriteLine(err.Message);
+                Console.Error.WriteLine(e.GetBaseException().Message);
+                Trace.TraceError(e.ToString());
             }
         }
 
