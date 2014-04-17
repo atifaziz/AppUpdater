@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace AppUpdater.Log
+﻿namespace AppUpdater.Log
 {
-    public class Logger
+    using System;
+
+    public static class Logger
     {
         public static Func<Type, ILog> LoggerProvider { get; set; }
 
@@ -31,7 +28,7 @@ namespace AppUpdater.Log
             return For(typeof(T));
         }
 
-        private static ILog DefaultLoggerProvider(Type type)
+        static ILog DefaultLoggerProvider(Type type)
         {
             return EmptyLog.Instance;
         }
