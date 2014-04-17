@@ -10,7 +10,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using System.Xml.Linq;
-    using Log;
+    using Logging;
     using Manifest;
 
     #endregion

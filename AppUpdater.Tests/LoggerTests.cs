@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
-using AppUpdater.Log;
-
-namespace AppUpdater.Tests
+﻿namespace AppUpdater.Tests
 {
+    using System;
+    using NUnit.Framework;
+    using Logging;
+
     [TestFixture]
     public class LoggerTests
     {

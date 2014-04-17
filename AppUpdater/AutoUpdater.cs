@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading;
-using AppUpdater.Log;
+using AppUpdater.Logging;
 
 namespace AppUpdater
 {

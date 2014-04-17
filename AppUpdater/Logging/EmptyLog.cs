@@ -1,4 +1,4 @@
-﻿namespace AppUpdater.Log
+﻿namespace AppUpdater.Logging
 {
     public sealed class EmptyLog : ILog
     {

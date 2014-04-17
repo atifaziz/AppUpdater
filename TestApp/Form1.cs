@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using AppUpdater;
-using AppUpdater.Log;
+using AppUpdater.Logging;
 
 namespace TestApp
 {

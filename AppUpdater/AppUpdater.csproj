@@ -49,9 +49,9 @@
     <Compile Include="Delta\MSDeltaPInvoke.cs" />
     <Compile Include="IUpdateManager.cs" />
     <Compile Include="LocalStructure\LocalStructureManager.cs" />
-    <Compile Include="Log\EmptyLog.cs" />
-    <Compile Include="Log\ILog.cs" />
-    <Compile Include="Log\Logger.cs" />
+    <Compile Include="Logging\EmptyLog.cs" />
+    <Compile Include="Logging\ILog.cs" />
+    <Compile Include="Logging\Logger.cs" />
     <Compile Include="Manifest\VersionManifestDeltaFile.cs" />
     <Compile Include="Chef\IUpdaterChef.cs" />
     <Compile Include="LocalStructure\ILocalStructureManager.cs" />

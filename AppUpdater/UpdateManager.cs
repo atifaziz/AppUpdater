@@ -10,7 +10,7 @@
     using System.Threading.Tasks;
     using Chef;
     using LocalStructure;
-    using Log;
+    using Logging;
     using Manifest;
     using Server;
 
