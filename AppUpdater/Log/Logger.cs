@@ -8,7 +8,7 @@
 
         static Logger()
         {
-            LoggerProvider = DefaultLoggerProvider;
+            LoggerProvider = _ => EmptyLog.Instance;
         }
 
         public static ILog For(Type type)
@@ -26,11 +26,6 @@
         public static ILog For<T>()
         {
             return For(typeof(T));
-        }
-
-        static ILog DefaultLoggerProvider(Type type)
-        {
-            return EmptyLog.Instance;
         }
     }
 }
