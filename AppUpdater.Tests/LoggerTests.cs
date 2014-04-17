@@ -54,14 +54,16 @@ namespace AppUpdater.Tests
             Assert.That(log, Is.InstanceOf<EmptyLog>());
         }
 
-        public class TestLog : EmptyLog
+        public class TestLog : ILog
         {
-            public Type Type { get; set; }
+            public Type Type { get; private set; }
 
-            public TestLog(Type type)
-            {
-                this.Type = type;
-            }
+            public TestLog(Type type) { Type = type; }
+
+            public void Info (string message, params object[] values) { throw new NotImplementedException(); }
+            public void Warn (string message, params object[] values) { throw new NotImplementedException(); }
+            public void Error(string message, params object[] values) { throw new NotImplementedException(); }
+            public void Debug(string message, params object[] values) { throw new NotImplementedException(); }
         }
     }
 }
