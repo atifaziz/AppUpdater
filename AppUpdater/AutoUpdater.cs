@@ -7,14 +7,14 @@ namespace AppUpdater
     public class AutoUpdater
     {
         private readonly ILog log = Logger.For<AutoUpdater>();
-        private int secondsBetweenChecks;
+        private TimeSpan checkInterval;
         private readonly IUpdateManager updateManager;
         private Thread thread;
 
-        public int SecondsBetweenChecks
+        public TimeSpan CheckInterval
         {
-            get { return secondsBetweenChecks; }
-            set { secondsBetweenChecks = value; }
+            get { return checkInterval; }
+            set { checkInterval = value; }
         }
 
         public event EventHandler Updated;
@@ -22,7 +22,7 @@ namespace AppUpdater
         public AutoUpdater(IUpdateManager updateManager)
         {
             this.updateManager = updateManager;
-            secondsBetweenChecks = 3600;
+            checkInterval = TimeSpan.FromSeconds(3600);
         }
 
         public void Start()
@@ -76,7 +76,7 @@ namespace AppUpdater
                     log.Error(err.Message);
                 }
 
-                Thread.Sleep(secondsBetweenChecks * 1000);
+                Thread.Sleep((int) checkInterval.TotalMilliseconds);
             }
         }
 
