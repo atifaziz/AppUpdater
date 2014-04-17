@@ -1,9 +1,9 @@
-﻿using System;
-using System.Runtime.InteropServices;
-
-namespace AppUpdater.Delta
+﻿namespace AppUpdater.Delta
 {
-    public partial class NativeConstants
+    using System;
+    using System.Runtime.InteropServices;
+
+    static class NativeConstants
     {
         public const int DELTA_FILE_SIZE_LIMIT = (32 * (1024 * 1024));
         public const int DELTA_OPTIONS_SIZE_LIMIT = (128 * (1024 * 1024));
@@ -109,7 +109,7 @@ namespace AppUpdater.Delta
     #endif
 
     [StructLayoutAttribute(LayoutKind.Explicit)]
-    public struct Anonymous_5f2a119c_cb15_4d4e_86b9_c244a4a45396
+    struct Anonymous_5f2a119c_cb15_4d4e_86b9_c244a4a45396
     {
         [FieldOffsetAttribute(0)]
         public System.IntPtr lpcStart;
@@ -119,7 +119,7 @@ namespace AppUpdater.Delta
     }
 
     [StructLayoutAttribute(LayoutKind.Sequential)]
-    public struct DELTA_INPUT
+    struct DELTA_INPUT
     {
         public Anonymous_5f2a119c_cb15_4d4e_86b9_c244a4a45396 Union1;
 
@@ -129,7 +129,7 @@ namespace AppUpdater.Delta
         public bool Editable;
     }
 
-    public class NativeMethods
+    static class NativeMethods
     {
         [DllImportAttribute("msdelta.dll", EntryPoint = "ApplyDeltaW")]
         [return: MarshalAsAttribute(UnmanagedType.Bool)]

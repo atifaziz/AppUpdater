@@ -58,6 +58,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\AppUpdater\Delta\DeltaAPI.cs">
+      <Link>DeltaAPI.cs</Link>
+    </Compile>
+    <Compile Include="..\AppUpdater\Delta\MSDeltaPInvoke.cs">
+      <Link>MSDeltaPInvoke.cs</Link>
+    </Compile>
     <Compile Include="AppPublisher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

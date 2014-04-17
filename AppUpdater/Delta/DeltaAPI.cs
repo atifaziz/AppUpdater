@@ -1,8 +1,8 @@
-﻿using System;
-
-namespace AppUpdater.Delta
+﻿namespace AppUpdater.Delta
 {
-    public static class DeltaAPI
+    using System;
+
+    static class DeltaAPI
     {
         private static bool checkedSupport = false;
         private static bool isSupported = false;
