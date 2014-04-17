@@ -47,6 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Packages\TaskHelpers.Sources.0.3\TaskHelpers.cs" />
+    <Compile Include="App_Packages\TaskHelpers.Sources.0.3\TaskHelpersExtensions.cs" />
     <Compile Include="AutoUpdaterTests.cs" />
     <Compile Include="DefaultLocalStructureManagerTests.cs" />
     <Compile Include="LoggerTests.cs" />
@@ -69,6 +71,9 @@
       <Project>{AC95E782-8C9F-4381-A043-6D8A65806743}</Project>
       <Name>AppUpdater</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

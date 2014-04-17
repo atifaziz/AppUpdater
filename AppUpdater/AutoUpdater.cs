@@ -54,11 +54,11 @@ namespace AppUpdater
                 try
                 {
                     log.Debug("Checking for updates.");
-                    var updateInfo = updateManager.CheckForUpdate();
+                    var updateInfo = updateManager.CheckForUpdateAsync(CancellationToken.None).Result;
                     if (updateInfo.HasUpdate)
                     {
                         log.Debug("Updates found. Installing new files.");
-                        updateManager.DoUpdate(updateInfo);
+                        updateManager.DoUpdateAsync(updateInfo, CancellationToken.None).Wait();
                         log.Debug("Update is ready.");
                         RaiseUpdated();
                     }

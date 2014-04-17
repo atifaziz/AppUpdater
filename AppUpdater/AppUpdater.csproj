@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Packages\TaskHelpers.Sources.0.3\TaskHelpers.cs" />
+    <Compile Include="App_Packages\TaskHelpers.Sources.0.3\TaskHelpersExtensions.cs" />
     <Compile Include="AutoUpdater.cs" />
     <Compile Include="Delta\DeltaAPI.cs" />
     <Compile Include="Delta\MSDeltaPInvoke.cs" />
@@ -67,7 +69,9 @@
     <Compile Include="Utils\DataCompressor.cs" />
     <Compile Include="Utils\PathUtils.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

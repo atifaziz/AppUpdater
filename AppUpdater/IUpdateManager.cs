@@ -1,10 +1,12 @@
-﻿
-namespace AppUpdater
+﻿namespace AppUpdater
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+
     public interface IUpdateManager
     {
         void Initialize();
-        UpdateInfo CheckForUpdate();
-        void DoUpdate(UpdateInfo updateInfo);
+        Task<UpdateInfo> CheckForUpdateAsync(CancellationToken cancellationToken);
+        Task DoUpdateAsync(UpdateInfo updateInfo, CancellationToken cancellationToken);
     }
 }

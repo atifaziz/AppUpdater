@@ -3,11 +3,15 @@
     #region Imports
 
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
     using Chef;
     using LocalStructure;
     using Log;
+    using Manifest;
     using Server;
 
     #endregion
@@ -59,27 +63,54 @@
             Initialized = true;
         }
 
-        public virtual UpdateInfo CheckForUpdate()
+        public virtual Task<UpdateInfo> CheckForUpdateAsync(CancellationToken cancellationToken)
         {
             CheckInitialized();            
-            var serverCurrentVersion = UpdateServer.GetCurrentVersion();
-            var hasUpdate = CurrentVersion != serverCurrentVersion;
-            return new UpdateInfo(hasUpdate, serverCurrentVersion);
+            return UpdateServer.GetCurrentVersionAsync(cancellationToken).ContinueWith(t =>
+            {
+                var serverCurrentVersion = t.Result;
+                var hasUpdate = CurrentVersion != serverCurrentVersion;
+                return new UpdateInfo(hasUpdate, serverCurrentVersion);
+
+            }, cancellationToken);
         }
 
-        public virtual void DoUpdate(UpdateInfo updateInfo)
+        public virtual Task DoUpdateAsync(UpdateInfo updateInfo, CancellationToken cancellationToken)
+        {
+            return TaskHelpers.Iterate(DoUpdateAsyncImpl(updateInfo, cancellationToken), cancellationToken);
+            CheckInitialized();
+            var currentVersionManifest = LocalStructureManager.LoadManifest(CurrentVersion);
+            return 
+                UpdateServer.GetManifestAsync(updateInfo.Version, cancellationToken)
+                .ContinueWith(t =>
+                {
+                    var newVersionManifest = t.Result;
+                    var recipe = currentVersionManifest.UpdateTo(newVersionManifest);
+                    return UpdaterChef.CookAsync(recipe, cancellationToken);
+
+                }, cancellationToken)
+                .Unwrap()
+                .ContinueWith(_ =>
+                {
+                    LocalStructureManager.SetLastValidVersion(LocalStructureManager.GetExecutingVersion());
+                    LocalStructureManager.SetCurrentVersion(updateInfo.Version);
+                    CurrentVersion = updateInfo.Version;
+                    DeleteOldVersions();
+                
+                }, cancellationToken);
+        }
+
+        IEnumerable<Task> DoUpdateAsyncImpl(UpdateInfo updateInfo, CancellationToken cancellationToken)
         {
             CheckInitialized();
             var currentVersionManifest = LocalStructureManager.LoadManifest(CurrentVersion);
-            var newVersionManifest = UpdateServer.GetManifest(updateInfo.Version);
-            var recipe = currentVersionManifest.UpdateTo(newVersionManifest);
-
-            UpdaterChef.Cook(recipe);
-
+            Task<VersionManifest> manifestTask;
+            yield return manifestTask = UpdateServer.GetManifestAsync(updateInfo.Version, cancellationToken);
+            var recipe = currentVersionManifest.UpdateTo(manifestTask.Result);
+            yield return UpdaterChef.CookAsync(recipe, cancellationToken);
             LocalStructureManager.SetLastValidVersion(LocalStructureManager.GetExecutingVersion());
             LocalStructureManager.SetCurrentVersion(updateInfo.Version);
             CurrentVersion = updateInfo.Version;
-
             DeleteOldVersions();
         }
 

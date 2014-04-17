@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
-using Rhino.Mocks;
-using System.Threading;
-
-namespace AppUpdater.Tests
+﻿namespace AppUpdater.Tests
 {
+    #region Imports
+
+    using System;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using NUnit.Framework;
+    using Rhino.Mocks;
+
+    #endregion
+
     [TestFixture]
     public class AutoUpdaterTests
     {
@@ -35,7 +37,7 @@ namespace AppUpdater.Tests
             autoUpdater.Start();
             Thread.Sleep(1000);
 
-            updateManager.AssertWasCalled(x => x.CheckForUpdate());
+            updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(CancellationToken.None));
         }
 
         [Test]
@@ -46,7 +48,7 @@ namespace AppUpdater.Tests
             autoUpdater.Start();
             Thread.Sleep(1000);
 
-            updateManager.AssertWasCalled(x => x.CheckForUpdate(), s=>s.Repeat.Once());
+            updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(CancellationToken.None), s => s.Repeat.Once());
         }
 
         [Test]
@@ -57,7 +59,7 @@ namespace AppUpdater.Tests
             autoUpdater.Start();
             Thread.Sleep(1500);
 
-            updateManager.AssertWasCalled(x => x.CheckForUpdate(), s => s.Repeat.Twice());
+            updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(CancellationToken.None), s => s.Repeat.Twice());
         }
 
         [Test]
@@ -70,7 +72,7 @@ namespace AppUpdater.Tests
             autoUpdater.Start();
             Thread.Sleep(100);
 
-            updateManager.AssertWasCalled(x => x.CheckForUpdate(), s => s.Repeat.Once());
+            updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(CancellationToken.None), s => s.Repeat.Once());
         }
 
         [Test]
@@ -83,7 +85,7 @@ namespace AppUpdater.Tests
             autoUpdater.Stop();
             Thread.Sleep(1500);
 
-            updateManager.AssertWasCalled(x => x.CheckForUpdate(), s => s.Repeat.Once());
+            updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(CancellationToken.None), s => s.Repeat.Once());
         }
 
         [Test]
@@ -99,7 +101,8 @@ namespace AppUpdater.Tests
         {
             var called = false;
             var info = new UpdateInfo(true, new Version("2.0.0"));
-            updateManager.Stub(x => x.CheckForUpdate()).Return(info);
+            updateManager.Stub(x => x.CheckForUpdateAsync(CancellationToken.None)).Return(TaskHelpers.FromResult(info));
+            updateManager.Stub(x => x.DoUpdateAsync(info, CancellationToken.None)).Return(TaskHelpers.Completed());
             autoUpdater.Updated += (sender, e) => called = true;
 
             autoUpdater.Start();

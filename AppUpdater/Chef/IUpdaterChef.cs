@@ -1,9 +1,11 @@
-﻿using AppUpdater.Recipe;
-
-namespace AppUpdater.Chef
+﻿namespace AppUpdater.Chef
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Recipe;
+
     public interface IUpdaterChef
     {
-        void Cook(UpdateRecipe recipe);
+        Task CookAsync(UpdateRecipe recipe, CancellationToken cancellationToken);
     }
 }

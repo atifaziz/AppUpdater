@@ -11,6 +11,8 @@ using AppUpdater.Log;
 
 namespace TestApp
 {
+    using System.Threading;
+
     public partial class Form1 : Form
     {
         private AutoUpdater autoUpdater;
@@ -51,16 +53,20 @@ namespace TestApp
         private void btnUpdate_Click(object sender, EventArgs e)
         {
             var manager = UpdateManager.Default;
-            var info = manager.CheckForUpdate();
-            if (info.HasUpdate)
+
+            manager.CheckForUpdateAsync(CancellationToken.None)
+                   .ContinueEventHandlerWith(this, info =>
             {
-                manager.DoUpdate(info);
-                MessageBox.Show("Updated");
-            }
-            else
-            {
-                MessageBox.Show("No update available.");
-            }
+                if (info.HasUpdate)
+                {
+                    manager.DoUpdateAsync(info, CancellationToken.None)
+                           .ContinueEventHandlerWith(this, () => MessageBox.Show("Updated"));
+                }
+                else
+                {
+                    MessageBox.Show("No update available.");
+                }
+            });
         }
 
         private void DoLog(string logLevel, Type type, string message, object[] values)

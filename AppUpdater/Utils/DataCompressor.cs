@@ -19,7 +19,7 @@ namespace AppUpdater.Utils
 
         public static byte[] Compress(byte[] data)
         {
-            if (data == null)
+            if (data == null) // TODO review
             {
                 return null;
             }
@@ -48,7 +48,7 @@ namespace AppUpdater.Utils
 
         public static byte[] Decompress(byte[] data)
         {
-            if (data == null)
+            if (data == null) // TODO review
             {
                 return null;
             }

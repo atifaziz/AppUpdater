@@ -1,13 +1,14 @@
-﻿using AppUpdater.Manifest;
-
-namespace AppUpdater.Server
+﻿namespace AppUpdater.Server
 {
     using System;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Manifest;
 
     public interface IUpdateServer
     {
-        Version GetCurrentVersion();
-        VersionManifest GetManifest(Version version);
-        byte[] DownloadFile(Version version, string filename);
+        Task<Version> GetCurrentVersionAsync(CancellationToken cancellationToken);
+        Task<VersionManifest> GetManifestAsync(Version version, CancellationToken cancellationToken);
+        Task<byte[]> DownloadFileAsync(Version version, string filename, CancellationToken cancellationToken);
     }
 }

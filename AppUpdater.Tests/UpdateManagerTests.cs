@@ -10,6 +10,8 @@ using System;
 namespace AppUpdater.Tests
 {
     using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     public class UpdateManagerTests
     {
@@ -70,9 +72,9 @@ namespace AppUpdater.Tests
             [Test]
             public void CheckForUpdate_WithoutUpdate_HasUpdateIsFalse()
             {
-                updateServer.Stub(x => x.GetCurrentVersion()).Return(initialVersion);
+                updateServer.Stub(x => x.GetCurrentVersionAsync(CancellationToken.None)).Return(TaskHelpers.FromResult(initialVersion));
 
-                var updateInfo = updateManager.CheckForUpdate();
+                var updateInfo = updateManager.CheckForUpdateAsync(CancellationToken.None).Result;
 
                 Assert.That(updateInfo.HasUpdate, Is.False);
             }
@@ -80,9 +82,9 @@ namespace AppUpdater.Tests
             [Test]
             public void CheckForUpdate_WithoutUpdate_ReturnsTheCurrentVersion()
             {
-                updateServer.Stub(x => x.GetCurrentVersion()).Return(initialVersion);
+                updateServer.Stub(x => x.GetCurrentVersionAsync(CancellationToken.None)).Return(TaskHelpers.FromResult(initialVersion));
 
-                var updateInfo = updateManager.CheckForUpdate();
+                var updateInfo = updateManager.CheckForUpdateAsync(CancellationToken.None).Result;
 
                 Assert.That(updateInfo.Version, Is.EqualTo(initialVersion));
             }
@@ -90,9 +92,9 @@ namespace AppUpdater.Tests
             [Test]
             public void CheckForUpdate_WithUpdate_HasUpdateIsTrue()
             {
-                updateServer.Stub(x => x.GetCurrentVersion()).Return(new Version("2.6.8"));
+                updateServer.Stub(x => x.GetCurrentVersionAsync(CancellationToken.None)).Return(TaskHelpers.FromResult(new Version("2.6.8")));
 
-                var updateInfo = updateManager.CheckForUpdate();
+                var updateInfo = updateManager.CheckForUpdateAsync(CancellationToken.None).Result;
 
                 Assert.That(updateInfo.HasUpdate, Is.True);
             }
@@ -101,9 +103,9 @@ namespace AppUpdater.Tests
             public void CheckForUpdate_WithUpdate_ReturnsTheNewVersionNumber()
             {
                 var newVersion = new Version("2.6.8");
-                updateServer.Stub(x => x.GetCurrentVersion()).Return(newVersion);
+                updateServer.Stub(x => x.GetCurrentVersionAsync(CancellationToken.None)).Return(TaskHelpers.FromResult(newVersion));
 
-                var updateInfo = updateManager.CheckForUpdate();
+                var updateInfo = updateManager.CheckForUpdateAsync(CancellationToken.None).Result;
 
                 Assert.That(updateInfo.Version, Is.EqualTo(newVersion));
             }
@@ -113,10 +115,11 @@ namespace AppUpdater.Tests
             {
                 var newVersion = new Version("2.6.8");
                 var updateInfo = new UpdateInfo(true, newVersion);
-                updateServer.Stub(x => x.GetManifest(newVersion)).Return(new VersionManifest(newVersion, new VersionManifestFile[0]));
+                updateServer.Stub(x => x.GetManifestAsync(newVersion, CancellationToken.None)).Return(TaskHelpers.FromResult(new VersionManifest(newVersion, new VersionManifestFile[0])));
                 localStructureManager.Stub(x => x.LoadManifest(initialVersion)).Return(new VersionManifest(initialVersion, new VersionManifestFile[0]));
+                updaterChef.Stub(x => x.CookAsync(Arg<UpdateRecipe>.Is.Anything, Arg<CancellationToken>.Is.Equal(CancellationToken.None))).Return(TaskHelpers.Completed());
 
-                updateManager.DoUpdate(updateInfo);
+                updateManager.DoUpdateAsync(updateInfo, CancellationToken.None).Wait();
 
                 Assert.That(updateManager.CurrentVersion, Is.EqualTo(newVersion));
             }
@@ -126,10 +129,11 @@ namespace AppUpdater.Tests
             {
                 var newVersion = new Version("2.6.8");
                 var updateInfo = new UpdateInfo(true, newVersion);
-                updateServer.Stub(x => x.GetManifest(newVersion)).Return(new VersionManifest(newVersion, new VersionManifestFile[0]));
+                updateServer.Stub(x => x.GetManifestAsync(newVersion, CancellationToken.None)).Return(TaskHelpers.FromResult(new VersionManifest(newVersion, new VersionManifestFile[0])));
                 localStructureManager.Stub(x => x.LoadManifest(initialVersion)).Return(new VersionManifest(initialVersion, new VersionManifestFile[0]));
+                updaterChef.Stub(x => x.CookAsync(Arg<UpdateRecipe>.Is.Anything, Arg<CancellationToken>.Is.Equal(CancellationToken.None))).Return(TaskHelpers.Completed());
 
-                updateManager.DoUpdate(updateInfo);
+                updateManager.DoUpdateAsync(updateInfo, CancellationToken.None).Wait();
 
                 localStructureManager.AssertWasCalled(x => x.SetCurrentVersion(newVersion));
             }
@@ -140,11 +144,12 @@ namespace AppUpdater.Tests
                 var versionBeingExecuted = initialVersion;
                 var newVersion = new Version("2.6.8");
                 var updateInfo = new UpdateInfo(true, newVersion);
-                updateServer.Stub(x => x.GetManifest(newVersion)).Return(new VersionManifest(newVersion, new VersionManifestFile[0]));
+                updateServer.Stub(x => x.GetManifestAsync(newVersion, CancellationToken.None)).Return(TaskHelpers.FromResult(new VersionManifest(newVersion, new VersionManifestFile[0])));
                 localStructureManager.Stub(x => x.GetCurrentVersion()).Return(new Version("2.0.0"));
                 localStructureManager.Stub(x => x.LoadManifest(initialVersion)).Return(new VersionManifest(initialVersion, new VersionManifestFile[0]));
+                updaterChef.Stub(x => x.CookAsync(Arg<UpdateRecipe>.Is.Anything, Arg<CancellationToken>.Is.Equal(CancellationToken.None))).Return(TaskHelpers.Completed());
 
-                updateManager.DoUpdate(updateInfo);
+                updateManager.DoUpdateAsync(updateInfo, CancellationToken.None).Wait();
 
                 localStructureManager.AssertWasCalled(x => x.SetLastValidVersion(versionBeingExecuted));
             }
@@ -154,12 +159,13 @@ namespace AppUpdater.Tests
             {
                 var newVersion = new Version("2.6.8");
                 var updateInfo = new UpdateInfo(true, newVersion);
-                updateServer.Stub(x => x.GetManifest(newVersion)).Return(new VersionManifest(newVersion, new VersionManifestFile[0]));
+                updateServer.Stub(x => x.GetManifestAsync(newVersion, CancellationToken.None)).Return(TaskHelpers.FromResult(new VersionManifest(newVersion, new VersionManifestFile[0])));
                 localStructureManager.Stub(x => x.LoadManifest(initialVersion)).Return(new VersionManifest(initialVersion, new VersionManifestFile[0]));
+                updaterChef.Stub(x => x.CookAsync(Arg<UpdateRecipe>.Is.Anything, Arg<CancellationToken>.Is.Equal(CancellationToken.None))).Return(TaskHelpers.Completed());
 
-                updateManager.DoUpdate(updateInfo);
+                updateManager.DoUpdateAsync(updateInfo, CancellationToken.None).Wait();
 
-                updaterChef.AssertWasCalled(x => x.Cook(Arg<UpdateRecipe>.Is.Anything));
+                updaterChef.AssertWasCalled(x => x.CookAsync(Arg<UpdateRecipe>.Is.Anything, Arg<CancellationToken>.Is.Anything));
             }
 
             [Test]
@@ -167,7 +173,7 @@ namespace AppUpdater.Tests
             {
                 var updateInfo = SetupUpdateToVersion(new Version("3.1"));
 
-                updateManager.DoUpdate(updateInfo);
+                updateManager.DoUpdateAsync(updateInfo, CancellationToken.None).Wait();
 
                 localStructureManager.AssertWasCalled(x => x.DeleteVersionDir(new Version("1.0.0")));
                 localStructureManager.AssertWasCalled(x => x.DeleteVersionDir(new Version("1.1.1")));
@@ -178,7 +184,7 @@ namespace AppUpdater.Tests
             {
                 var updateInfo = SetupUpdateToVersion(new Version("3.1"));
 
-                updateManager.DoUpdate(updateInfo);
+                updateManager.DoUpdateAsync(updateInfo, CancellationToken.None).Wait();
 
                 localStructureManager.AssertWasNotCalled(x => x.DeleteVersionDir(initialVersion));
             }
@@ -189,7 +195,7 @@ namespace AppUpdater.Tests
                 installedVersions = new[] { "1.0.0", "1.1.1", "1.2.3", "3.1" }.Select(v => new Version(v)).ToArray();
                 var updateInfo = SetupUpdateToVersion(new Version("3.1"));
 
-                updateManager.DoUpdate(updateInfo);
+                updateManager.DoUpdateAsync(updateInfo, CancellationToken.None).Wait();
 
                 localStructureManager.AssertWasNotCalled(x => x.DeleteVersionDir(new Version("3.1")));
             }
@@ -200,14 +206,15 @@ namespace AppUpdater.Tests
                 localStructureManager.Stub(x => x.DeleteVersionDir(new Version("1.0.0"))).Throw(new Exception("Error deliting version."));
                 var updateInfo = SetupUpdateToVersion(new Version("3.1"));
 
-                updateManager.DoUpdate(updateInfo);
+                updateManager.DoUpdateAsync(updateInfo, CancellationToken.None).Wait();
             }
 
             private UpdateInfo SetupUpdateToVersion(Version newVersion)
             {
                 var updateInfo = new UpdateInfo(true, newVersion);
-                updateServer.Stub(x => x.GetManifest(newVersion)).Return(new VersionManifest(newVersion, new VersionManifestFile[0]));
+                updateServer.Stub(x => x.GetManifestAsync(newVersion, CancellationToken.None)).Return(TaskHelpers.FromResult(new VersionManifest(newVersion, new VersionManifestFile[0])));
                 localStructureManager.Stub(x => x.LoadManifest(initialVersion)).Return(new VersionManifest(initialVersion, new VersionManifestFile[0]));
+                updaterChef.Stub(x => x.CookAsync(Arg<UpdateRecipe>.Is.Anything, Arg<CancellationToken>.Is.Equal(CancellationToken.None))).Return(TaskHelpers.Completed());
                 return updateInfo;
             }
         }
