@@ -10,12 +10,12 @@ using AppUpdater.Manifest;
 
 namespace AppUpdater.LocalStructure
 {
-    public class DefaultLocalStructureManager : ILocalStructureManager
+    public class LocalStructureManager : ILocalStructureManager
     {
         public string baseDir;
         public static Func<string> GetExecutablePath = GetExecutingAssemblyLocation;
 
-        public DefaultLocalStructureManager(string baseDir)
+        public LocalStructureManager(string baseDir)
         {
             this.baseDir = baseDir;
         }

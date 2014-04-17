@@ -50,7 +50,7 @@
     <Compile Include="App_Packages\TaskHelpers.Sources.0.3\TaskHelpers.cs" />
     <Compile Include="App_Packages\TaskHelpers.Sources.0.3\TaskHelpersExtensions.cs" />
     <Compile Include="AutoUpdaterTests.cs" />
-    <Compile Include="DefaultLocalStructureManagerTests.cs" />
+    <Compile Include="LocalStructureManagerTests.cs" />
     <Compile Include="LoggerTests.cs" />
     <Compile Include="Publisher\AppPublisherTests.cs" />
     <Compile Include="UpdateManagerTests.cs" />

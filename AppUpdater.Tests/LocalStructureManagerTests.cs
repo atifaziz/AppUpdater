@@ -12,9 +12,9 @@ using AppUpdater.Delta;
 namespace AppUpdater.Tests
 {
     [TestFixture]
-    public class DefaultLocalStructureManagerTests
+    public class LocalStructureManagerTests
     {
-        private DefaultLocalStructureManager structureManager;
+        private LocalStructureManager structureManager;
         private string baseDir;
 
         [SetUp]
@@ -22,7 +22,7 @@ namespace AppUpdater.Tests
         {
             baseDir = Path.GetTempFileName() + "_";
             Directory.CreateDirectory(baseDir);
-            structureManager = new DefaultLocalStructureManager(baseDir);
+            structureManager = new LocalStructureManager(baseDir);
         }
 
         [Test]
@@ -208,7 +208,7 @@ namespace AppUpdater.Tests
         [Test]
         public void GetExecutingVersion_ReturnsTheVersionThatIsBeingExecuted()
         {
-            DefaultLocalStructureManager.GetExecutablePath = () => @"C:\Test\AppRoot\1.4.5\app.exe";
+            LocalStructureManager.GetExecutablePath = () => @"C:\Test\AppRoot\1.4.5\app.exe";
 
             var executingVersion = structureManager.GetExecutingVersion();
 
