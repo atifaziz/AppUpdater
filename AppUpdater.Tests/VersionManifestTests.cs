@@ -167,7 +167,7 @@ namespace AppUpdater.Tests
 
             Assert.That(manifest, Is.Not.Null);
             Assert.That(manifest.Version, Is.EqualTo(new Version("1.0.0")));
-            Assert.That(manifest.Files, Has.Count.EqualTo(2));
+            Assert.That(manifest.Files, Has.Length.EqualTo(2));
             Assert.That(manifest.Files.ElementAt(0).Name, Is.EqualTo("test1.txt"));
             Assert.That(manifest.Files.ElementAt(0).Checksum, Is.EqualTo("B94F6F125C79E3A5FFAA826F584C10D52ADA669E6762051B826B55776D05AED2"));
             Assert.That(manifest.Files.ElementAt(0).Size, Is.EqualTo(9));

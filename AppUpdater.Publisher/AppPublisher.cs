@@ -71,7 +71,7 @@ namespace AppUpdater.Publisher
         {
             if (checksum == null || checksum.Length < 5)
             {
-                return checksum + string.Empty;
+                return checksum + String.Empty;
             }
 
             return checksum.Substring(0, 5);
@@ -105,6 +105,18 @@ namespace AppUpdater.Publisher
                 {
                     DataCompressor.Compress(streamSource, streamDestination);
                 }
+            }
+        }
+
+        static class PathUtils // TODO Remove after reviewing assumptions
+        {
+            public static string AddTrailingSlash(string path)
+            {
+                return string.IsNullOrEmpty(path)
+                     ? path
+                     : (path[path.Length - 1] != Path.DirectorySeparatorChar
+                     ? path + Path.DirectorySeparatorChar
+                     : path);
             }
         }
     }

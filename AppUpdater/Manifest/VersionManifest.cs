@@ -94,20 +94,17 @@ namespace AppUpdater.Manifest
 
         public static VersionManifest GenerateFromDirectory(Version version, string directory)
         {
-            directory = PathUtils.AddTrailingSlash(directory);
-
-            var files = new List<VersionManifestFile>();
-            foreach (var filename in Directory.EnumerateFiles(directory, "*", SearchOption.AllDirectories))
-            {
-                using (var fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
-                {
-                    var checksum = Checksum.Calculate(fs);
-                    var file = new VersionManifestFile(filename.Remove(0, directory.Length), checksum, fs.Length);
-                    files.Add(file);
-                }
-            }
-
-            return new VersionManifest(version, files);
+            var files =
+                from dir in new[] { directory.TrimEnd(Path.DirectorySeparatorChar, 
+                                                      Path.AltDirectorySeparatorChar) }
+                select new DirectoryInfo(dir) into dir
+                from file in dir.EnumerateFiles("*", SearchOption.AllDirectories)
+                // TODO filter hidden and system files
+                select new VersionManifestFile(file.FullName.Substring(dir.FullName.Length + 1), 
+                               Checksum.Calculate(file.FullName), 
+                               file.Length);
+            
+            return new VersionManifest(version, files.ToArray());
         }
 
         public void SaveToFile(string filename)
