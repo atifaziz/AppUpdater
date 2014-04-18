@@ -26,50 +26,50 @@
         [Test]
         public void Ctor_SetsTheDefaultCheckIntervalTo1hour()
         {
-            Assert.That(autoUpdater.SecondsBetweenChecks, Is.EqualTo(3600));
+            Assert.That(autoUpdater.CheckInterval, Is.EqualTo(TimeSpan.FromHours(1)));
         }
 
         [Test]
         public void Start_CheckForUpdatesOnStart()
         {
-            autoUpdater.SecondsBetweenChecks = 10000;
+            autoUpdater.CheckInterval = TimeSpan.FromSeconds(10000);
 
-            autoUpdater.Start();
+            autoUpdater.StartAsync(CancellationToken.None).Wait();
             Thread.Sleep(1000);
 
-            updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(CancellationToken.None));
+            updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(Arg<CancellationToken>.Is.Anything));
         }
 
         [Test]
         public void Start_DoNotCheckBeforeTime()
         {
-            autoUpdater.SecondsBetweenChecks = 2;
+            autoUpdater.CheckInterval = TimeSpan.FromSeconds(2);
 
-            autoUpdater.Start();
+            autoUpdater.StartAsync(CancellationToken.None).Wait();
             Thread.Sleep(1000);
 
-            updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(CancellationToken.None), s => s.Repeat.Once());
+            updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(Arg<CancellationToken>.Is.Anything), s => s.Repeat.Once());
         }
 
         [Test]
         public void Start_StoppedUpdater_CheckAfterWaitTime()
         {
-            autoUpdater.SecondsBetweenChecks = 1;
+            autoUpdater.CheckInterval = TimeSpan.FromSeconds(1);
 
-            autoUpdater.Start();
+            autoUpdater.StartAsync(CancellationToken.None).Wait();
             Thread.Sleep(1500);
 
-            updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(CancellationToken.None), s => s.Repeat.Twice());
+            updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(Arg<CancellationToken>.Is.Anything), s => s.Repeat.Twice());
         }
 
         [Test]
         public void Start_StartedUpdater_DoNotStartAgain()
         {
-            autoUpdater.SecondsBetweenChecks = 1;
+            autoUpdater.CheckInterval = TimeSpan.FromSeconds(1);
 
-            autoUpdater.Start();
+            autoUpdater.StartAsync(CancellationToken.None).Wait();
             Thread.Sleep(100);
-            autoUpdater.Start();
+            autoUpdater.StartAsync(CancellationToken.None).Wait();
             Thread.Sleep(100);
 
             updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(CancellationToken.None), s => s.Repeat.Once());
@@ -78,9 +78,9 @@
         [Test]
         public void Stop_StartedUpdater_StopsTheChecks()
         {
-            autoUpdater.SecondsBetweenChecks = 1;
+            autoUpdater.CheckInterval = TimeSpan.FromSeconds(1);
 
-            autoUpdater.Start();
+            autoUpdater.StartAsync(CancellationToken.None).Wait();
             Thread.Sleep(300);
             autoUpdater.Stop();
             Thread.Sleep(1500);
@@ -91,7 +91,7 @@
         [Test]
         public void Stop_StoppedUpdater_DoNothing()
         {
-            autoUpdater.SecondsBetweenChecks = 1;
+            autoUpdater.CheckInterval = TimeSpan.FromSeconds(1);
 
             autoUpdater.Stop();
         }
@@ -105,7 +105,7 @@
             updateManager.Stub(x => x.DoUpdateAsync(info, CancellationToken.None)).Return(TaskHelpers.Completed());
             autoUpdater.Updated += (sender, e) => called = true;
 
-            autoUpdater.Start();
+            autoUpdater.StartAsync(CancellationToken.None).Wait();
             Thread.Sleep(100);
 
             Assert.That(called, Is.True);

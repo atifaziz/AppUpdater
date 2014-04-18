@@ -12,6 +12,7 @@ using AppUpdater.Logging;
 namespace TestApp
 {
     using System.Threading;
+    using System.Threading.Tasks;
 
     public partial class Form1 : Form
     {
@@ -27,9 +28,9 @@ namespace TestApp
         private void btnStart_Click(object sender, EventArgs e)
         {
             autoUpdater = new AutoUpdater(UpdateManager.Default);
-            autoUpdater.SecondsBetweenChecks = 10;
+            autoUpdater.CheckInterval = TimeSpan.FromSeconds(10);
             autoUpdater.Updated += new EventHandler(autoUpdater_Updated);
-            autoUpdater.Start();
+            autoUpdater.StartAsync(CancellationToken.None).Wait();
 
             btnStart.Enabled = false;
             btnStop.Enabled = true;

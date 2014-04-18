@@ -1,87 +1,118 @@
-﻿using System;
-using System.Threading;
-using AppUpdater.Logging;
-
-namespace AppUpdater
+﻿namespace AppUpdater
 {
+    #region Imports
+
+    using System;
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Logging;
+    using Timer = System.Timers.Timer;
+
+    #endregion
+
     public class AutoUpdater
     {
-        private readonly ILog log = Logger.For<AutoUpdater>();
-        private readonly IUpdateManager updateManager;
-        private Thread thread;
+        readonly ILog log = Logger.For<AutoUpdater>();
+        readonly IUpdateManager updateManager;
+        Timer timer;
+        CancellationTokenSource stopTokenSource;
 
         public TimeSpan CheckInterval { get; set; }
+
+        Timer Timer
+        {
+            get { return timer; }
+            set
+            {
+                if (timer != null)
+                    timer.Dispose();
+                timer = value;
+            }
+        }
 
         public event EventHandler Updated;
 
         public AutoUpdater(IUpdateManager updateManager)
         {
             this.updateManager = updateManager;
-            CheckInterval = TimeSpan.FromSeconds(3600);
+            CheckInterval = TimeSpan.FromHours(1);
         }
 
-        public void Start()
+        public Task StartAsync(CancellationToken cancellationToken)
         {
-            if (thread == null || !thread.IsAlive)
+            return Timer != null 
+                 ? TaskHelpers.Completed() 
+                 : TaskHelpers.Iterate(StartImpl(cancellationToken), cancellationToken);
+        }
+
+        IEnumerable<Task> StartImpl(CancellationToken cancellationToken)
+        {
+            yield return Task.Factory.StartNew(() => CheckForUpdates(cancellationToken), cancellationToken);
+            var stopTokenSource = new CancellationTokenSource();
+            var newTimer = new Timer(CheckInterval.TotalMilliseconds);
+            newTimer.Elapsed += delegate { CheckForUpdates(stopTokenSource.Token); };
+            newTimer.Enabled = true;
+            this.stopTokenSource = stopTokenSource;
+            Timer = newTimer;
+        }
+
+        void CheckForUpdates(CancellationToken cancellationToken)
+        {
+            try
+            {   // ReSharper disable once MethodSupportsCancellation
+                CheckForUpdatesAsync(cancellationToken).Wait();
+            }
+            catch (Exception e)
             {
-                log.Debug("Starting the AutoUpdater.");
-                thread = new Thread(CheckForUpdates);
-                thread.IsBackground = true;
-                thread.Start();
+                log.Error(e.Message);
+                if (e is StackOverflowException || e is ThreadAbortException)
+                    throw;
             }
         }
 
         public void Stop()
         {
-            if (thread != null && thread.IsAlive)
+            var timer = this.timer;
+            this.timer = null;
+            if (timer != null)
             {
-                log.Debug("Stopping the AutoUpdater.");
-                thread.Abort();
+                var stopTokenSource = this.stopTokenSource;
+                this.stopTokenSource = null;
+                stopTokenSource.Cancel();
+                stopTokenSource.Dispose();
+                timer.Dispose();
             }
-
-            thread = null;
+            log.Debug("Stopping the AutoUpdater.");
         }
 
-        private void CheckForUpdates()
+        Task CheckForUpdatesAsync(CancellationToken token)
         {
-            while (true)
-            {
-                try
-                {
-                    log.Debug("Checking for updates.");
-                    var updateInfo = updateManager.CheckForUpdateAsync(CancellationToken.None).Result;
-                    if (updateInfo.HasUpdate)
-                    {
-                        log.Debug("Updates found. Installing new files.");
-                        updateManager.DoUpdateAsync(updateInfo, CancellationToken.None).Wait();
-                        log.Debug("Update is ready.");
-                        RaiseUpdated();
-                    }
-                    else
-                    {
-                        log.Debug("No updates found.");
-                    }
-                }
-                catch (ThreadAbortException)
-                {
-                    throw;
-                }
-                catch (Exception err)
-                {
-                    log.Error(err.Message);
-                }
-
-                Thread.Sleep((int) CheckInterval.TotalMilliseconds);
-            }
+            return TaskHelpers.Iterate(CheckForUpdatesImpl(token), token);
         }
 
-        private void RaiseUpdated()
+        IEnumerable<Task> CheckForUpdatesImpl(CancellationToken token)
+        {
+            log.Debug("Checking for updates.");
+            var checkTask = updateManager.CheckForUpdateAsync(token);
+            yield return checkTask;
+            var updateInfo = checkTask.Result;
+            if (!updateInfo.HasUpdate)
+            {
+                log.Debug("No updates found.");
+                yield break;
+            }
+            log.Debug("Updates found. Installing new files.");
+            yield return updateManager.DoUpdateAsync(updateInfo, token);
+            log.Debug("Update is ready.");
+            RaiseUpdated();
+        }
+
+        void RaiseUpdated()
         {
             var updated = Updated;
             if (updated != null)
-            {
                 updated(this, EventArgs.Empty);
-            }
         }
     }
 }
