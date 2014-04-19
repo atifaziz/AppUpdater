@@ -5,3 +5,4 @@ obj
 TestApp/Updates/*/*.deploy
 *.user
 *.swp
+/packages/*
