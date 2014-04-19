@@ -34,7 +34,7 @@
         {
             autoUpdater.CheckInterval = TimeSpan.FromSeconds(10000);
 
-            autoUpdater.StartAsync(CancellationToken.None).Wait();
+            autoUpdater.StartAsync().Wait();
             Thread.Sleep(1000);
 
             updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(Arg<CancellationToken>.Is.Anything));
@@ -45,7 +45,7 @@
         {
             autoUpdater.CheckInterval = TimeSpan.FromSeconds(2);
 
-            autoUpdater.StartAsync(CancellationToken.None).Wait();
+            autoUpdater.StartAsync().Wait();
             Thread.Sleep(1000);
 
             updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(Arg<CancellationToken>.Is.Anything), s => s.Repeat.Once());
@@ -56,7 +56,7 @@
         {
             autoUpdater.CheckInterval = TimeSpan.FromSeconds(1);
 
-            autoUpdater.StartAsync(CancellationToken.None).Wait();
+            autoUpdater.StartAsync().Wait();
             Thread.Sleep(1500);
 
             updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(Arg<CancellationToken>.Is.Anything), s => s.Repeat.Twice());
@@ -67,9 +67,9 @@
         {
             autoUpdater.CheckInterval = TimeSpan.FromSeconds(1);
 
-            autoUpdater.StartAsync(CancellationToken.None).Wait();
+            autoUpdater.StartAsync().Wait();
             Thread.Sleep(100);
-            autoUpdater.StartAsync(CancellationToken.None).Wait();
+            autoUpdater.StartAsync().Wait();
             Thread.Sleep(100);
 
             updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(CancellationToken.None), s => s.Repeat.Once());
@@ -80,7 +80,7 @@
         {
             autoUpdater.CheckInterval = TimeSpan.FromSeconds(1);
 
-            autoUpdater.StartAsync(CancellationToken.None).Wait();
+            autoUpdater.StartAsync().Wait();
             Thread.Sleep(300);
             autoUpdater.Stop();
             Thread.Sleep(1500);
@@ -105,7 +105,7 @@
             updateManager.Stub(x => x.DoUpdateAsync(info, CancellationToken.None)).Return(TaskHelpers.Completed());
             autoUpdater.Updated += (sender, e) => called = true;
 
-            autoUpdater.StartAsync(CancellationToken.None).Wait();
+            autoUpdater.StartAsync().Wait();
             Thread.Sleep(100);
 
             Assert.That(called, Is.True);

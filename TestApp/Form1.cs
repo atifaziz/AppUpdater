@@ -30,7 +30,7 @@ namespace TestApp
             autoUpdater = new AutoUpdater(UpdateManager.Default);
             autoUpdater.CheckInterval = TimeSpan.FromSeconds(10);
             autoUpdater.Updated += new EventHandler(autoUpdater_Updated);
-            autoUpdater.StartAsync(CancellationToken.None);
+            autoUpdater.StartAsync();
 
             btnStart.Enabled = false;
             btnStop.Enabled = true;

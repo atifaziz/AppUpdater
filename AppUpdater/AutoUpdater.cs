@@ -39,29 +39,44 @@
             CheckInterval = TimeSpan.FromHours(1);
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
+        public Task StartAsync()
         {
-            return Timer != null 
-                 ? TaskHelpers.Completed() 
-                 : TaskHelpers.Iterate(StartImpl(cancellationToken), cancellationToken);
+            return StartAsync(CancellationToken.None);
         }
 
-        IEnumerable<Task> StartImpl(CancellationToken cancellationToken)
+        public Task StartAsync(CancellationToken cancellationToken)
         {
-            yield return Task.Factory.StartNew(() => CheckForUpdates(cancellationToken), cancellationToken);
+            return StartAsync(cancellationToken, null);
+        }
+
+        public Task StartAsync(CancellationToken cancellationToken, TaskScheduler scheduler)
+        {
+            return Timer != null 
+                 ? TaskHelpers.Completed()
+                 : TaskHelpers.Iterate(StartImpl(cancellationToken, 
+                                       scheduler 
+                                       ?? (SynchronizationContext.Current != null 
+                                           ? TaskScheduler.FromCurrentSynchronizationContext() 
+                                           : TaskScheduler.Default)), 
+                                       cancellationToken);
+        }
+
+        IEnumerable<Task> StartImpl(CancellationToken cancellationToken, TaskScheduler scheduler)
+        {
+            yield return Task.Factory.StartNew(() => CheckForUpdates(cancellationToken, scheduler), cancellationToken);
             var stopTokenSource = new CancellationTokenSource();
             var newTimer = new Timer(CheckInterval.TotalMilliseconds);
-            newTimer.Elapsed += delegate { CheckForUpdates(stopTokenSource.Token); };
+            newTimer.Elapsed += delegate { CheckForUpdates(stopTokenSource.Token, scheduler); };
             newTimer.Enabled = true;
             this.stopTokenSource = stopTokenSource;
             Timer = newTimer;
         }
 
-        void CheckForUpdates(CancellationToken cancellationToken)
+        void CheckForUpdates(CancellationToken cancellationToken, TaskScheduler scheduler)
         {
             try
             {   // ReSharper disable once MethodSupportsCancellation
-                CheckForUpdatesAsync(cancellationToken).Wait();
+                CheckForUpdatesAsync(cancellationToken, scheduler).Wait();
             }
             catch (Exception e)
             {
@@ -86,15 +101,15 @@
             log.Debug("Stopping the AutoUpdater.");
         }
 
-        Task CheckForUpdatesAsync(CancellationToken token)
+        Task CheckForUpdatesAsync(CancellationToken cancellationToken, TaskScheduler scheduler)
         {
-            return TaskHelpers.Iterate(CheckForUpdatesImpl(token), token);
+            return TaskHelpers.Iterate(CheckForUpdatesImpl(cancellationToken, scheduler), cancellationToken);
         }
 
-        IEnumerable<Task> CheckForUpdatesImpl(CancellationToken token)
+        IEnumerable<Task> CheckForUpdatesImpl(CancellationToken cancellationToken, TaskScheduler scheduler)
         {
             log.Debug("Checking for updates.");
-            var checkTask = updateManager.CheckForUpdateAsync(token);
+            var checkTask = updateManager.CheckForUpdateAsync(cancellationToken);
             yield return checkTask;
             var updateInfo = checkTask.Result;
             if (!updateInfo.HasUpdate)
@@ -103,16 +118,11 @@
                 yield break;
             }
             log.Debug("Updates found. Installing new files.");
-            yield return updateManager.DoUpdateAsync(updateInfo, token);
+            yield return updateManager.DoUpdateAsync(updateInfo, cancellationToken);
             log.Debug("Update is ready.");
-            RaiseUpdated();
-        }
-
-        void RaiseUpdated()
-        {
             var updated = Updated;
             if (updated != null)
-                updated(this, EventArgs.Empty);
+                Task.Factory.StartNew(() => updated(this, EventArgs.Empty), cancellationToken, TaskCreationOptions.None, scheduler);
         }
     }
 }
