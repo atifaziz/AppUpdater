@@ -4,10 +4,11 @@
 
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Threading;
     using System.Threading.Tasks;
     using Logging;
-    using Timer = System.Timers.Timer;
+    using Timer = System.Threading.Timer;
 
     #endregion
 
@@ -39,37 +40,26 @@
             CheckInterval = TimeSpan.FromHours(1);
         }
 
-        public Task StartAsync()
+        public void Start()
         {
-            return StartAsync(CancellationToken.None);
+            Start(null);
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
+        public void Start(TaskScheduler scheduler)
         {
-            return StartAsync(cancellationToken, null);
+            if (Timer != null)
+                return;
+            StartImpl(scheduler ?? (SynchronizationContext.Current != null 
+                                    ? TaskScheduler.FromCurrentSynchronizationContext() 
+                                    : TaskScheduler.Default));
         }
 
-        public Task StartAsync(CancellationToken cancellationToken, TaskScheduler scheduler)
+        void StartImpl(TaskScheduler scheduler)
         {
-            return Timer != null 
-                 ? TaskHelpers.Completed()
-                 : TaskHelpers.Iterate(StartImpl(cancellationToken, 
-                                       scheduler 
-                                       ?? (SynchronizationContext.Current != null 
-                                           ? TaskScheduler.FromCurrentSynchronizationContext() 
-                                           : TaskScheduler.Default)), 
-                                       cancellationToken);
-        }
-
-        IEnumerable<Task> StartImpl(CancellationToken cancellationToken, TaskScheduler scheduler)
-        {
-            yield return Task.Factory.StartNew(() => CheckForUpdates(cancellationToken, scheduler), cancellationToken);
             var stopTokenSource = new CancellationTokenSource();
-            var newTimer = new Timer(CheckInterval.TotalMilliseconds);
-            newTimer.Elapsed += delegate { CheckForUpdates(stopTokenSource.Token, scheduler); };
-            newTimer.Enabled = true;
+            Timer = new Timer(delegate { CheckForUpdates(stopTokenSource.Token, scheduler); }, 
+                              null, TimeSpan.Zero, CheckInterval);
             this.stopTokenSource = stopTokenSource;
-            Timer = newTimer;
         }
 
         void CheckForUpdates(CancellationToken cancellationToken, TaskScheduler scheduler)

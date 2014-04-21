@@ -34,7 +34,7 @@
         {
             autoUpdater.CheckInterval = TimeSpan.FromSeconds(10000);
 
-            autoUpdater.StartAsync().Wait();
+            autoUpdater.Start();
             Thread.Sleep(1000);
 
             updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(Arg<CancellationToken>.Is.Anything));
@@ -45,7 +45,7 @@
         {
             autoUpdater.CheckInterval = TimeSpan.FromSeconds(2);
 
-            autoUpdater.StartAsync().Wait();
+            autoUpdater.Start();
             Thread.Sleep(1000);
 
             updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(Arg<CancellationToken>.Is.Anything), s => s.Repeat.Once());
@@ -56,7 +56,7 @@
         {
             autoUpdater.CheckInterval = TimeSpan.FromSeconds(1);
 
-            autoUpdater.StartAsync().Wait();
+            autoUpdater.Start();
             Thread.Sleep(1500);
 
             updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(Arg<CancellationToken>.Is.Anything), s => s.Repeat.Twice());
@@ -67,12 +67,12 @@
         {
             autoUpdater.CheckInterval = TimeSpan.FromSeconds(1);
 
-            autoUpdater.StartAsync().Wait();
+            autoUpdater.Start();
             Thread.Sleep(100);
-            autoUpdater.StartAsync().Wait();
+            autoUpdater.Start();
             Thread.Sleep(100);
 
-            updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(CancellationToken.None), s => s.Repeat.Once());
+            updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(Arg<CancellationToken>.Is.Anything), s => s.Repeat.Once());
         }
 
         [Test]
@@ -80,12 +80,12 @@
         {
             autoUpdater.CheckInterval = TimeSpan.FromSeconds(1);
 
-            autoUpdater.StartAsync().Wait();
+            autoUpdater.Start();
             Thread.Sleep(300);
             autoUpdater.Stop();
             Thread.Sleep(1500);
 
-            updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(CancellationToken.None), s => s.Repeat.Once());
+            updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(Arg<CancellationToken>.Is.Anything), s => s.Repeat.Once());
         }
 
         [Test]
@@ -101,11 +101,11 @@
         {
             var called = false;
             var info = new UpdateInfo(true, new Version("2.0.0"));
-            updateManager.Stub(x => x.CheckForUpdateAsync(CancellationToken.None)).Return(TaskHelpers.FromResult(info));
-            updateManager.Stub(x => x.DoUpdateAsync(info, CancellationToken.None)).Return(TaskHelpers.Completed());
+            updateManager.Stub(x => x.CheckForUpdateAsync(Arg<CancellationToken>.Is.Anything)).Return(TaskHelpers.FromResult(info));
+            updateManager.Stub(x => x.DoUpdateAsync(Arg<UpdateInfo>.Is.Equal(info), Arg<CancellationToken>.Is.Anything)).Return(TaskHelpers.Completed());
             autoUpdater.Updated += (sender, e) => called = true;
 
-            autoUpdater.StartAsync().Wait();
+            autoUpdater.Start();
             Thread.Sleep(100);
 
             Assert.That(called, Is.True);
