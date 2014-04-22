@@ -48,7 +48,7 @@
 
         Uri GetVersionUrl(Version version, string fileName)
         {
-            return new Uri(updateServerUrl, /*TODO*/ Path.Combine(version.ToString(), fileName));
+            return new Uri(updateServerUrl, version + "/" + fileName);
         }
 
         Task<string> DownloadStringAsync(Uri url, CancellationToken cancellationToken)
