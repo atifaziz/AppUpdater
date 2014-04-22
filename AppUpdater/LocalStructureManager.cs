@@ -15,7 +15,8 @@
     
     public class LocalStructureManager : ILocalStructureManager
     {
-        public string baseDir;
+        readonly string baseDir;
+
         public static Func<string> GetExecutablePath = GetExecutingAssemblyLocation;
 
         public LocalStructureManager(string baseDir)
