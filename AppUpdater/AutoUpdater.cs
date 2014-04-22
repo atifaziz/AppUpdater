@@ -4,7 +4,6 @@
 
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Threading;
     using System.Threading.Tasks;
     using Logging;
@@ -12,60 +11,120 @@
 
     #endregion
 
-    public class AutoUpdater
+    public sealed class AutoUpdater
     {
-        readonly ILog log = Logger.For<AutoUpdater>();
+        static readonly ILog log = Logger.For<AutoUpdater>();
+        static readonly object busyLock = new object();
+        static bool busy;
+        static readonly object currentLock = new object();
+        static AutoUpdater current;
+
+        readonly CancellationTokenSource stopper;
+        readonly Timer timer;
         readonly IUpdateManager updateManager;
-        Timer timer;
-        CancellationTokenSource stopTokenSource;
+        readonly TimeSpan checkInterval;
+        readonly TaskScheduler scheduler;
+        readonly EventHandler updated;
 
-        public TimeSpan CheckInterval { get; set; }
-
-        Timer Timer
+        AutoUpdater(IUpdateManager updateManager, TimeSpan checkInterval, Timer timer, EventHandler updated, TaskScheduler scheduler)
         {
-            get { return timer; }
-            set
+            stopper = new CancellationTokenSource();
+            this.timer = timer;
+            this.updateManager = updateManager;
+            this.checkInterval = checkInterval;
+            this.scheduler = scheduler;
+            this.updated = updated;
+        }
+
+        public sealed class Setup
+        {
+            TimeSpan checkInterval;
+
+            public IUpdateManager UpdateManager { get; set; }
+
+            public TimeSpan CheckInterval
             {
-                if (timer != null)
-                    timer.Dispose();
-                timer = value;
+                get { return checkInterval; }
+                set
+                {
+                    if ((int) value.TotalMilliseconds <= 0) throw new ArgumentOutOfRangeException("value", value, "Interval cannot be zero or negative.");
+                    checkInterval = value;
+                }
+            }
+
+            public TaskScheduler Scheduler { get; set; }
+            public event EventHandler Updated;
+
+            public Setup(IUpdateManager updateManager) : 
+                this(updateManager, TimeSpan.FromHours(1)) {}
+
+            public Setup(IUpdateManager updateManager, TimeSpan checkInterval)
+            {
+                if (updateManager == null) throw new ArgumentNullException("updateManager");
+                UpdateManager = updateManager;
+                CheckInterval = checkInterval;
+            }
+
+            internal EventHandler UpdatedInternal { get { return Updated; } }
+        }
+
+        public static void Start(Setup setup)
+        {
+            if (setup == null) throw new ArgumentNullException("setup");
+
+            AutoUpdater updater;
+
+            lock (currentLock)
+            {
+                if (current != null)
+                    return;
+
+                var timerUpdater = new AutoUpdater[1];
+                updater = timerUpdater[0] = new AutoUpdater(
+                    setup.UpdateManager,
+                    setup.CheckInterval,
+                    new Timer(_ => timerUpdater[0].CheckForUpdatesThenReschedule()),
+                    setup.UpdatedInternal ?? delegate { },
+                    setup.Scheduler ?? (SynchronizationContext.Current != null
+                                        ? TaskScheduler.FromCurrentSynchronizationContext()
+                                        : TaskScheduler.Default));
+
+                ReplaceCurrent(updater);
+            }
+
+            updater.timer.Change(TimeSpan.Zero, TimeSpan.Zero); // immediate!
+        }
+
+        static void ReplaceCurrent(AutoUpdater value)
+        {
+            lock (currentLock)
+            {
+                var old = current;
+                current = value;
+                if (old == null)
+                    return;
+                old.stopper.Cancel();
+                old.timer.Dispose();
             }
         }
 
-        public event EventHandler Updated;
-
-        public AutoUpdater(IUpdateManager updateManager)
+        public static void Stop()
         {
-            this.updateManager = updateManager;
-            CheckInterval = TimeSpan.FromHours(1);
+            lock (currentLock)
+            {
+                if (current == null)
+                    return;
+                ReplaceCurrent(null);
+            }
+            log.Debug("Stopping the AutoUpdater.");
         }
 
-        public void Start()
-        {
-            Start(null);
-        }
-
-        public void Start(TaskScheduler scheduler)
-        {
-            if (Timer != null)
-                return;
-            var stopTokenSource = new CancellationTokenSource();
-            Timer = new Timer(_ => CheckForUpdatesThenReschedule(stopTokenSource.Token, 
-                              scheduler ?? 
-                              (SynchronizationContext.Current != null
-                               ? TaskScheduler.FromCurrentSynchronizationContext()
-                               : TaskScheduler.Default)));
-            this.stopTokenSource = stopTokenSource;
-            Timer.Change(TimeSpan.Zero, TimeSpan.Zero); // immediate!
-        }
-
-        void CheckForUpdatesThenReschedule(CancellationToken cancellationToken, TaskScheduler scheduler)
-        {
-            var timer = Timer;
+        void CheckForUpdatesThenReschedule()
+        {            
             var reschedule = false;
             try
             {   // ReSharper disable once MethodSupportsCancellation
-                CheckForUpdatesAsync(cancellationToken, scheduler).Wait();
+                CheckForUpdatesAsync().Wait();
                 reschedule = true;
             }
             catch (Exception e)
@@ -77,48 +136,47 @@
             }
             finally
             {
-                if (reschedule && !cancellationToken.IsCancellationRequested)
-                    timer.Change(CheckInterval, TimeSpan.Zero);
+                if (reschedule && !stopper.IsCancellationRequested)
+                    timer.Change(checkInterval, TimeSpan.Zero);
             }
         }
 
-        public void Stop()
+
+        Task CheckForUpdatesAsync()
         {
-            var timer = this.timer;
-            this.timer = null;
-            if (timer != null)
+            return TaskHelpers.Iterate(CheckForUpdatesImpl(), stopper.Token);
+        }
+
+        IEnumerable<Task> CheckForUpdatesImpl()
+        {
+            lock (busyLock)
             {
-                var stopTokenSource = this.stopTokenSource;
-                this.stopTokenSource = null;
-                stopTokenSource.Cancel();
-                stopTokenSource.Dispose();
-                timer.Dispose();
+                if (busy)
+                    yield break;
+                busy = true;
             }
-            log.Debug("Stopping the AutoUpdater.");
-        }
 
-        Task CheckForUpdatesAsync(CancellationToken cancellationToken, TaskScheduler scheduler)
-        {
-            return TaskHelpers.Iterate(CheckForUpdatesImpl(cancellationToken, scheduler), cancellationToken);
-        }
-
-        IEnumerable<Task> CheckForUpdatesImpl(CancellationToken cancellationToken, TaskScheduler scheduler)
-        {
-            log.Debug("Checking for updates.");
-            var checkTask = updateManager.CheckForUpdateAsync(cancellationToken);
-            yield return checkTask;
-            var updateInfo = checkTask.Result;
-            if (!updateInfo.HasUpdate)
+            try
             {
-                log.Debug("No updates found.");
-                yield break;
-            }
-            log.Debug("Updates found. Installing new files.");
-            yield return updateManager.DoUpdateAsync(updateInfo, cancellationToken);
-            log.Debug("Update is ready.");
-            var updated = Updated;
-            if (updated != null)
+                log.Debug("Checking for updates.");
+                var cancellationToken = stopper.Token;
+                var checkTask = updateManager.CheckForUpdateAsync(cancellationToken);
+                yield return checkTask;
+                var updateInfo = checkTask.Result;
+                if (!updateInfo.HasUpdate)
+                {
+                    log.Debug("No updates found.");
+                    yield break;
+                }
+                log.Debug("Updates found. Installing new files.");
+                yield return updateManager.DoUpdateAsync(updateInfo, cancellationToken);
+                log.Debug("Update is ready.");
                 Task.Factory.StartNew(() => updated(this, EventArgs.Empty), cancellationToken, TaskCreationOptions.None, scheduler);
+            }
+            finally
+            {
+                lock (busyLock) { busy = false; }
+            }
         }
     }
 }

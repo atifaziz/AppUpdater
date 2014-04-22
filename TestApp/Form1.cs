@@ -16,8 +16,6 @@ namespace TestApp
 
     public partial class Form1 : Form
     {
-        private AutoUpdater autoUpdater;
-
         public Form1()
         {
             InitializeComponent();
@@ -27,10 +25,13 @@ namespace TestApp
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            autoUpdater = new AutoUpdater(UpdateManager.Default);
-            autoUpdater.CheckInterval = TimeSpan.FromSeconds(10);
-            autoUpdater.Updated += new EventHandler(autoUpdater_Updated);
-            autoUpdater.Start();
+            var setup = new AutoUpdater.Setup(UpdateManager.Default)
+            {
+                CheckInterval = TimeSpan.FromSeconds(10),
+            };
+            setup.Updated += autoUpdater_Updated;
+            AutoUpdater.Start(setup);
+
 
             btnStart.Enabled = false;
             btnStop.Enabled = true;
@@ -44,7 +45,7 @@ namespace TestApp
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            autoUpdater.Stop();
+            AutoUpdater.Stop();
 
             btnStart.Enabled = true;
             btnStop.Enabled = false;
