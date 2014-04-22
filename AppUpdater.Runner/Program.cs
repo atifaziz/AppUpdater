@@ -11,7 +11,9 @@
 
     #endregion
 
-    static class Program
+    // ReSharper disable once PartialTypeWithSinglePart
+    
+    static partial class Program
     {
         static int Main(string[] args)
         {
