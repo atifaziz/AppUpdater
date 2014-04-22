@@ -30,13 +30,14 @@
  
         static int Run(IEnumerable<string> args)
         {
-            var dir = Path.GetDirectoryName(typeof(Program).Assembly.Location);
+            var thisAssemblyPath = typeof(Program).Assembly.Location;
+            var dir = Path.GetDirectoryName(thisAssemblyPath);
             Debug.Assert(dir != null);
             var config = XDocument.Load(Path.Combine(dir, "config.xml")).Root;  // ReSharper disable once PossibleNullReferenceException
 
             var version     = (string) config.Element("version");
             var lastVersion = (string) config.Element("last_version");
-            var executable  = (string) config.Element("executable");
+            var executable  = (string) config.Element("executable") ?? Path.GetFileName(thisAssemblyPath);
 
             var runLast = args.Any(x => x.Equals("-last", StringComparison.CurrentCultureIgnoreCase));
             if (runLast && lastVersion == null)
