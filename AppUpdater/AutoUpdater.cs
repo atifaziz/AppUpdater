@@ -49,30 +49,36 @@
         {
             if (Timer != null)
                 return;
-            StartImpl(scheduler ?? (SynchronizationContext.Current != null 
-                                    ? TaskScheduler.FromCurrentSynchronizationContext() 
-                                    : TaskScheduler.Default));
-        }
-
-        void StartImpl(TaskScheduler scheduler)
-        {
             var stopTokenSource = new CancellationTokenSource();
-            Timer = new Timer(delegate { CheckForUpdates(stopTokenSource.Token, scheduler); }, 
-                              null, TimeSpan.Zero, CheckInterval);
+            Timer = new Timer(_ => CheckForUpdatesThenReschedule(stopTokenSource.Token, 
+                              scheduler ?? 
+                              (SynchronizationContext.Current != null
+                               ? TaskScheduler.FromCurrentSynchronizationContext()
+                               : TaskScheduler.Default)));
             this.stopTokenSource = stopTokenSource;
+            Timer.Change(TimeSpan.Zero, TimeSpan.Zero); // immediate!
         }
 
-        void CheckForUpdates(CancellationToken cancellationToken, TaskScheduler scheduler)
+        void CheckForUpdatesThenReschedule(CancellationToken cancellationToken, TaskScheduler scheduler)
         {
+            var timer = Timer;
+            var reschedule = false;
             try
             {   // ReSharper disable once MethodSupportsCancellation
                 CheckForUpdatesAsync(cancellationToken, scheduler).Wait();
+                reschedule = true;
             }
             catch (Exception e)
             {
                 log.Error(e.Message);
                 if (e is StackOverflowException || e is ThreadAbortException)
                     throw;
+                reschedule = true;
+            }
+            finally
+            {
+                if (reschedule && !cancellationToken.IsCancellationRequested)
+                    timer.Change(CheckInterval, TimeSpan.Zero);
             }
         }
 
