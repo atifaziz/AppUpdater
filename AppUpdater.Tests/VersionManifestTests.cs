@@ -17,11 +17,11 @@
         {
             var data = @"<manifest>
                                 <files>
-                                    <file name=""teste1.txt"" checksum=""algo111"" size=""1000"">
-                                        <delta from=""AABBCC"" size=""500"" file=""teste1.txt.1.deploy"" />
-                                        <delta from=""CCDDEE"" size=""400"" file=""teste1.txt.2.deploy"" />
+                                    <file name='teste1.txt' checksum='algo111' size='1000'>
+                                        <delta from='AABBCC' size='500' file='teste1.txt.1.deploy' />
+                                        <delta from='CCDDEE' size='400' file='teste1.txt.2.deploy' />
                                     </file>
-                                    <file name=""teste2.txt"" checksum=""algo222"" size=""2000"" />
+                                    <file name='teste2.txt' checksum='algo222' size='2000' />
                                 </files>
                             </manifest>";
 
@@ -46,11 +46,11 @@
             var path = Path.GetTempFileName();
             var data = @"<manifest>
                                 <files>
-                                    <file name=""teste1.txt"" checksum=""algo111"" size=""1000"">
-                                        <delta from=""AABBCC"" size=""500"" file=""teste1.txt.1.deploy"" />
-                                        <delta from=""CCDDEE"" size=""400"" file=""teste1.txt.2.deploy"" />
+                                    <file name='teste1.txt' checksum='algo111' size='1000'>
+                                        <delta from='AABBCC' size='500' file='teste1.txt.1.deploy' />
+                                        <delta from='CCDDEE' size='400' file='teste1.txt.2.deploy' />
                                     </file>
-                                    <file name=""teste2.txt"" checksum=""algo222"" size=""2000"" />
+                                    <file name='teste2.txt' checksum='algo222' size='2000' />
                                 </files>
                             </manifest>";
             File.WriteAllText(path, data);
@@ -199,11 +199,11 @@
             var path = Path.GetTempFileName();
             var data = @"<manifest>
                                 <files>
-                                    <file name=""test1.txt"" checksum=""algo111"" size=""1000"" >
-                                        <delta from=""AABBCC"" size=""500"" file=""teste1.txt.1.deploy"" />
-                                        <delta from=""CCDDEE"" size=""400"" file=""teste1.txt.2.deploy"" />
+                                    <file name='test1.txt' checksum='algo111' size='1000' >
+                                        <delta from='AABBCC' size='500' file='teste1.txt.1.deploy' />
+                                        <delta from='CCDDEE' size='400' file='teste1.txt.2.deploy' />
                                     </file>
-                                    <file name=""test2.txt"" checksum=""algo222"" size=""2000"" />
+                                    <file name='test2.txt' checksum='algo222' size='2000' />
                                 </files>
                             </manifest>";
 
