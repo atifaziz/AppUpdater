@@ -15,9 +15,9 @@
         void SetLastValidVersion(Version version);
         Version GetExecutingVersion();
         bool HasVersionFolder(Version version);
-        void CopyFile(Version originVersion, Version destinationVersion, string filename);
-        void SaveFile(Version version, string filename, byte[] data);
-        void ApplyDelta(Version originalVersion, Version newVersion, string filename, byte[] deltaData);
-        Uri GetUpdateServerUri();
+        void CopyFile(Version originVersion, Version destinationVersion, string fileName);
+        void SaveFile(Version version, string fileName, byte[] data);
+        void ApplyDelta(Version originalVersion, Version newVersion, string fileName, byte[] deltaData);
+        Uri GetUpdateServerUrl();
     }
 }

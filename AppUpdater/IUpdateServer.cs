@@ -8,6 +8,6 @@
     {
         Task<Version> GetCurrentVersionAsync(CancellationToken cancellationToken);
         Task<VersionManifest> GetManifestAsync(Version version, CancellationToken cancellationToken);
-        Task<byte[]> DownloadFileAsync(Version version, string filename, CancellationToken cancellationToken);
+        Task<byte[]> DownloadFileAsync(Version version, string fileName, CancellationToken cancellationToken);
     }
 }

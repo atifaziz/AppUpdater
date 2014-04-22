@@ -37,13 +37,13 @@
             Assert.That(manifest.Files.ElementAt(0).Deltas.Count(), Is.EqualTo(2));
             Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).Checksum, Is.EqualTo("AABBCC"));
             Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).Size, Is.EqualTo(500));
-            Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).Filename, Is.EqualTo("teste1.txt.1.deploy"));
+            Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).FileName, Is.EqualTo("teste1.txt.1.deploy"));
         }
 
         [Test]
         public void LoadVersionFile_LoadsTheData()
         {
-            var filename = Path.GetTempFileName();
+            var path = Path.GetTempFileName();
             var data = @"<manifest>
                                 <files>
                                     <file name=""teste1.txt"" checksum=""algo111"" size=""1000"">
@@ -53,9 +53,9 @@
                                     <file name=""teste2.txt"" checksum=""algo222"" size=""2000"" />
                                 </files>
                             </manifest>";
-            File.WriteAllText(filename, data);
+            File.WriteAllText(path, data);
 
-            var manifest = VersionManifest.LoadVersionFile(new Version("1.2.3"), filename);
+            var manifest = VersionManifest.LoadVersionFile(new Version("1.2.3"), path);
 
             Assert.That(manifest, Is.Not.Null);
             Assert.That(manifest.Version, Is.EqualTo(new Version("1.2.3")));
@@ -67,7 +67,7 @@
             Assert.That(manifest.Files.ElementAt(0).Deltas.Count(), Is.EqualTo(2));
             Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).Checksum, Is.EqualTo("AABBCC"));
             Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).Size, Is.EqualTo(500));
-            Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).Filename, Is.EqualTo("teste1.txt.1.deploy"));
+            Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).FileName, Is.EqualTo("teste1.txt.1.deploy"));
         }
 
         [Test]
@@ -184,19 +184,19 @@
         [Test]
         public void SaveToFile_CreatesTheFile()
         {
-            var filename = Path.GetTempFileName();
+            var path = Path.GetTempFileName();
             var data = @"<manifest></manifest>";
 
             var manifest = VersionManifest.LoadVersionData(new Version("1.0.0"), data);
-            manifest.SaveToFile(filename);
+            manifest.SaveToFile(path);
 
-            Assert.That(File.Exists(filename), Is.True);
+            Assert.That(File.Exists(path), Is.True);
         }
 
         [Test]
         public void SaveToFile_SavesAllTheInfoToTheFile()
         {
-            var filename = Path.GetTempFileName();
+            var path = Path.GetTempFileName();
             var data = @"<manifest>
                                 <files>
                                     <file name=""test1.txt"" checksum=""algo111"" size=""1000"" >
@@ -208,9 +208,9 @@
                             </manifest>";
 
             var originalManifest = VersionManifest.LoadVersionData(new Version("1.0.0"), data);
-            originalManifest.SaveToFile(filename);
+            originalManifest.SaveToFile(path);
 
-            var savedManifest = VersionManifest.LoadVersionData(new Version("1.0.0"), File.ReadAllText(filename));
+            var savedManifest = VersionManifest.LoadVersionData(new Version("1.0.0"), File.ReadAllText(path));
             Assert.That(savedManifest, Is.Not.Null);
             Assert.That(savedManifest.Files, Has.Length.EqualTo(2));
             Assert.That(savedManifest.Files.ElementAt(0).Name, Is.EqualTo("test1.txt"));
@@ -222,7 +222,7 @@
             Assert.That(savedManifest.Files.ElementAt(0).Deltas.Count(), Is.EqualTo(2));
             Assert.That(savedManifest.Files.ElementAt(0).Deltas.ElementAt(0).Checksum, Is.EqualTo("AABBCC"));
             Assert.That(savedManifest.Files.ElementAt(0).Deltas.ElementAt(0).Size, Is.EqualTo(500));
-            Assert.That(savedManifest.Files.ElementAt(0).Deltas.ElementAt(0).Filename, Is.EqualTo("teste1.txt.1.deploy"));
+            Assert.That(savedManifest.Files.ElementAt(0).Deltas.ElementAt(0).FileName, Is.EqualTo("teste1.txt.1.deploy"));
         }
     }
 }

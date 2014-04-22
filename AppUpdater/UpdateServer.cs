@@ -26,7 +26,7 @@
 
         public virtual Task<Version> GetCurrentVersionAsync(CancellationToken cancellationToken)
         {
-            return DownloadStringAsync("version.xml", cancellationToken)
+            return DownloadStringAsync(new Uri("version.xml", UriKind.Relative), cancellationToken)
                   .ContinueWith(t =>
                   {
                       var doc = XDocument.Parse(t.Result);
@@ -37,42 +37,42 @@
 
         public virtual Task<VersionManifest> GetManifestAsync(Version version, CancellationToken cancellationToken)
         {
-            return DownloadStringAsync(GetVersionFilename(version, "manifest.xml"), cancellationToken)
+            return DownloadStringAsync(GetVersionUrl(version, "manifest.xml"), cancellationToken)
                   .ContinueWith(t => VersionManifest.LoadVersionData(version, t.Result), cancellationToken);
         }
 
-        public virtual Task<byte[]> DownloadFileAsync(Version version, string filename, CancellationToken cancellationToken)
+        public virtual Task<byte[]> DownloadFileAsync(Version version, string fileName, CancellationToken cancellationToken)
         {
-            return DownloadBinaryAsync(GetVersionFilename(version, filename), cancellationToken);
+            return DownloadBinaryAsync(GetVersionUrl(version, fileName), cancellationToken);
         }
 
-        string GetVersionFilename(Version version, string filename)
+        Uri GetVersionUrl(Version version, string fileName)
         {
-            return new Uri(updateServerUrl, /*TODO*/ Path.Combine(version.ToString(), filename)).ToString();
+            return new Uri(updateServerUrl, /*TODO*/ Path.Combine(version.ToString(), fileName));
         }
 
-        Task<string> DownloadStringAsync(string filename, CancellationToken cancellationToken)
+        Task<string> DownloadStringAsync(Uri url, CancellationToken cancellationToken)
         {
-            return DownloadAsync(filename,
+            return DownloadAsync(url,
                                  WebClientTaskifiers.DownloadString,
-                                 (wc, url) => wc.DownloadStringAsync(url),
+                                 (wc, ur1) => wc.DownloadStringAsync(ur1),
                                  cancellationToken);
         }
 
-        Task<byte[]> DownloadBinaryAsync(string filename, CancellationToken cancellationToken)
+        Task<byte[]> DownloadBinaryAsync(Uri url, CancellationToken cancellationToken)
         {
-            return DownloadAsync(filename,
+            return DownloadAsync(url,
                                  WebClientTaskifiers.DownloadData,
-                                 (wc, url) => wc.DownloadDataAsync(url),
+                                 (wc, ur1) => wc.DownloadDataAsync(ur1),
                                  cancellationToken);
         }
 
-        Task<T> DownloadAsync<T>(string filename,
+        Task<T> DownloadAsync<T>(Uri url,
             Func<WebClient, CancellationToken, Task<T>> tasker,
             Action<WebClient, Uri> starter,
             CancellationToken cancellationToken)
         {
-            var versionUrl = new Uri(updateServerUrl, filename);
+            var versionUrl = new Uri(updateServerUrl, url);
             var client = new WebClient();
             var task = tasker(client, cancellationToken);
             starter(client, versionUrl);

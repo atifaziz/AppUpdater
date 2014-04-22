@@ -296,7 +296,7 @@
             var configFilename = Path.Combine(baseDir, "config.xml");
             File.WriteAllText(configFilename, data);
             
-            var uri = structureManager.GetUpdateServerUri();
+            var uri = structureManager.GetUpdateServerUrl();
 
             Assert.That(uri.ToString(), Is.EqualTo("http://localhost:8080/update/"));
         }

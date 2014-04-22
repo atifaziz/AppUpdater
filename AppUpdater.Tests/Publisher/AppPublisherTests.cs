@@ -142,7 +142,7 @@
             Assert.That(manifest.Files.ElementAt(0).Deltas.Count(), Is.EqualTo(2));
             Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).Checksum, Is.EqualTo("B21A7D77034B2A1120A5E7E803AFACB52F14D6BF7C833A3F0E5B1FD10380AF3D"));
             Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).Size, Is.EqualTo(23));
-            Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).Filename, Is.EqualTo("deltas\\test1.txt.B21A7.deploy"));
+            Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).FileName, Is.EqualTo("deltas\\test1.txt.B21A7.deploy"));
         }
 
         private void CreateVersionFiles(int diferenciator=0)

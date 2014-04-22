@@ -21,7 +21,7 @@
             var delta = file.GetDeltaFrom("AAA");
 
             Assert.That(delta, Is.Not.Null);
-            Assert.That(delta.Filename, Is.EqualTo("aa.bb"));
+            Assert.That(delta.FileName, Is.EqualTo("aa.bb"));
         }
 
         [Test]

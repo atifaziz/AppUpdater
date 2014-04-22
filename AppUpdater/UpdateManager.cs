@@ -33,7 +33,7 @@
                 {
                     var baseDir = Path.Combine(Path.GetDirectoryName(typeof(UpdateManager).Assembly.Location), "..\\");
                     ILocalStructureManager manager = new LocalStructureManager(baseDir);
-                    IUpdateServer updateServer = new UpdateServer(manager.GetUpdateServerUri());
+                    IUpdateServer updateServer = new UpdateServer(manager.GetUpdateServerUrl());
                     defaultInstance = new UpdateManager(updateServer, manager, new UpdaterChef(manager, updateServer));
                     defaultInstance.Initialize();
                 }

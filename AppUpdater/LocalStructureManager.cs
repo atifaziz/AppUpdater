@@ -16,6 +16,7 @@
     public class LocalStructureManager : ILocalStructureManager
     {
         readonly string baseDir;
+        string configFilePath;
 
         public static Func<string> GetExecutablePath = GetExecutingAssemblyLocation;
 
@@ -26,12 +27,12 @@
 
         public void CreateVersionDir(Version version)
         {
-            Directory.CreateDirectory(GetVersionDir(version));
+            Directory.CreateDirectory(GetVersionPath(version));
         }
 
         public void DeleteVersionDir(Version version)
         {
-            Directory.Delete(GetVersionDir(version), true);
+            Directory.Delete(GetVersionPath(version), true);
         }
 
         public IEnumerable<Version> GetInstalledVersions()
@@ -42,8 +43,8 @@
 
         public VersionManifest LoadManifest(Version version)
         {
-            var versionDir = GetVersionDir(version);
-            return VersionManifest.GenerateFromDirectory(version, versionDir);
+            var versionPath = GetVersionPath(version);
+            return VersionManifest.GenerateFromDirectory(version, versionPath);
         }
 
         public Version GetCurrentVersion()
@@ -75,48 +76,48 @@
 
         public bool HasVersionFolder(Version version)
         {
-            return Directory.Exists(GetVersionDir(version));
+            return Directory.Exists(GetVersionPath(version));
         }
 
-        public void CopyFile(Version originVersion, Version destinationVersion, string filename)
+        public void CopyFile(Version originVersion, Version destinationVersion, string fileName)
         {
-            var originFilename = Path.Combine(GetVersionDir(originVersion), filename);
-            var destinationFilename = Path.Combine(GetVersionDir(destinationVersion), filename);
+            var originFilePath = Path.Combine(GetVersionPath(originVersion), fileName);
+            var destinationFilePath = Path.Combine(GetVersionPath(destinationVersion), fileName);
 
-            File.Copy(originFilename, destinationFilename, true);
+            File.Copy(originFilePath, destinationFilePath, true);
         }
 
-        public void SaveFile(Version version, string filename, byte[] data)
+        public void SaveFile(Version version, string fileName, byte[] data)
         {
-            var destinationFilename = Path.Combine(GetVersionDir(version), filename);
-            File.WriteAllBytes(destinationFilename, data);
+            var destinationFilePath = Path.Combine(GetVersionPath(version), fileName);
+            File.WriteAllBytes(destinationFilePath, data);
         }
 
-        public void ApplyDelta(Version originalVersion, Version newVersion, string filename, byte[] deltaData)
+        public void ApplyDelta(Version originalVersion, Version newVersion, string fileName, byte[] deltaData)
         {
-            var originalFile = GetFilename(originalVersion, filename);
-            var newFile = GetFilename(newVersion, filename);
+            var originalFile = GetFilePath(originalVersion, fileName);
+            var newFile = GetFilePath(newVersion, fileName);
             var deltaFile = Path.GetTempFileName();
             File.WriteAllBytes(deltaFile, deltaData);
 
             DeltaAPI.ApplyDelta(originalFile, newFile, deltaFile);
         }
 
-        public Uri GetUpdateServerUri()
+        public Uri GetUpdateServerUrl()
         {
             var configFilename = Path.Combine(baseDir, "config.xml");
             var doc = XDocument.Load(configFilename);
             return new Uri((string) doc.Elements("config").Elements("updateServer").Single());
         }
 
-        private string GetVersionDir(Version version)
+        string GetVersionPath(Version version)
         {
             return Path.Combine(baseDir, version.ToString());
         }
 
-        private string GetFilename(Version version, string filename)
+        string GetFilePath(Version version, string fileName)
         {
-            return Path.Combine(GetVersionDir(version), filename);
+            return Path.Combine(GetVersionPath(version), fileName);
         }
 
         private static string GetExecutingAssemblyLocation()
@@ -124,21 +125,25 @@
             return Assembly.GetExecutingAssembly().Location;
         }
 
+        string ConfigFilePath
+        {
+            get { return configFilePath ?? (configFilePath = Path.Combine(baseDir, "config.xml")); }
+        }
+
         private string GetConfigValue(string name)
         {
-            var configFilename = Path.Combine(baseDir, "config.xml");
-            var doc = XDocument.Load(configFilename);
+            var doc = XDocument.Load(ConfigFilePath);
             var configValue = (string) doc.Elements("config").Elements(name).SingleOrDefault();
             return configValue ?? string.Empty;
         }
 
         private void SetConfigValue(string name, object value)
         {
-            var configFilename = Path.Combine(baseDir, "config.xml");
-            var doc = XDocument.Load(configFilename);
+            var configFilePath = ConfigFilePath;
+            var doc = XDocument.Load(configFilePath);
             // ReSharper disable once PossibleNullReferenceException
             doc.Root.SetElementValue(name, string.Format(CultureInfo.InvariantCulture, "{0}", value));
-            doc.Save(configFilename);
+            doc.Save(configFilePath);
         }
     }
 }

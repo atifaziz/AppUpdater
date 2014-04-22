@@ -22,9 +22,9 @@
             Files = files;
         }
 
-        public static VersionManifest LoadVersionFile(Version version, string filename)
+        public static VersionManifest LoadVersionFile(Version version, string path)
         {
-            return LoadData(version, XDocument.Load(filename));
+            return LoadData(version, XDocument.Load(path));
         }
 
         public static VersionManifest LoadVersionData(Version version, string data)
@@ -75,7 +75,7 @@
                         if (delta != null)
                         {
                             action = FileUpdateAction.DownloadDelta;
-                            fileToDownload = delta.Filename;
+                            fileToDownload = delta.FileName;
                             size = delta.Size;
                         }
                     }
@@ -102,7 +102,7 @@
             return new VersionManifest(version, files.ToArray());
         }
 
-        public void SaveToFile(string filename)
+        public void SaveToFile(string path)
         {
             var manifest =
                 new XElement("manifest",
@@ -116,9 +116,9 @@
                             select new XElement("delta",
                                 new XAttribute("from", delta.Checksum),
                                 new XAttribute("size", delta.Size),
-                                new XAttribute("file", delta.Filename)))));
+                                new XAttribute("file", delta.FileName)))));
 
-            manifest.Save(filename);
+            manifest.Save(path);
         }
     }
 }
