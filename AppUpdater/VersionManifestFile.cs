@@ -8,7 +8,7 @@
         public string Name { get; private set; }
         public string Checksum { get; private set; }
         public long Size { get; private set; }
-        public /* TODO IEnumerable */ List<VersionManifestDeltaFile> Deltas { get; private set; }
+        public ICollection<VersionManifestDeltaFile> Deltas { get; private set; }
 
         public string DeployedName
         {
@@ -26,7 +26,7 @@
             Name = name;
             Checksum = checksum;
             Size = size;
-            Deltas = new List<VersionManifestDeltaFile>(deltas ?? new VersionManifestDeltaFile[0]);
+            Deltas = (deltas ?? Enumerable.Empty<VersionManifestDeltaFile>()).ToList();
         }
 
         public VersionManifestDeltaFile GetDeltaFrom(string checksum)

@@ -38,16 +38,18 @@
                 from f in doc.Elements("manifest")
                              .Elements("files").Take(1)
                              .Elements("file")
+                let deltas = 
+                    from d in f.Elements("delta")
+                    select new VersionManifestDeltaFile(
+                            (string) d.Attribute("file"),
+                            (string) d.Attribute("from"),
+                            (long)   d.Attribute("size"))
                 select new VersionManifestFile
                 (
                         (string) f.Attribute("name"),
                         (string) f.Attribute("checksum"),
                         (long)   f.Attribute("size"), 
-                        from d in f.Elements("delta")
-                        select new VersionManifestDeltaFile(
-                                (string) d.Attribute("file"),
-                                (string) d.Attribute("from"),
-                                (long)   d.Attribute("size")));
+                        deltas.ToArray());
             
             return new VersionManifest(version, files.ToArray());
         }

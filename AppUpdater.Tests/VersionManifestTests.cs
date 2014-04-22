@@ -129,8 +129,10 @@
         public void UpdateTo_WithAnIncorrectDelta_SetTheActionAsDownload()
         {
             var fileOriginal = new VersionManifestFile("arquivo1.txt", "333", 1000);
-            var fileUpdate = new VersionManifestFile("arquivo1.txt", "123", 1000);
-            fileUpdate.Deltas.Add(new VersionManifestDeltaFile("deltas\\arquivo1.txt", "444", 10));
+            var fileUpdate = new VersionManifestFile("arquivo1.txt", "123", 1000, new[]
+            {
+                new VersionManifestDeltaFile("deltas\\arquivo1.txt", "444", 10)
+            });
             var currentManifest = new VersionManifest(new Version("1.0.0"), new VersionManifestFile[] { fileOriginal });
             var updateManifest = new VersionManifest(new Version("2.0.0"), new VersionManifestFile[] { fileUpdate });
 
@@ -144,8 +146,10 @@
         public void UpdateTo_WithADeltaAvailable_SetTheActionAsDownloadDelta()
         {
             var fileOriginal = new VersionManifestFile("arquivo1.txt", "333", 1000);
-            var fileUpdate = new VersionManifestFile("arquivo1.txt", "123", 1000);
-            fileUpdate.Deltas.Add(new VersionManifestDeltaFile("deltas\\arquivo1.txt", "333", 10));
+            var fileUpdate = new VersionManifestFile("arquivo1.txt", "123", 1000, new[]
+            {
+                new VersionManifestDeltaFile("deltas\\arquivo1.txt", "333", 10)                                                                                      
+            });
             var currentManifest = new VersionManifest(new Version("1.0.0"), new VersionManifestFile[] { fileOriginal });
             var updateManifest = new VersionManifest(new Version("2.0.0"), new VersionManifestFile[] { fileUpdate });
 
