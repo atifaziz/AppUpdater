@@ -60,6 +60,11 @@
     <Compile Include="UpdateInfo.cs" />
     <Compile Include="UpdateManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.g.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AssemblyInfo.g.tt</DependentUpon>
+    </Compile>
     <Compile Include="UpdaterChef.cs" />
     <Compile Include="UpdateRecipe.cs" />
     <Compile Include="UpdateRecipeFile.cs" />
@@ -70,6 +75,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\AssemblyInfo.g.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>AssemblyInfo.g.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
