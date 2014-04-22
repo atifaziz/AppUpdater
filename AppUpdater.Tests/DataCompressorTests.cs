@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using AppUpdater.Utils;
+using AppUpdater;
 using System.IO;
 
-namespace AppUpdater.Tests.Utils
+namespace AppUpdater.Tests
 {
     [TestFixture]
     public class DataCompressorTests

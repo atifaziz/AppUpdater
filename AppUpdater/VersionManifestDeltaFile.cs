@@ -1,4 +1,4 @@
-﻿namespace AppUpdater.Manifest
+﻿namespace AppUpdater
 {
     public class VersionManifestDeltaFile
     {

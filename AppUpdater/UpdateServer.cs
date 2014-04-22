@@ -1,4 +1,4 @@
-﻿namespace AppUpdater.Server
+﻿namespace AppUpdater
 {
     #region Imports
 
@@ -11,7 +11,6 @@
     using System.Threading.Tasks;
     using System.Xml.Linq;
     using Logging;
-    using Manifest;
 
     #endregion
 

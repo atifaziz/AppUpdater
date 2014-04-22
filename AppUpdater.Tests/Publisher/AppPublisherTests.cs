@@ -5,9 +5,8 @@ using System.Text;
 using NUnit.Framework;
 using AppUpdater.Publisher;
 using System.IO;
-using AppUpdater.Manifest;
+using AppUpdater;
 using System.Xml;
-using AppUpdater.Utils;
 
 namespace AppUpdater.Tests.Publisher
 {

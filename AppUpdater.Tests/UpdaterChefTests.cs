@@ -1,11 +1,7 @@
 ﻿using System;
-using AppUpdater.LocalStructure;
-using AppUpdater.Recipe;
-using AppUpdater.Server;
-using AppUpdater.Chef;
+using AppUpdater;
 using NUnit.Framework;
 using Rhino.Mocks;
-using AppUpdater.Utils;
 
 namespace AppUpdater.Tests
 {

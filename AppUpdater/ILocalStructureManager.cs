@@ -1,9 +1,8 @@
-﻿using AppUpdater.Manifest;
-using System;
-using System.Collections.Generic;
-
-namespace AppUpdater.LocalStructure
+﻿namespace AppUpdater
 {
+    using System;
+    using System.Collections.Generic;
+
     public interface ILocalStructureManager
     {
         void CreateVersionDir(Version version);

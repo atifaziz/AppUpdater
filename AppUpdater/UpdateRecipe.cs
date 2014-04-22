@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace AppUpdater.Recipe
+﻿namespace AppUpdater
 {
+    using System;
+    using System.Collections.Generic;
+
     public class UpdateRecipe
     {
         public Version NewVersion { get; private set; }

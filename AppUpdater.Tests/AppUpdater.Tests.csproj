@@ -50,14 +50,14 @@
     <Compile Include="App_Packages\TaskHelpers.Sources.0.3\TaskHelpers.cs" />
     <Compile Include="App_Packages\TaskHelpers.Sources.0.3\TaskHelpersExtensions.cs" />
     <Compile Include="AutoUpdaterTests.cs" />
+    <Compile Include="ChecksumTests.cs" />
+    <Compile Include="DataCompressorTests.cs" />
     <Compile Include="LocalStructureManagerTests.cs" />
     <Compile Include="LoggerTests.cs" />
     <Compile Include="Publisher\AppPublisherTests.cs" />
     <Compile Include="UpdateManagerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UpdaterChefTests.cs" />
-    <Compile Include="Utils\ChecksumTests.cs" />
-    <Compile Include="Utils\DataCompressorTests.cs" />
     <Compile Include="VersionManifestFileTests.cs" />
     <Compile Include="VersionManifestTests.cs" />
   </ItemGroup>

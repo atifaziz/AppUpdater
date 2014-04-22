@@ -1,7 +1,8 @@
-﻿using System.Linq;
-using System.Collections.Generic;
-namespace AppUpdater.Manifest
+﻿namespace AppUpdater
 {
+    using System.Linq;
+    using System.Collections.Generic;
+
     public class VersionManifestFile
     {
         public string Name { get; private set; }

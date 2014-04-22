@@ -3,8 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using AppUpdater.Delta;
-using AppUpdater.Manifest;
-using AppUpdater.Utils;
+using AppUpdater;
 
 namespace AppUpdater.Publisher
 {

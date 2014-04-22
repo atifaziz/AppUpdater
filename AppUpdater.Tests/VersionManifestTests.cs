@@ -1,6 +1,5 @@
 ﻿using System.Linq;
-using AppUpdater.Manifest;
-using AppUpdater.Recipe;
+using AppUpdater;
 using NUnit.Framework;
 using System.IO;
 

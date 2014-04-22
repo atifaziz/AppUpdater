@@ -1,9 +1,8 @@
-﻿namespace AppUpdater.Server
+﻿namespace AppUpdater
 {
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Manifest;
 
     public interface IUpdateServer
     {

@@ -1,5 +1,4 @@
-﻿
-namespace AppUpdater.Recipe
+﻿namespace AppUpdater
 {
     public enum FileUpdateAction
     {

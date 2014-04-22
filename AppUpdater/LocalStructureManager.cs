@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Xml;
-using AppUpdater.Delta;
-using AppUpdater.Manifest;
-
-namespace AppUpdater.LocalStructure
+﻿namespace AppUpdater
 {
+    #region Imports
+
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using System.Xml;
+    using Delta;
+
+    #endregion
+    
     public class LocalStructureManager : ILocalStructureManager
     {
         public string baseDir;

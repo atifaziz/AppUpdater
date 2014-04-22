@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using System.IO;
-using AppUpdater.Utils;
+using AppUpdater;
 
-namespace AppUpdater.Tests.Utils
+namespace AppUpdater.Tests
 {
     [TestFixture]
     public class ChecksumTests

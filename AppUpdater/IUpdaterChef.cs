@@ -1,8 +1,8 @@
-﻿namespace AppUpdater.Chef
+﻿namespace AppUpdater
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Recipe;
+    using AppUpdater;
 
     public interface IUpdaterChef
     {

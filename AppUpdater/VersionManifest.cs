@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml;
-using AppUpdater.Recipe;
-using AppUpdater.Utils;
-using System.IO;
-using AppUpdater.Delta;
-
-namespace AppUpdater.Manifest
+﻿namespace AppUpdater
 {
+    #region Imports
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Xml;
+    using System.IO;
+    using Delta;
+
+    #endregion
+
     public class VersionManifest
     {
         public Version Version { get; private set; }

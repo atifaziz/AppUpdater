@@ -1,4 +1,4 @@
-﻿namespace AppUpdater.Utils
+﻿namespace AppUpdater
 {
     using System;
     using System.Security.Cryptography;

@@ -4,8 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using System.IO;
-using AppUpdater.LocalStructure;
-using AppUpdater.Manifest;
+using AppUpdater;
 using System.Xml;
 using AppUpdater.Delta;
 

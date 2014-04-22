@@ -1,4 +1,4 @@
-﻿namespace AppUpdater.Chef
+﻿namespace AppUpdater
 {
     #region Imports
 
@@ -6,11 +6,8 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using LocalStructure;
     using Logging;
-    using Recipe;
-    using Server;
-    using Utils;
+    using AppUpdater;
 
     #endregion
 
