@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
-using AppUpdater.Publisher;
-using System.IO;
-using AppUpdater;
-using System.Xml;
-
-namespace AppUpdater.Tests.Publisher
+﻿namespace AppUpdater.Tests.Publisher
 {
+    #region Imports
+
+    using System;
+    using System.Linq;
+    using NUnit.Framework;
+    using AppUpdater.Publisher;
+    using System.IO;
+    using System.Xml;
+
+    #endregion
+
     [TestFixture]
     public class AppPublisherTests
     {

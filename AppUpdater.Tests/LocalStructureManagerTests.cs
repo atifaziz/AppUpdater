@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
-using System.IO;
-using AppUpdater;
-using System.Xml;
-using AppUpdater.Delta;
-
-namespace AppUpdater.Tests
+﻿namespace AppUpdater.Tests
 {
+    #region Imports
+
+    using System;
+    using System.Linq;
+    using NUnit.Framework;
+    using System.IO;
+    using System.Xml;
+    using Delta;
+
+    #endregion
+
     [TestFixture]
     public class LocalStructureManagerTests
     {

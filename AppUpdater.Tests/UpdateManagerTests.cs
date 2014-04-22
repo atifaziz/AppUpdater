@@ -1,13 +1,15 @@
-﻿using AppUpdater;
-using NUnit.Framework;
-using Rhino.Mocks;
-using System;
-
-namespace AppUpdater.Tests
+﻿namespace AppUpdater.Tests
 {
+    #region Imports
+
+    using System;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using NUnit.Framework;
+    using Rhino.Mocks;
+
+    #endregion
 
     public class UpdateManagerTests
     {

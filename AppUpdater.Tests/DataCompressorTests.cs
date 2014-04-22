@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
-using AppUpdater;
-using System.IO;
-
-namespace AppUpdater.Tests
+﻿namespace AppUpdater.Tests
 {
+    using System.Text;
+    using NUnit.Framework;
+
     [TestFixture]
     public class DataCompressorTests
     {

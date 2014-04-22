@@ -1,12 +1,15 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Xml.Linq;
-using AppUpdater.Delta;
-using AppUpdater;
-
-namespace AppUpdater.Publisher
+﻿namespace AppUpdater.Publisher
 {
+    #region Imports
+
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Xml.Linq;
+    using Delta;
+
+    #endregion
+
     static class AppPublisher
     {
         public static void Publish(string sourceDirectory, string destionationDirectory, Version version, int numberOfVersionsAsDelta)

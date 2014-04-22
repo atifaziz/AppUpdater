@@ -1,11 +1,13 @@
-﻿using System.Linq;
-using AppUpdater;
-using NUnit.Framework;
-using System.IO;
-
-namespace AppUpdater.Tests
+﻿namespace AppUpdater.Tests
 {
+    #region Imports
+
     using System;
+    using System.IO;
+    using System.Linq;
+    using NUnit.Framework;
+
+    #endregion
 
     [TestFixture]
     public class VersionManifestTests

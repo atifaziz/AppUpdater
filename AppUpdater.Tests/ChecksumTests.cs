@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
-using System.IO;
-using AppUpdater;
-
-namespace AppUpdater.Tests
+﻿namespace AppUpdater.Tests
 {
+    using System.IO;
+    using System.Text;
+    using NUnit.Framework;
+
     [TestFixture]
     public class ChecksumTests
     {
