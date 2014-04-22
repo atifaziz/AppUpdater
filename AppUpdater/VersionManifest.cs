@@ -5,8 +5,8 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Xml;
     using System.IO;
+    using System.Xml.Linq;
     using Delta;
 
     #endregion
@@ -24,41 +24,32 @@
 
         public static VersionManifest LoadVersionFile(Version version, string filename)
         {
-            var doc = new XmlDocument();
-            doc.Load(filename);
-
-            return LoadData(version, doc);
+            return LoadData(version, XDocument.Load(filename));
         }
 
         public static VersionManifest LoadVersionData(Version version, string data)
         {
-            var doc = new XmlDocument();
-            doc.LoadXml(data);
-
-            return LoadData(version, doc);
+            return LoadData(version, XDocument.Parse(data));
         }
 
-        private static VersionManifest LoadData(Version version, XmlDocument doc)
+        static VersionManifest LoadData(Version version, XDocument doc)
         {
-            var files = new List<VersionManifestFile>();
-            foreach (XmlNode fileNode in doc.SelectNodes("manifest/files/file"))
-            {
-                var filename = fileNode.Attributes["name"].Value;
-                var checksum = fileNode.Attributes["checksum"].Value;
-                var size = long.Parse(fileNode.Attributes["size"].Value);
-                var deltas = new List<VersionManifestDeltaFile>();
-                foreach (XmlNode deltaNode in fileNode.SelectNodes("delta"))
-                {
-                    var deltaFilename = deltaNode.Attributes["file"].Value;
-                    var deltaChecksum = deltaNode.Attributes["from"].Value;
-                    var deltaSize = long.Parse(deltaNode.Attributes["size"].Value);
-                    deltas.Add(new VersionManifestDeltaFile(deltaFilename, deltaChecksum, deltaSize));
-                }
-
-                files.Add(new VersionManifestFile(filename, checksum, size, deltas));
-            }
-
-            return new VersionManifest(version, files);
+            var files =
+                from f in doc.Elements("manifest")
+                             .Elements("files").Take(1)
+                             .Elements("file")
+                select new VersionManifestFile
+                (
+                        (string) f.Attribute("name"),
+                        (string) f.Attribute("checksum"),
+                        (long)   f.Attribute("size"), 
+                        from d in f.Elements("delta")
+                        select new VersionManifestDeltaFile(
+                                (string) d.Attribute("file"),
+                                (string) d.Attribute("from"),
+                                (long)   d.Attribute("size")));
+            
+            return new VersionManifest(version, files.ToArray());
         }
 
         public UpdateRecipe UpdateTo(VersionManifest newVersionManifest)
@@ -111,31 +102,21 @@
 
         public void SaveToFile(string filename)
         {
-            var settings = new XmlWriterSettings();
-            settings.Indent = true;
-            using (var xml = XmlWriter.Create(filename, settings))
-            {
-                xml.WriteStartElement("manifest");
-                xml.WriteStartElement("files");
-                foreach (var file in Files)
-                {
-                    xml.WriteStartElement("file");
-                    xml.WriteAttributeString("name", file.Name);
-                    xml.WriteAttributeString("checksum", file.Checksum);
-                    xml.WriteAttributeString("size", file.Size.ToString());
-                    foreach (var delta in file.Deltas)
-                    {
-                        xml.WriteStartElement("delta");
-                        xml.WriteAttributeString("from", delta.Checksum);
-                        xml.WriteAttributeString("size", delta.Size.ToString());
-                        xml.WriteAttributeString("file", delta.Filename);
-                        xml.WriteEndElement();
-                    }
-                    xml.WriteEndElement();
-                }
-                xml.WriteEndElement();
-                xml.WriteEndElement();
-            }
+            var manifest =
+                new XElement("manifest",
+                    new XElement("files",
+                        from file in Files
+                        select new XElement("file",
+                            new XAttribute("name", file.Name),
+                            new XAttribute("checksum", file.Checksum),
+                            new XAttribute("size", file.Size),
+                            from delta in file.Deltas
+                            select new XElement("delta",
+                                new XAttribute("from", delta.Checksum),
+                                new XAttribute("size", delta.Size),
+                                new XAttribute("file", delta.Filename)))));
+
+            manifest.Save(filename);
         }
     }
 }

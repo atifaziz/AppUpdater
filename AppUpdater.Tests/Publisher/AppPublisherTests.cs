@@ -4,10 +4,10 @@
 
     using System;
     using System.Linq;
+    using System.Xml.Linq;
     using NUnit.Framework;
     using AppUpdater.Publisher;
     using System.IO;
-    using System.Xml;
 
     #endregion
 
@@ -97,9 +97,11 @@
         {
             AppPublisher.Publish(sourceDir, destinationDir, new Version("1.1.0"), 0);
 
-            var doc = new XmlDocument();
-            doc.Load(Path.Combine(destinationDir, "version.xml"));
-            var version = doc.SelectSingleNode("config/version").InnerText;
+            var version = (string) XDocument.Load(Path.Combine(destinationDir, "version.xml"))
+                                            .Elements("config")
+                                            .Elements("version")
+                                            .SingleOrDefault();
+
             Assert.That(version, Is.EqualTo("1.1.0"));
         }
 

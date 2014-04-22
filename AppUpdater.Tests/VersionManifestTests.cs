@@ -29,7 +29,7 @@
 
             Assert.That(manifest, Is.Not.Null);
             Assert.That(manifest.Version, Is.EqualTo(new Version("1.2.3")));
-            Assert.That(manifest.Files, Has.Count.EqualTo(2));
+            Assert.That(manifest.Files, Has.Length.EqualTo(2));
             Assert.That(manifest.Files.ElementAt(0).Name, Is.EqualTo("teste1.txt"));
             Assert.That(manifest.Files.ElementAt(0).Checksum, Is.EqualTo("algo111"));
             Assert.That(manifest.Files.ElementAt(0).Size, Is.EqualTo(1000));
@@ -59,7 +59,7 @@
 
             Assert.That(manifest, Is.Not.Null);
             Assert.That(manifest.Version, Is.EqualTo(new Version("1.2.3")));
-            Assert.That(manifest.Files, Has.Count.EqualTo(2));
+            Assert.That(manifest.Files, Has.Length.EqualTo(2));
             Assert.That(manifest.Files.ElementAt(0).Name, Is.EqualTo("teste1.txt"));
             Assert.That(manifest.Files.ElementAt(0).Checksum, Is.EqualTo("algo111"));
             Assert.That(manifest.Files.ElementAt(0).Size, Is.EqualTo(1000));
@@ -208,7 +208,7 @@
 
             var savedManifest = VersionManifest.LoadVersionData(new Version("1.0.0"), File.ReadAllText(filename));
             Assert.That(savedManifest, Is.Not.Null);
-            Assert.That(savedManifest.Files, Has.Count.EqualTo(2));
+            Assert.That(savedManifest.Files, Has.Length.EqualTo(2));
             Assert.That(savedManifest.Files.ElementAt(0).Name, Is.EqualTo("test1.txt"));
             Assert.That(savedManifest.Files.ElementAt(0).Checksum, Is.EqualTo("algo111"));
             Assert.That(savedManifest.Files.ElementAt(0).Size, Is.EqualTo(1000));

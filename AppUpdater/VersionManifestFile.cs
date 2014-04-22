@@ -8,7 +8,7 @@
         public string Name { get; private set; }
         public string Checksum { get; private set; }
         public long Size { get; private set; }
-        public List<VersionManifestDeltaFile> Deltas { get; private set; }
+        public /* TODO IEnumerable */ List<VersionManifestDeltaFile> Deltas { get; private set; }
 
         public string DeployedName
         {

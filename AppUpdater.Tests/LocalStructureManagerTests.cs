@@ -3,11 +3,11 @@
     #region Imports
 
     using System;
-    using System.Linq;
-    using NUnit.Framework;
     using System.IO;
-    using System.Xml;
+    using System.Linq;
+    using System.Xml.Linq;
     using Delta;
+    using NUnit.Framework;
 
     #endregion
 
@@ -113,9 +113,11 @@
 
             structureManager.SetCurrentVersion(new Version("3.4.5"));
 
-            var doc = new XmlDocument();
-            doc.Load(configFilename);
-            var version = doc.SelectSingleNode("config/version").InnerText;
+            var version = (string) XDocument.Load(configFilename)
+                                            .Elements("config")
+                                            .Elements("version")
+                                            .SingleOrDefault();
+
             Assert.That(version, Is.EqualTo("3.4.5"));
         }
 
@@ -128,11 +130,12 @@
 
             structureManager.SetCurrentVersion(new Version("3.4.5"));
 
-            var doc = new XmlDocument();
-            doc.Load(configFilename);
-            var lastVersion = doc.SelectSingleNode("config/last_version");
+            var lastVersion = (string) XDocument.Load(configFilename)
+                                                .Elements("config")
+                                                .Elements("last_version")
+                                                .SingleOrDefault();
             Assert.That(lastVersion, Is.Not.Null);
-            Assert.That(lastVersion.InnerText, Is.EqualTo("3.0.1"));
+            Assert.That(lastVersion, Is.EqualTo("3.0.1"));
         }
 
         [Test]
@@ -166,11 +169,12 @@
 
             structureManager.SetLastValidVersion(new Version("3.3.4"));
 
-            var doc = new XmlDocument();
-            doc.Load(configFilename);
-            var lastVersion = doc.SelectSingleNode("config/last_version");
+            var lastVersion = (string) XDocument.Load(configFilename)
+                                                .Elements("config")
+                                                .Elements("last_version")
+                                                .SingleOrDefault();
             Assert.That(lastVersion, Is.Not.Null);
-            Assert.That(lastVersion.InnerText, Is.EqualTo("3.3.4"));
+            Assert.That(lastVersion, Is.EqualTo("3.3.4"));
         }
 
         [Test]
@@ -182,11 +186,12 @@
 
             structureManager.SetLastValidVersion(new Version("3.3.4"));
 
-            var doc = new XmlDocument();
-            doc.Load(configFilename);
-            var lastVersion = doc.SelectSingleNode("config/last_version");
+            var lastVersion = (string) XDocument.Load(configFilename)
+                                                .Elements("config")
+                                                .Elements("last_version")
+                                                .SingleOrDefault();
             Assert.That(lastVersion, Is.Not.Null);
-            Assert.That(lastVersion.InnerText, Is.EqualTo("3.3.4"));
+            Assert.That(lastVersion, Is.EqualTo("3.3.4"));
         }
 
         [Test]
@@ -198,11 +203,12 @@
 
             structureManager.SetLastValidVersion(new Version("3.4.5"));
 
-            var doc = new XmlDocument();
-            doc.Load(configFilename);
-            var version = doc.SelectSingleNode("config/version");
+            var version = (string) XDocument.Load(configFilename)
+                                            .Elements("config")
+                                            .Elements("version")
+                                            .SingleOrDefault();
             Assert.That(version, Is.Not.Null);
-            Assert.That(version.InnerText, Is.EqualTo("1.2.3"));
+            Assert.That(version, Is.EqualTo("1.2.3"));
         }
 
         [Test]

@@ -8,7 +8,7 @@
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Xml;
+    using System.Xml.Linq;
     using Delta;
 
     #endregion
@@ -104,10 +104,8 @@
         public Uri GetUpdateServerUri()
         {
             var configFilename = Path.Combine(baseDir, "config.xml");
-            var doc = new XmlDocument();
-            doc.Load(configFilename);
-
-            return new Uri(doc.SelectSingleNode("config/updateServer").InnerText);
+            var doc = XDocument.Load(configFilename);
+            return new Uri((string) doc.Elements("config").Elements("updateServer").Single());
         }
 
         private string GetVersionDir(Version version)
@@ -128,26 +126,17 @@
         private string GetConfigValue(string name)
         {
             var configFilename = Path.Combine(baseDir, "config.xml");
-            var doc = new XmlDocument();
-            doc.Load(configFilename);
-
-            var configValue = doc.SelectSingleNode("config/" + name);
-            return configValue == null ? string.Empty : configValue.InnerText;
+            var doc = XDocument.Load(configFilename);
+            var configValue = (string) doc.Elements("config").Elements(name).SingleOrDefault();
+            return configValue ?? string.Empty;
         }
 
         private void SetConfigValue(string name, object value)
         {
             var configFilename = Path.Combine(baseDir, "config.xml");
-            var doc = new XmlDocument();
-            doc.Load(configFilename);
-            var lastVersionNode = doc.SelectSingleNode("config/" + name);
-            if (lastVersionNode == null)
-            {
-                lastVersionNode = doc.CreateElement(name);
-                doc.SelectSingleNode("config").AppendChild(lastVersionNode);
-            }
-
-            lastVersionNode.InnerText = string.Format(CultureInfo.InvariantCulture, "{0}", value);
+            var doc = XDocument.Load(configFilename);
+            // ReSharper disable once PossibleNullReferenceException
+            doc.Root.SetElementValue(name, string.Format(CultureInfo.InvariantCulture, "{0}", value));
             doc.Save(configFilename);
         }
     }
