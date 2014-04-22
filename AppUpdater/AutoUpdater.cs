@@ -4,6 +4,7 @@
 
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Logging;
@@ -127,10 +128,11 @@
                 CheckForUpdatesAsync().Wait();
                 reschedule = true;
             }
-            catch (Exception e)
+            catch (AggregateException ae)
             {
-                log.Error(e.Message);
-                if (e is StackOverflowException || e is ThreadAbortException)
+                var be = ae.GetBaseException();
+                log.Error(be.Message);
+                if (ae.Flatten().InnerExceptions.Any(ie => ie is StackOverflowException || ie is ThreadAbortException))
                     throw;
                 reschedule = true;
             }
