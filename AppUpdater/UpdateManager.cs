@@ -31,7 +31,8 @@
             {
                 if (defaultInstance == null)
                 {
-                    var baseDir = Path.Combine(Path.GetDirectoryName(typeof(UpdateManager).Assembly.Location), "..\\");
+                    var baseDir = Path.Combine(Path.GetDirectoryName(typeof(UpdateManager).Assembly.Location), "..") 
+                                + Path.DirectorySeparatorChar;
                     ILocalStructureManager manager = new LocalStructureManager(baseDir);
                     IUpdateServer updateServer = new UpdateServer(manager.GetUpdateServerUrl());
                     defaultInstance = new UpdateManager(updateServer, manager, new UpdaterChef(manager, updateServer));
