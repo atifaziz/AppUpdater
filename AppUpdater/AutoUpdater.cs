@@ -173,7 +173,7 @@
                 log.Debug("Updates found. Installing new files.");
                 yield return updateManager.DoUpdateAsync(updateInfo, cancellationToken);
                 log.Debug("Update is ready.");
-                Task.Factory.StartNew(() => updated(this, EventArgs.Empty), cancellationToken, TaskCreationOptions.None, scheduler);
+                yield return Task.Factory.StartNew(() => updated(this, EventArgs.Empty), cancellationToken, TaskCreationOptions.None, scheduler);
             }
             finally
             {
