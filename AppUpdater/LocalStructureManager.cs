@@ -49,24 +49,24 @@
 
         public Version GetCurrentVersion()
         {
-            var value = GetConfigValue("version");
+            var value = GetConfigValue("version", "current");
             return !string.IsNullOrEmpty(value) ? new Version(value) : null;
         }
 
         public void SetCurrentVersion(Version version)
         {
-            SetConfigValue("version", version);
+            SetConfigValue("version", "current", version);
         }
 
         public Version GetLastValidVersion()
         {
-            var value = GetConfigValue("lastVersion");
+            var value = GetConfigValue("version", "last");
             return !string.IsNullOrEmpty(value) ? new Version(value) : null;
         }
 
         public void SetLastValidVersion(Version version)
         {
-            SetConfigValue("lastVersion", version);
+            SetConfigValue("version", "last", version);
         }
 
         public Version GetExecutingVersion()
@@ -107,7 +107,11 @@
         {
             var configFilename = Path.Combine(baseDir, "config.xml");
             var doc = XDocument.Load(configFilename);
-            return new Uri((string) doc.Elements("config").Elements("updateServer").Single());
+            return new Uri((string) doc.Elements("config")
+                                       .Elements("updateServer")
+                                       .Take(1)
+                                       .Attributes("url")
+                                       .FirstOrDefault());
         }
 
         string GetVersionPath(Version version)
@@ -130,20 +134,27 @@
             get { return configFilePath ?? (configFilePath = Path.Combine(baseDir, "config.xml")); }
         }
 
-        private string GetConfigValue(string name)
+        string GetConfigValue(XName elementName, XName attributeName)
         {
             var doc = XDocument.Load(ConfigFilePath);
-            var configValue = (string) doc.Elements("config").Elements(name).SingleOrDefault();
+            var configValue = (string) doc.Elements("config")
+                                          .Elements(elementName)
+                                          .Take(1)
+                                          .Attributes(attributeName)
+                                          .FirstOrDefault();
             return configValue ?? string.Empty;
         }
 
-        private void SetConfigValue(string name, object value)
+        void SetConfigValue(XName elementName, XName attributeName, object value)
         {
-            var configFilePath = ConfigFilePath;
-            var doc = XDocument.Load(configFilePath);
-            // ReSharper disable once PossibleNullReferenceException
-            doc.Root.SetElementValue(name, string.Format(CultureInfo.InvariantCulture, "{0}", value));
-            doc.Save(configFilePath);
+            value = string.Format(CultureInfo.InvariantCulture, "{0}", value);
+            var doc = XDocument.Load(ConfigFilePath);
+            var element = doc.Elements("config").Elements(elementName).FirstOrDefault();
+            if (element == null) // ReSharper disable once PossibleNullReferenceException
+                doc.Root.Add(new XElement(elementName, new XAttribute(attributeName, value)));
+            else
+                element.SetAttributeValue(attributeName, value);
+            doc.Save(ConfigFilePath);
         }
     }
 }

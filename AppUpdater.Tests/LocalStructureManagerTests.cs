@@ -85,7 +85,7 @@
         [Test]
         public void GetCurrentVersion_ReturnsTheVersion()
         {
-            var data = @"<config><version>1.2.3</version></config>";
+            var data = @"<config><version current='1.2.3' /></config>";
             File.WriteAllText(Path.Combine(baseDir, "config.xml"), data);
 
             var currentVersion = structureManager.GetCurrentVersion();
@@ -107,16 +107,16 @@
         [Test]
         public void SetCurrentVersion_UpdatesTheConfigFile()
         {
-            var data = @"<config><version>1.2.3</version></config>";
+            var data = @"<config><version current='1.2.3' /></config>";
             var configFilename = Path.Combine(baseDir, "config.xml");
             File.WriteAllText(configFilename, data);
 
             structureManager.SetCurrentVersion(new Version("3.4.5"));
 
             var version = (string) XDocument.Load(configFilename)
-                                            .Elements("config")
-                                            .Elements("version")
-                                            .SingleOrDefault();
+                                            .Elements("config").Take(1)
+                                            .Elements("version").Take(1)
+                                            .Attributes("current").First();
 
             Assert.That(version, Is.EqualTo("3.4.5"));
         }
@@ -152,7 +152,7 @@
         [Test]
         public void GetLastValidVersion_ReturnsTheVersion()
         {
-            var data = @"<config><version>1.2.3</version><lastVersion>3.1.1</lastVersion></config>";
+            var data = @"<config><version current='1.2.3' last='3.1.1' /></config>";
             File.WriteAllText(Path.Combine(baseDir, "config.xml"), data);
 
             var lastVersion = structureManager.GetLastValidVersion();
@@ -163,16 +163,17 @@
         [Test]
         public void SetLastValidVersion_WithAnUndefinedVersion_UpdatesTheConfigFile()
         {
-            var data = @"<config><version>1.2.3</version></config>";
+            var data = @"<config><version current='1.2.3' /></config>";
             var configFilename = Path.Combine(baseDir, "config.xml");
             File.WriteAllText(configFilename, data);
 
             structureManager.SetLastValidVersion(new Version("3.3.4"));
 
             var lastVersion = (string) XDocument.Load(configFilename)
-                                                .Elements("config")
-                                                .Elements("lastVersion")
-                                                .SingleOrDefault();
+                                                .Elements("config").Take(1)
+                                                .Elements("version").Take(1)
+                                                .Attributes("last")
+                                                .FirstOrDefault();
             Assert.That(lastVersion, Is.Not.Null);
             Assert.That(lastVersion, Is.EqualTo("3.3.4"));
         }
@@ -180,16 +181,17 @@
         [Test]
         public void SetLastValidVersion_UpdatesTheConfigFile()
         {
-            var data = @"<config><version>1.2.3</version><lastVersion>1.2.0</lastVersion></config>";
+            var data = @"<config><version current='1.2.3' last='1.2.0' /></config>";
             var configFilename = Path.Combine(baseDir, "config.xml");
             File.WriteAllText(configFilename, data);
 
             structureManager.SetLastValidVersion(new Version("3.3.4"));
 
             var lastVersion = (string) XDocument.Load(configFilename)
-                                                .Elements("config")
-                                                .Elements("lastVersion")
-                                                .SingleOrDefault();
+                                                .Elements("config").Take(1)
+                                                .Elements("version").Take(1)
+                                                .Attributes("last")
+                                                .FirstOrDefault();
             Assert.That(lastVersion, Is.Not.Null);
             Assert.That(lastVersion, Is.EqualTo("3.3.4"));
         }
@@ -292,7 +294,7 @@
         [Test]
         public void GetUpdateServerUri_ReturnsTheUri()
         {
-            var data = @"<config><version>1.2.3</version><updateServer>http://localhost:8080/update/</updateServer></config>";
+            var data = @"<config><updateServer url='http://localhost:8080/update/' /></config>";
             var configFilename = Path.Combine(baseDir, "config.xml");
             File.WriteAllText(configFilename, data);
             

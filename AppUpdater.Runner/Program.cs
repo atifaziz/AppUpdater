@@ -35,9 +35,12 @@
             Debug.Assert(dir != null);
             var config = XDocument.Load(Path.Combine(dir, "config.xml")).Root;  // ReSharper disable once PossibleNullReferenceException
 
-            var version     = (string) config.Element("version");
-            var lastVersion = (string) config.Element("lastVersion");
-            var executable  = (string) config.Element("executable") ?? Path.GetFileName(thisAssemblyPath);
+            var version = config.Elements("version").Single();
+            var currentVersion = (string) version.Attribute("current");
+            var lastVersion    = (string) version.Attribute("last");
+            var executableName = (string) config.Elements("executable").Take(1)
+                                                .Attributes("name").FirstOrDefault() 
+                                 ?? Path.GetFileName(thisAssemblyPath);
 
             var runLast = args.Any(x => x.Equals("-last", StringComparison.CurrentCultureIgnoreCase));
             if (runLast && lastVersion == null)
@@ -48,7 +51,7 @@
 
             var commandLine = Environment.CommandLine;
             var commandLineArgs = GetCommandLineArguments(commandLine);
-            var path = Path.Combine(dir, Path.Combine(runLast ? lastVersion : version, executable));
+            var path = Path.Combine(dir, Path.Combine(runLast ? lastVersion : currentVersion, executableName));
 
             using (var process = Process.Start(path, commandLineArgs))
             {
