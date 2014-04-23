@@ -60,13 +60,13 @@
 
         public Version GetLastValidVersion()
         {
-            var value = GetConfigValue("last_version");
+            var value = GetConfigValue("lastVersion");
             return !string.IsNullOrEmpty(value) ? new Version(value) : null;
         }
 
         public void SetLastValidVersion(Version version)
         {
-            SetConfigValue("last_version", version);
+            SetConfigValue("lastVersion", version);
         }
 
         public Version GetExecutingVersion()

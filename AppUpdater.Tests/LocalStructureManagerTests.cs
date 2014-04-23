@@ -152,7 +152,7 @@
         [Test]
         public void GetLastValidVersion_ReturnsTheVersion()
         {
-            var data = @"<config><version>1.2.3</version><last_version>3.1.1</last_version></config>";
+            var data = @"<config><version>1.2.3</version><lastVersion>3.1.1</lastVersion></config>";
             File.WriteAllText(Path.Combine(baseDir, "config.xml"), data);
 
             var lastVersion = structureManager.GetLastValidVersion();
@@ -171,7 +171,7 @@
 
             var lastVersion = (string) XDocument.Load(configFilename)
                                                 .Elements("config")
-                                                .Elements("last_version")
+                                                .Elements("lastVersion")
                                                 .SingleOrDefault();
             Assert.That(lastVersion, Is.Not.Null);
             Assert.That(lastVersion, Is.EqualTo("3.3.4"));
@@ -180,7 +180,7 @@
         [Test]
         public void SetLastValidVersion_UpdatesTheConfigFile()
         {
-            var data = @"<config><version>1.2.3</version><last_version>1.2.0</last_version></config>";
+            var data = @"<config><version>1.2.3</version><lastVersion>1.2.0</lastVersion></config>";
             var configFilename = Path.Combine(baseDir, "config.xml");
             File.WriteAllText(configFilename, data);
 
@@ -188,7 +188,7 @@
 
             var lastVersion = (string) XDocument.Load(configFilename)
                                                 .Elements("config")
-                                                .Elements("last_version")
+                                                .Elements("lastVersion")
                                                 .SingleOrDefault();
             Assert.That(lastVersion, Is.Not.Null);
             Assert.That(lastVersion, Is.EqualTo("3.3.4"));

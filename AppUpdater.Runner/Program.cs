@@ -36,7 +36,7 @@
             var config = XDocument.Load(Path.Combine(dir, "config.xml")).Root;  // ReSharper disable once PossibleNullReferenceException
 
             var version     = (string) config.Element("version");
-            var lastVersion = (string) config.Element("last_version");
+            var lastVersion = (string) config.Element("lastVersion");
             var executable  = (string) config.Element("executable") ?? Path.GetFileName(thisAssemblyPath);
 
             var runLast = args.Any(x => x.Equals("-last", StringComparison.CurrentCultureIgnoreCase));
