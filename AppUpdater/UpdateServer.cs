@@ -76,7 +76,7 @@
             var client = new WebClient();
             var task = tasker(client, cancellationToken);
             starter(client, versionUrl);
-            log.Debug("Downloading from url: {0}", versionUrl);
+            log.Debug("Downloading from URL: {0}", versionUrl);
             return task;
         }
 
