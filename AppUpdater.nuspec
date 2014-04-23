@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>AppUpdater</id>
+        <version>2.0.0-beta1</version>
+        <title>AppUpdater</title>
+        <authors>Atif Aziz,Diogo Edegar Mafra</authors>
+        <owners>Atif Aziz</owners>
+        <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+        <projectUrl>https://github.com/atifaziz/AppUpdater</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Library to enable an application to check for updates and install them using a simple deployment model.</description>
+        <summary>AppUpdater</summary>
+        <copyright>Copyright (c) 2012 Diogo Edegar Mafra</copyright>
+        <language>en-US</language>
+    </metadata>
+    <files>
+        <file src="AppUpdater\bin\Release\AppUpdater.dll" target="lib\net40-client\AppUpdater.dll" />
+        <file src="AppUpdater.Publisher\bin\Release\AppUpdater.dll" target="tools\AppUpdater.dll" />
+        <file src="AppUpdater.Publisher\bin\Release\AppUpdater.Publisher.exe" target="tools\AppUpdater.Publisher.exe" />
+        <file src="MIT-LICENSE" target="MIT-LICENSE" />
+    </files>
+</package>

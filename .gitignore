@@ -6,3 +6,4 @@ TestApp/Updates/*/*.deploy
 *.user
 *.swp
 /packages/*
+dist/*

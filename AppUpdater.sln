@@ -15,9 +15,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppUpdater.Publisher", "App
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7140CE03-A621-4E8A-BD93-C37BB26E247A}"
 	ProjectSection(SolutionItems) = preProject
+		AppUpdater.nuspec = AppUpdater.nuspec
+		AppUpdater.Runner.Source.nuspec = AppUpdater.Runner.Source.nuspec
 		build.cmd = build.cmd
 		buildw.cmd = buildw.cmd
 		MIT-LICENSE = MIT-LICENSE
+		pack.cmd = pack.cmd
+		packw.cmd = packw.cmd
 	EndProjectSection
 EndProject
 Global
