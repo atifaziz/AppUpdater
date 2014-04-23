@@ -73,12 +73,12 @@
 
         public virtual Task DoUpdateAsync(UpdateInfo updateInfo, CancellationToken cancellationToken)
         {
+            CheckInitialized();
             return TaskHelpers.Iterate(DoUpdateAsyncImpl(updateInfo, cancellationToken), cancellationToken);
         }
 
         IEnumerable<Task> DoUpdateAsyncImpl(UpdateInfo updateInfo, CancellationToken cancellationToken)
         {
-            CheckInitialized();
             var currentVersionManifest = LocalStructureManager.LoadManifest(CurrentVersion);
             Task<VersionManifest> manifestTask;
             yield return manifestTask = UpdateServer.GetManifestAsync(updateInfo.Version, cancellationToken);
