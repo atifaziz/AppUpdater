@@ -27,12 +27,12 @@
         public virtual Task<Version> GetCurrentVersionAsync(CancellationToken cancellationToken)
         {
             return DownloadStringAsync(new Uri("version.xml", UriKind.Relative), cancellationToken)
-                  .ContinueWith(t =>
-                  {
-                      var doc = XDocument.Parse(t.Result);
-                      return new Version((string) doc.Elements("config").Single().Element("version"));
-
-                  }, cancellationToken);
+                  .ContinueWith(t => new Version((string) XDocument.Parse(t.Result)
+                                                                   .Elements("version")
+                                                                   .Take(1)
+                                                                   .Attributes("current")
+                                                                   .FirstOrDefault()), 
+                                cancellationToken);
         }
 
         public virtual Task<VersionManifest> GetManifestAsync(Version version, CancellationToken cancellationToken)

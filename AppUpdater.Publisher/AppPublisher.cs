@@ -95,7 +95,7 @@
 
         private static void SaveConfigFile(string destionationDirectory, Version version)
         {
-            var doc = new XElement("config", new XElement("version", version));
+            var doc = new XElement("version", new XAttribute("current", version));
             doc.Save(Path.Combine(destionationDirectory, "version.xml"));
         }
 

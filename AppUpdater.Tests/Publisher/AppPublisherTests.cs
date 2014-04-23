@@ -98,9 +98,9 @@
             AppPublisher.Publish(sourceDir, destinationDir, new Version("1.1.0"), 0);
 
             var version = (string) XDocument.Load(Path.Combine(destinationDir, "version.xml"))
-                                            .Elements("config")
-                                            .Elements("version")
-                                            .SingleOrDefault();
+                                            .Elements("version").Take(1)
+                                            .Attributes("current")
+                                            .FirstOrDefault();
 
             Assert.That(version, Is.EqualTo("1.1.0"));
         }
