@@ -49,6 +49,7 @@
     <Compile Include="DataCompressor.cs" />
     <Compile Include="Delta\DeltaAPI.cs" />
     <Compile Include="Delta\MSDeltaPInvoke.cs" />
+    <Compile Include="Disposable.cs" />
     <Compile Include="ILocalStructureManager.cs" />
     <Compile Include="IUpdateManager.cs" />
     <Compile Include="IUpdaterChef.cs" />

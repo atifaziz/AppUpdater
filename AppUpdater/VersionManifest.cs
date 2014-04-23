@@ -96,7 +96,7 @@
                 from file in dir.EnumerateFiles("*", SearchOption.AllDirectories)
                 // TODO filter hidden and system files
                 select new VersionManifestFile(file.FullName.Substring(dir.FullName.Length + 1), 
-                               Checksum.Calculate(file.FullName), 
+                               File.OpenRead(file.FullName).Using(Checksum.Calculate),
                                file.Length);
             
             return new VersionManifest(version, files.ToArray());
