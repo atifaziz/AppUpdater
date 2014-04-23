@@ -75,10 +75,10 @@
             Assert.That(manifest.Version, Is.EqualTo(new Version("1.0.0")));
             Assert.That(manifest.Files, Has.Length.EqualTo(2));
             Assert.That(manifest.Files.ElementAt(0).Name, Is.EqualTo("test1.txt"));
-            Assert.That(manifest.Files.ElementAt(0).Checksum, Is.EqualTo("B94F6F125C79E3A5FFAA826F584C10D52ADA669E6762051B826B55776D05AED2"));
+            Assert.That(manifest.Files.ElementAt(0).Checksum, Is.EqualTo("b94f6f125c79e3a5ffaa826f584c10d52ada669e6762051b826b55776d05aed2"));
             Assert.That(manifest.Files.ElementAt(0).Size, Is.EqualTo(9));
             Assert.That(manifest.Files.ElementAt(1).Name, Is.EqualTo("abc\\test2.txt"));
-            Assert.That(manifest.Files.ElementAt(1).Checksum, Is.EqualTo("4895ECC6F0C011072AF486EA30A1239CAA1B297FB61ECACA8AC94D9C2071BE22"));
+            Assert.That(manifest.Files.ElementAt(1).Checksum, Is.EqualTo("4895ecc6f0c011072af486ea30a1239caa1b297fb61ecaca8ac94d9c2071be22"));
             Assert.That(manifest.Files.ElementAt(1).Size, Is.EqualTo(12));
         }
 

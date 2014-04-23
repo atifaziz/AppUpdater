@@ -85,10 +85,10 @@
             var manifest = VersionManifest.LoadVersionData(new Version("1.1.0"), File.ReadAllText(manifestFilename));
             Assert.That(manifest.Files.Count(), Is.EqualTo(2));
             Assert.That(manifest.Files.ElementAt(0).Name, Is.EqualTo("test1.txt"));
-            Assert.That(manifest.Files.ElementAt(0).Checksum, Is.EqualTo("A475EC7E8BDCC9B7F017B29A760A9010C8A9B6F2A9E1550A58BF77783F5C9319"));
+            Assert.That(manifest.Files.ElementAt(0).Checksum, Is.EqualTo("a475ec7e8bdcc9b7f017b29a760a9010c8a9b6f2a9e1550a58bf77783f5c9319"));
             Assert.That(manifest.Files.ElementAt(0).Size, Is.EqualTo(15));
             Assert.That(manifest.Files.ElementAt(1).Name, Is.EqualTo("another\\test2.txt"));
-            Assert.That(manifest.Files.ElementAt(1).Checksum, Is.EqualTo("16AF4D078042175206C6F05228475FA391E7DF98BF9AF599BC775EFCDB86D784"));
+            Assert.That(manifest.Files.ElementAt(1).Checksum, Is.EqualTo("16af4d078042175206c6f05228475fa391e7df98bf9af599bc775efcdb86d784"));
             Assert.That(manifest.Files.ElementAt(1).Size, Is.EqualTo(15));
         }
 
@@ -140,9 +140,9 @@
 
             var manifest = VersionManifest.LoadVersionData(new Version("4.0.0"), File.ReadAllText(manifestFilename));
             Assert.That(manifest.Files.ElementAt(0).Deltas.Count(), Is.EqualTo(2));
-            Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).Checksum, Is.EqualTo("B21A7D77034B2A1120A5E7E803AFACB52F14D6BF7C833A3F0E5B1FD10380AF3D"));
+            Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).Checksum, Is.EqualTo("b21a7d77034b2a1120a5e7e803afacb52f14d6bf7c833a3f0e5b1fd10380af3d"));
             Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).Size, Is.EqualTo(23));
-            Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).FileName, Is.EqualTo("deltas\\test1.txt.B21A7.deploy"));
+            Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).FileName, Is.EqualTo("deltas\\test1.txt.b21a7.deploy"));
         }
 
         private void CreateVersionFiles(int diferenciator=0)

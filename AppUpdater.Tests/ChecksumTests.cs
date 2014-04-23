@@ -17,7 +17,7 @@
 
             var checksum = Checksum.Calculate(stream);
 
-            Assert.That(checksum, Is.EqualTo("B94F6F125C79E3A5FFAA826F584C10D52ADA669E6762051B826B55776D05AED2"));
+            Assert.That(checksum, Is.EqualTo("b94f6f125c79e3a5ffaa826f584c10d52ada669e6762051b826b55776d05aed2"));
         }
     }
 }

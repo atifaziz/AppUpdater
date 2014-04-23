@@ -16,8 +16,10 @@
         {
             if (stream == null) throw new ArgumentNullException("stream");
             var sha = new SHA256Managed();
-            var checksum = sha.ComputeHash(stream);
-            return BitConverter.ToString(checksum).Replace("-", string.Empty);
+            var hash = sha.ComputeHash(stream);
+            return BitConverter.ToString(hash)
+                               .Replace("-", string.Empty)
+                               .ToLowerInvariant();
         }
     }
 }
