@@ -41,7 +41,7 @@
                         from dir in new[] { new DirectoryInfo(destionationDirectory) }
                         select dir.EnumerateDirectories() into subdirs
                         from subdir in subdirs
-                        // TODO skip hidden and system dirs
+                        where (subdir.Attributes & (FileAttributes.Hidden | FileAttributes.System)) == 0
                         select new
                         {
                             Version = new Version(subdir.Name),

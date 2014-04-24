@@ -100,7 +100,7 @@
                                                       Path.AltDirectorySeparatorChar) }
                 select new DirectoryInfo(dir) into dir
                 from file in dir.EnumerateFiles("*", SearchOption.AllDirectories)
-                // TODO filter hidden and system files
+                where (file.Attributes & (FileAttributes.Hidden | FileAttributes.System)) == 0
                 select new VersionManifestFile(file.FullName.Substring(dir.FullName.Length + 1), 
                                File.OpenRead(file.FullName).Using(Checksum.Calculate),
                                file.Length);
