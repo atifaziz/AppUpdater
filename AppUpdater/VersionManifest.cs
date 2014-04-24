@@ -25,7 +25,6 @@
             Files = files != null
                    ? new ReadOnlyCollection<VersionManifestFile>(files.ToArray())
                    : ZeroFiles;
-            ;
         }
 
         public static VersionManifest LoadVersionFile(Version version, string path)

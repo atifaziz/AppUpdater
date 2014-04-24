@@ -116,7 +116,7 @@
                  : checksum.Substring(0, 5);
         }
 
-        private static void CopyFiles(string sourceDirectory, string destinationVersionDirectory)
+        static void CopyFiles(string sourceDirectory, string destinationVersionDirectory)
         {
             Directory.CreateDirectory(destinationVersionDirectory);
 
@@ -130,13 +130,13 @@
             }
         }
 
-        private static void SaveConfigFile(string destionationDirectory, Version version)
+        static void SaveConfigFile(string destionationDirectory, Version version)
         {
             var doc = new XElement("version", new XAttribute("current", version));
             doc.Save(Path.Combine(destionationDirectory, "version.xml"));
         }
 
-        private static void CreateDeployFile(string sourceFile, string destinationFile)
+        static void CreateDeployFile(string sourceFile, string destinationFile)
         {
             using (var streamSource = File.OpenRead(sourceFile))
             {

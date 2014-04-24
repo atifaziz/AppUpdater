@@ -14,9 +14,9 @@
     [TestFixture]
     public class UpdaterChefTests
     {
-        private UpdaterChef updaterChef;
-        private ILocalStructureManager localStructureManager;
-        private IUpdateServer updateServer;
+        UpdaterChef updaterChef;
+        ILocalStructureManager localStructureManager;
+        IUpdateServer updateServer;
         static readonly Version v1 = new Version("1.0.0");
         static readonly Version v2 = new Version("2.0.0");
 
@@ -54,7 +54,7 @@
             updateServer.Stub(s => s.DownloadFileAsync(v2, "test2.txt.deploy", CancellationToken.None)).Return(TaskHelpers.FromResult((byte[])null));
             var file1 = new UpdateRecipeFile("test1.txt", "123", 100, FileUpdateAction.Copy, null);
             var file2 = new UpdateRecipeFile("test2.txt", "123", 100, FileUpdateAction.Download, "test2.txt.deploy");
-            var updateRecipe = new UpdateRecipe(v2, v1, new UpdateRecipeFile[] { file1, file2 });
+            var updateRecipe = new UpdateRecipe(v2, v1, new[] { file1, file2 });
 
             updaterChef.CookAsync(updateRecipe, CancellationToken.None).Wait();
 
@@ -68,7 +68,7 @@
             updateServer.Stub(x => x.DownloadFileAsync(v2, "test2.txt.deploy", CancellationToken.None)).Return(TaskHelpers.FromResult(DataCompressor.Compress(data)));
             var file1 = new UpdateRecipeFile("test1.txt", "123", 100, FileUpdateAction.Copy, null);
             var file2 = new UpdateRecipeFile("test2.txt", "123", 100, FileUpdateAction.Download, "test2.txt.deploy");
-            var updateRecipe = new UpdateRecipe(v2, v1, new UpdateRecipeFile[] { file1, file2 });
+            var updateRecipe = new UpdateRecipe(v2, v1, new[] { file1, file2 });
 
             updaterChef.CookAsync(updateRecipe, CancellationToken.None).Wait();
 
@@ -82,7 +82,7 @@
             updateServer.Stub(x => x.DownloadFileAsync(v2, "test2.txt.deploy", CancellationToken.None)).Return(TaskHelpers.FromResult(data));
             var file1 = new UpdateRecipeFile("test1.txt", "123", 100, FileUpdateAction.Copy, null);
             var file2 = new UpdateRecipeFile("test2.txt", "123", 100, FileUpdateAction.DownloadDelta, "test2.txt.deploy");
-            var updateRecipe = new UpdateRecipe(v2, v1, new UpdateRecipeFile[] { file1, file2 });
+            var updateRecipe = new UpdateRecipe(v2, v1, new[] { file1, file2 });
 
             updaterChef.CookAsync(updateRecipe, CancellationToken.None).Wait();
 

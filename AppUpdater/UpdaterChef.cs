@@ -12,9 +12,9 @@
 
     public class UpdaterChef : IUpdaterChef
     {
-        private readonly ILog log = Logger.For<UpdaterChef>();
-        private readonly ILocalStructureManager localStructureManager;
-        private readonly IUpdateServer updateServer;
+        readonly ILog log = Logger.For<UpdaterChef>();
+        readonly ILocalStructureManager localStructureManager;
+        readonly IUpdateServer updateServer;
 
         public UpdaterChef(ILocalStructureManager localStructureManager, IUpdateServer updateServer)
         {

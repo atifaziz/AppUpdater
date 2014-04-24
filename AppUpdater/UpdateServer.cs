@@ -16,8 +16,8 @@
 
     public class UpdateServer : IUpdateServer
     {
-        private readonly Uri updateServerUrl;
-        private readonly ILog log = Logger.For<UpdateServer>();
+        readonly Uri updateServerUrl;
+        readonly ILog log = Logger.For<UpdateServer>();
 
         public UpdateServer(Uri updateServerUrl)
         {

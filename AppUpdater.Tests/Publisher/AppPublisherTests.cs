@@ -14,8 +14,8 @@
     [TestFixture]
     public class AppPublisherTests
     {
-        private string sourceDir;
-        private string destinationDir;
+        string sourceDir;
+        string destinationDir;
 
         [SetUp]
         public void Setup()
@@ -145,7 +145,7 @@
             Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).FileName, Is.EqualTo("deltas/test1.txt.b21a7.deploy"));
         }
 
-        private void CreateVersionFiles(int diferenciator=0)
+        void CreateVersionFiles(int diferenciator = 0)
         {
             File.WriteAllText(Path.Combine(sourceDir, "test1.txt"), "test1 content " + diferenciator);
             Directory.CreateDirectory(Path.Combine(sourceDir, "another"));

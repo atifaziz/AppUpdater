@@ -16,9 +16,9 @@
         [TestFixture]
         public class NotInitialized
         {
-            private UpdateManager updateManager;
-            private IUpdateServer updateServer;
-            private ILocalStructureManager localStructureManager;
+            UpdateManager updateManager;
+            IUpdateServer updateServer;
+            ILocalStructureManager localStructureManager;
 
             [SetUp]
             public void Setup()
@@ -43,12 +43,12 @@
         [TestFixture]
         public class Initialized
         {
-            private UpdateManager updateManager;
-            private IUpdateServer updateServer;
-            private ILocalStructureManager localStructureManager;
-            private IUpdaterChef updaterChef;
-            private Version initialVersion;
-            private Version[] installedVersions;
+            UpdateManager updateManager;
+            IUpdateServer updateServer;
+            ILocalStructureManager localStructureManager;
+            IUpdaterChef updaterChef;
+            Version initialVersion;
+            Version[] installedVersions;
 
             [SetUp]
             public void Setup()
@@ -207,7 +207,7 @@
                 updateManager.DoUpdateAsync(updateInfo, CancellationToken.None).Wait();
             }
 
-            private UpdateInfo SetupUpdateToVersion(Version newVersion)
+            UpdateInfo SetupUpdateToVersion(Version newVersion)
             {
                 var updateInfo = new UpdateInfo(true, newVersion);
                 updateServer.Stub(x => x.GetManifestAsync(newVersion, CancellationToken.None)).Return(TaskHelpers.FromResult(new VersionManifest(newVersion, new VersionManifestFile[0])));

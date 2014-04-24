@@ -19,7 +19,7 @@
             Logger.LoggerProvider = (type) => new FormLog(DoLog, type);
         }
 
-        private void btnStart_Click(object sender, EventArgs e)
+        void btnStart_Click(object sender, EventArgs e)
         {
             var setup = new AutoUpdater.Setup(UpdateManager.Default)
             {
@@ -39,7 +39,7 @@
             MessageBox.Show("Updated");
         }
 
-        private void btnStop_Click(object sender, EventArgs e)
+        void btnStop_Click(object sender, EventArgs e)
         {
             AutoUpdater.Stop();
 
@@ -48,7 +48,7 @@
             btnUpdate.Enabled = true;
         }
 
-        private void btnUpdate_Click(object sender, EventArgs e)
+        void btnUpdate_Click(object sender, EventArgs e)
         {
             var manager = UpdateManager.Default;
 
@@ -67,7 +67,7 @@
             });
         }
 
-        private void DoLog(string logLevel, Type type, string message, object[] values)
+        void DoLog(string logLevel, Type type, string message, object[] values)
         {
             if (txtLog.InvokeRequired)
             {
@@ -83,8 +83,8 @@
 
         public class FormLog : ILog
         {
-            private Action<string, Type, string, object[]> doLog;
-            private Type type;
+            Action<string, Type, string, object[]> doLog;
+            Type type;
 
             public FormLog(Action<string, Type, string, object[]> doLog, Type type)
             {

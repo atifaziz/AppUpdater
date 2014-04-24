@@ -75,7 +75,7 @@
         {
             var fileUpdate = new VersionManifestFile("arquivo1.txt", "123", 1000);
             var currentManifest = new VersionManifest(new Version("1.0.0"), new VersionManifestFile[] {  });
-            var updateManifest = new VersionManifest(new Version("2.0.0"), new VersionManifestFile[] { fileUpdate });
+            var updateManifest = new VersionManifest(new Version("2.0.0"), new[] { fileUpdate });
 
             var recipe = currentManifest.UpdateTo(updateManifest);
 
@@ -89,8 +89,8 @@
         public void UpdateTo_VersionWithEqualFile_SetTheActionAsCopy()
         {
             var fileUpdate = new VersionManifestFile("arquivo1.txt", "123", 1000);
-            var currentManifest = new VersionManifest(new Version("1.0.0"), new VersionManifestFile[] { fileUpdate });
-            var updateManifest = new VersionManifest(new Version("2.0.0"), new VersionManifestFile[] { fileUpdate });
+            var currentManifest = new VersionManifest(new Version("1.0.0"), new[] { fileUpdate });
+            var updateManifest = new VersionManifest(new Version("2.0.0"), new[] { fileUpdate });
 
             var recipe = currentManifest.UpdateTo(updateManifest);
 
@@ -103,7 +103,7 @@
         {
             var fileUpdate = new VersionManifestFile("arquivo1.txt", "123", 1000);
             var currentManifest = new VersionManifest(new Version("1.0.0"), new VersionManifestFile[] {  });
-            var updateManifest = new VersionManifest(new Version("2.0.0"), new VersionManifestFile[] { fileUpdate });
+            var updateManifest = new VersionManifest(new Version("2.0.0"), new[] { fileUpdate });
 
             var recipe = currentManifest.UpdateTo(updateManifest);
 
@@ -116,8 +116,8 @@
         {
             var fileOriginal = new VersionManifestFile("arquivo1.txt", "333", 1000);
             var fileUpdate = new VersionManifestFile("arquivo1.txt", "123", 1000);
-            var currentManifest = new VersionManifest(new Version("1.0.0"), new VersionManifestFile[] { fileOriginal });
-            var updateManifest = new VersionManifest(new Version("2.0.0"), new VersionManifestFile[] { fileUpdate });
+            var currentManifest = new VersionManifest(new Version("1.0.0"), new[] { fileOriginal });
+            var updateManifest = new VersionManifest(new Version("2.0.0"), new[] { fileUpdate });
 
             var recipe = currentManifest.UpdateTo(updateManifest);
 
@@ -133,8 +133,8 @@
             {
                 new VersionManifestDeltaFile("deltas\\arquivo1.txt", "444", 10)
             });
-            var currentManifest = new VersionManifest(new Version("1.0.0"), new VersionManifestFile[] { fileOriginal });
-            var updateManifest = new VersionManifest(new Version("2.0.0"), new VersionManifestFile[] { fileUpdate });
+            var currentManifest = new VersionManifest(new Version("1.0.0"), new[] { fileOriginal });
+            var updateManifest = new VersionManifest(new Version("2.0.0"), new[] { fileUpdate });
 
             var recipe = currentManifest.UpdateTo(updateManifest);
 
@@ -150,8 +150,8 @@
             {
                 new VersionManifestDeltaFile("deltas\\arquivo1.txt", "333", 10)                                                                                      
             });
-            var currentManifest = new VersionManifest(new Version("1.0.0"), new VersionManifestFile[] { fileOriginal });
-            var updateManifest = new VersionManifest(new Version("2.0.0"), new VersionManifestFile[] { fileUpdate });
+            var currentManifest = new VersionManifest(new Version("1.0.0"), new[] { fileOriginal });
+            var updateManifest = new VersionManifest(new Version("2.0.0"), new[] { fileUpdate });
 
             var recipe = currentManifest.UpdateTo(updateManifest);
 

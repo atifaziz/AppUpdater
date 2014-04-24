@@ -71,11 +71,11 @@
         [Test]
         public void Start_StartedUpdater_DoNotStartAgain()
         {
-            this.setup.CheckInterval = TimeSpan.FromSeconds(1);
+            setup.CheckInterval = TimeSpan.FromSeconds(1);
 
-            AutoUpdater.Start(this.setup);
+            AutoUpdater.Start(setup);
             Thread.Sleep(100);
-            AutoUpdater.Start(this.setup);
+            AutoUpdater.Start(setup);
             Thread.Sleep(100);
 
             updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(Arg<CancellationToken>.Is.Anything), s => s.Repeat.Once());
@@ -84,9 +84,9 @@
         [Test]
         public void Stop_StartedUpdater_StopsTheChecks()
         {
-            this.setup.CheckInterval = TimeSpan.FromSeconds(1);
+            setup.CheckInterval = TimeSpan.FromSeconds(1);
 
-            AutoUpdater.Start(this.setup);
+            AutoUpdater.Start(setup);
             Thread.Sleep(300);
             AutoUpdater.Stop();
             Thread.Sleep(1500);
@@ -97,9 +97,9 @@
         [Test]
         public void Stop_StoppedUpdater_DoNothing()
         {
-            this.setup.CheckInterval = TimeSpan.FromSeconds(1);
+            setup.CheckInterval = TimeSpan.FromSeconds(1);
 
-            AutoUpdater.Start(this.setup);
+            AutoUpdater.Start(setup);
             AutoUpdater.Stop();
             AutoUpdater.Stop();
         }

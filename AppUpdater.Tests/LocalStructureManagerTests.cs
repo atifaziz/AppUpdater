@@ -14,8 +14,8 @@
     [TestFixture]
     public class LocalStructureManagerTests
     {
-        private LocalStructureManager structureManager;
-        private string baseDir;
+        LocalStructureManager structureManager;
+        string baseDir;
 
         [SetUp]
         public void Setup()

@@ -124,7 +124,7 @@
             return Path.Combine(GetVersionPath(version), fileName);
         }
 
-        private static string GetExecutingAssemblyLocation()
+        static string GetExecutingAssemblyLocation()
         {
             return Assembly.GetExecutingAssembly().Location;
         }
