@@ -4,6 +4,7 @@
 
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
     using System.IO;
     using System.Xml.Linq;
@@ -13,13 +14,18 @@
 
     public class VersionManifest
     {
+        static readonly ICollection<VersionManifestFile> ZeroFiles = new VersionManifestFile[0];
+
         public Version Version { get; private set; }
-        public IEnumerable<VersionManifestFile> Files { get; private set; }
+        public ICollection<VersionManifestFile> Files { get; private set; }
 
         public VersionManifest(Version version, IEnumerable<VersionManifestFile> files)
         {
             Version = version;
-            Files = files;
+            Files = files != null
+                   ? new ReadOnlyCollection<VersionManifestFile>(files.ToArray())
+                   : ZeroFiles;
+            ;
         }
 
         public static VersionManifest LoadVersionFile(Version version, string path)
@@ -49,7 +55,7 @@
                         (string) f.Attribute("name"),
                         (string) f.Attribute("checksum"),
                         (long)   f.Attribute("size"), 
-                        deltas.ToArray());
+                        deltas);
             
             return new VersionManifest(version, files.ToArray());
         }

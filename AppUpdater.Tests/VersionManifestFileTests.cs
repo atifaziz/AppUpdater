@@ -10,9 +10,11 @@
         [SetUp]
         public void SetUp()
         {
-            file = new VersionManifestFile("", "", 1);
-            file.Deltas.Add(new VersionManifestDeltaFile("aa.bb", "AAA", 1));
-            file.Deltas.Add(new VersionManifestDeltaFile("bb.bb", "BBB", 1));
+            file = new VersionManifestFile("", "", 1, new[]
+            {
+                new VersionManifestDeltaFile("aa.bb", "AAA", 1),
+                new VersionManifestDeltaFile("bb.bb", "BBB", 1),
+            });
         }
 
         [Test]

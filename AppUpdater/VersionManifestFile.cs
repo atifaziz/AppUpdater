@@ -1,10 +1,13 @@
 ﻿namespace AppUpdater
 {
+    using System.Collections.ObjectModel;
     using System.Linq;
     using System.Collections.Generic;
 
     public class VersionManifestFile
     {
+        static readonly ICollection<VersionManifestDeltaFile> ZeroDeltas = new VersionManifestDeltaFile[0];
+
         public string Name { get; private set; }
         public string Checksum { get; private set; }
         public long Size { get; private set; }
@@ -26,7 +29,9 @@
             Name = name;
             Checksum = checksum;
             Size = size;
-            Deltas = (deltas ?? Enumerable.Empty<VersionManifestDeltaFile>()).ToList();
+            Deltas = deltas != null 
+                   ? new ReadOnlyCollection<VersionManifestDeltaFile>(deltas.ToArray())
+                   : ZeroDeltas;
         }
 
         public VersionManifestDeltaFile GetDeltaFrom(string checksum)

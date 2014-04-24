@@ -3,6 +3,7 @@
     #region Imports
 
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Xml.Linq;
@@ -20,63 +21,99 @@
 
             CopyFiles(sourceDirectory, destinationVersionDirectory);
             var manifest = VersionManifest.GenerateFromDirectory(version, sourceDirectory);
-            GenerateDeltas(manifest, sourceDirectory, destionationDirectory, version, numberOfVersionsAsDelta);
+            if (numberOfVersionsAsDelta > 0)
+            {
+                var files = GenerateDeltas(manifest, sourceDirectory, destionationDirectory, version, numberOfVersionsAsDelta);
+                manifest = new VersionManifest(manifest.Version, files.ToArray());
+            }
             manifest.SaveToFile(Path.Combine(destinationVersionDirectory, "manifest.xml"));
             SaveConfigFile(destionationDirectory, version);
         }
 
-        private static void GenerateDeltas(VersionManifest manifest, string sourceDirectory, string destionationDirectory, Version newVersion, int numberOfVersionsAsDelta)
+        static IEnumerable<VersionManifestFile> GenerateDeltas(VersionManifest manifest, string sourceDirectory, string destionationDirectory, Version newVersion, int numberOfVersionsAsDelta)
         {
             var newVersionDirectory = Path.Combine(destionationDirectory, newVersion.ToString());
-            var publishedVersions = new DirectoryInfo(destionationDirectory)
-                                             .EnumerateDirectories()
-                                             .Select(dir => new Version(dir.Name))
-                                             .Except(new[] { newVersion })
-                                             .OrderByDescending(x => x)
-                                             .Take(numberOfVersionsAsDelta);
-
-            foreach (var version in publishedVersions)
-            {
-                var versionDirectory = Path.Combine(destionationDirectory, version.ToString());
-                var manifestFile = Path.Combine(versionDirectory, "manifest.xml");
-                var versionManifest = VersionManifest.LoadVersionFile(version, manifestFile);
-                foreach (var file in manifest.Files)
+            var files =
+                from vms in new[]
                 {
-                    var fileInVersion = versionManifest.Files.FirstOrDefault(x => x.Name.Equals(file.Name, StringComparison.CurrentCultureIgnoreCase));
-                    if (fileInVersion != null && fileInVersion.Checksum != file.Checksum)
+                    from vds in new[]
                     {
-                        if (file.GetDeltaFrom(fileInVersion.Checksum) == null)
+                        from dir in new[] { new DirectoryInfo(destionationDirectory) }
+                        select dir.EnumerateDirectories() into subdirs
+                        from subdir in subdirs
+                        // TODO skip hidden and system dirs
+                        select new
                         {
-                            var oldFile = Path.Combine(versionDirectory, fileInVersion.Name + ".deploy");
-                            var decompressedOldFile = Path.GetTempFileName();
-                            var data = File.ReadAllBytes(oldFile);
-                            data = DataCompressor.Decompress(data);
-                            File.WriteAllBytes(decompressedOldFile, data);
-
-                            var decompressedNewFile = Path.Combine(sourceDirectory, fileInVersion.Name);
-                            var deltaFilename = String.Format("deltas\\{0}.{1}.deploy", fileInVersion.Name, GetShortChecksum(fileInVersion.Checksum));
-                            var deltaFile = Path.Combine(newVersionDirectory, deltaFilename);
-                            Directory.CreateDirectory(Path.GetDirectoryName(deltaFile));
-                            DeltaAPI.CreateDelta(decompressedOldFile, decompressedNewFile, deltaFile, true);
-                            File.Delete(decompressedOldFile);
-
-                            var deltaInfo = new VersionManifestDeltaFile(deltaFilename, fileInVersion.Checksum, new FileInfo(deltaFile).Length);
-                            file.Deltas.Add(deltaInfo);
-                        }
+                            Version = new Version(subdir.Name),
+                            Directory = subdir,
+                        } into vd
+                        where vd.Version != newVersion
+                        orderby vd.Version descending 
+                        select vd
+                    }
+                    from vd in vds.Take(numberOfVersionsAsDelta)
+                    let manifestPath = Path.Combine(vd.Directory.FullName, "manifest.xml")
+                    select new
+                    {
+                        VersionManifest.LoadVersionFile(vd.Version, manifestPath).Files,
+                        vd.Directory,
                     }
                 }
-            }
+                from file in manifest.Files
+                select new
+                {
+                    file.Name,
+                    file.Checksum,
+                    file.Size,
+                    file.Deltas,
+                    NewDeltas = 
+                        from vm in vms
+                        let vmFile = vm.Files.FirstOrDefault(x => x.Name.Equals(file.Name, StringComparison.CurrentCultureIgnoreCase))
+                        where vmFile != null
+                           && vmFile.Checksum != file.Checksum
+                           && file.GetDeltaFrom(vmFile.Checksum) == null
+                        let deltaFileName = vmFile.Name 
+                                          + "." 
+                                          + AbbreviateChecksum(vmFile.Checksum) 
+                                          + ".deploy"
+                        select new
+                        {
+                            OldFilePath = Path.Combine(vm.Directory.FullName, vmFile.Name + ".deploy"),
+                            DecompressedNewFilePath = Path.Combine(sourceDirectory, vmFile.Name),
+                            DeltaFileName = "deltas/" + /* TODO URL encoding */ deltaFileName,
+                            DeltaFilePath = Path.Combine(newVersionDirectory, "deltas", deltaFileName),
+                            vmFile.Checksum,
+                        }                           
+                };
 
+            foreach (var file in files)
+            {
+                var deltas = new List<VersionManifestDeltaFile>();
+                foreach (var delta in file.NewDeltas)
+                {
+                    var decompressedOldFile = Path.GetTempFileName();
+                    using (var input = File.OpenRead(delta.OldFilePath))
+                    using (var output = File.OpenWrite(decompressedOldFile))
+                        DataCompressor.Decompress(input, output);
+
+                    Directory.CreateDirectory(Path.GetDirectoryName(delta.DeltaFilePath));
+                    DeltaAPI.CreateDelta(decompressedOldFile, delta.DecompressedNewFilePath, delta.DeltaFilePath, true);
+                    File.Delete(decompressedOldFile);
+
+                    var size = new FileInfo(delta.DeltaFilePath).Length;
+                    deltas.Add(new VersionManifestDeltaFile(delta.DeltaFileName, delta.Checksum, size));
+                }
+
+                yield return new VersionManifestFile(file.Name, file.Checksum, file.Size, 
+                                                     file.Deltas.Concat(deltas));
+            }
         }
 
-        private static string GetShortChecksum(string checksum)
+        static string AbbreviateChecksum(string checksum)
         {
-            if (checksum == null || checksum.Length < 5)
-            {
-                return checksum + String.Empty;
-            }
-
-            return checksum.Substring(0, 5);
+            return checksum == null || checksum.Length < 5 
+                 ? checksum + string.Empty 
+                 : checksum.Substring(0, 5);
         }
 
         private static void CopyFiles(string sourceDirectory, string destinationVersionDirectory)
