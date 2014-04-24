@@ -13,7 +13,7 @@
             Logger.LoggerProvider = (type) => new TestLog(type);
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void For_ReturnsTheLoggerForTheType()
         {
             var log = Logger.For(typeof(LoggerTests));
@@ -22,7 +22,7 @@
             Assert.That((log as TestLog).Type, Is.EqualTo(typeof(LoggerTests)));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void ForT_ReturnsTheLoggerForTheType()
         {
             var log = Logger.For<LoggerTests>();
@@ -31,7 +31,7 @@
             Assert.That((log as TestLog).Type, Is.EqualTo(typeof(LoggerTests)));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void For_WithAProviderThatReturnsAnError_ReturnsTheEmptyLog()
         {
             Logger.LoggerProvider = (type) => { throw new Exception("Error"); };
@@ -41,7 +41,7 @@
             Assert.That(log, Is.InstanceOf<EmptyLog>());
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void ForT_WithAProviderThatReturnsAnError_ReturnsTheEmptyLog()
         {
             Logger.LoggerProvider = (type) => { throw new Exception("Error"); };

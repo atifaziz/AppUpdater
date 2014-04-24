@@ -28,7 +28,7 @@
             updaterChef = new UpdaterChef(localStructureManager, updateServer);
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Cook_WithAVersionAlreadyDownloaded_CreatesTheVersionDirectory()
         {
             localStructureManager.Stub(x => x.HasVersionFolder(v2)).Return(true);
@@ -39,7 +39,7 @@
             localStructureManager.AssertWasCalled(x => x.DeleteVersionDir(v2));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Cook_CreatesTheVersionDirectory()
         {
             var updateRecipe = new UpdateRecipe(v2, v1, new UpdateRecipeFile[0]);
@@ -48,7 +48,7 @@
             localStructureManager.AssertWasCalled(x => x.CreateVersionDir(v2));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Cook_CopyExistingFiles()
         {
             updateServer.Stub(s => s.DownloadFileAsync(v2, "test2.txt.deploy", CancellationToken.None)).Return(TaskHelpers.FromResult((byte[])null));
@@ -61,7 +61,7 @@
             localStructureManager.AssertWasCalled(x => x.CopyFile(v1, v2, "test1.txt"));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Cook_SavesNewFiles()
         {
             var data = new byte[]{1,2,3,4,5};
@@ -75,7 +75,7 @@
             localStructureManager.AssertWasCalled(x => x.SaveFile(v2, "test2.txt", data));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Cook_ApplyDeltaInModifiedFiles()
         {
             var data = new byte[] { 1, 2, 3, 4, 5 };

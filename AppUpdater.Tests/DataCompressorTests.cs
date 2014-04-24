@@ -6,7 +6,7 @@
     [TestFixture]
     public class DataCompressorTests
     {
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Compress_ValidData_ReturnsSmallerData()
         {
             var data = Encoding.UTF8.GetBytes(new string('a', 1000));
@@ -16,7 +16,7 @@
             Assert.That(compressedData.Length, Is.LessThan(data.Length));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Decompress_ValidData_ReturnsTheOriginalData()
         {
             var originalData = Encoding.UTF8.GetBytes(new string('a', 1000));
@@ -27,7 +27,7 @@
             Assert.That(decompressedData, Is.EqualTo(originalData));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Compress_NullData_ReturnsNullData()
         {
             byte[] data = null;
@@ -37,7 +37,7 @@
             Assert.That(compressedData, Is.Null);
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Decompress_NullData_ReturnsNullData()
         {
             byte[] compressedData = null;

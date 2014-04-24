@@ -29,13 +29,13 @@
             AutoUpdater.Stop();
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Ctor_SetsTheDefaultCheckIntervalTo1hour()
         {
             Assert.That(setup.CheckInterval, Is.EqualTo(TimeSpan.FromHours(1)));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Start_CheckForUpdatesOnStart()
         {
             setup.CheckInterval = TimeSpan.FromSeconds(10000);
@@ -46,7 +46,7 @@
             updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(Arg<CancellationToken>.Is.Anything));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Start_DoNotCheckBeforeTime()
         {
             setup.CheckInterval = TimeSpan.FromSeconds(2);
@@ -57,7 +57,7 @@
             updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(Arg<CancellationToken>.Is.Anything), s => s.Repeat.Once());
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Start_StoppedUpdater_CheckAfterWaitTime()
         {
             setup.CheckInterval = TimeSpan.FromSeconds(1);
@@ -68,7 +68,7 @@
             updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(Arg<CancellationToken>.Is.Anything), s => s.Repeat.Twice());
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Start_StartedUpdater_DoNotStartAgain()
         {
             setup.CheckInterval = TimeSpan.FromSeconds(1);
@@ -81,7 +81,7 @@
             updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(Arg<CancellationToken>.Is.Anything), s => s.Repeat.Once());
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Stop_StartedUpdater_StopsTheChecks()
         {
             setup.CheckInterval = TimeSpan.FromSeconds(1);
@@ -94,7 +94,7 @@
             updateManager.AssertWasCalled(x => x.CheckForUpdateAsync(Arg<CancellationToken>.Is.Anything), s => s.Repeat.Once());
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Stop_StoppedUpdater_DoNothing()
         {
             setup.CheckInterval = TimeSpan.FromSeconds(1);
@@ -104,7 +104,7 @@
             AutoUpdater.Stop();
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Updated_IsCalledAfterUpdate()
         {
             var called = false;

@@ -17,7 +17,7 @@
             });
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void GetDeltaFrom_WithValidChecksum_ReturnsTheItem()
         {
             var delta = file.GetDeltaFrom("AAA");
@@ -26,7 +26,7 @@
             Assert.That(delta.FileName, Is.EqualTo("aa.bb"));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void GetDeltaFrom_WithInvalidChecksum_ReturnsNull()
         {
             var delta = file.GetDeltaFrom("MMMMM");

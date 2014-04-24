@@ -12,7 +12,7 @@
     [TestFixture]
     public class VersionManifestTests
     {
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void LoadVersionData_WithValidData_LoadsTheData()
         {
             var data = @"<manifest>
@@ -40,7 +40,7 @@
             Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).FileName, Is.EqualTo("teste1.txt.1.deploy"));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void LoadVersionFile_LoadsTheData()
         {
             var path = Path.GetTempFileName();
@@ -70,7 +70,7 @@
             Assert.That(manifest.Files.ElementAt(0).Deltas.ElementAt(0).FileName, Is.EqualTo("teste1.txt.1.deploy"));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void UpdateTo_ReturnsARecipe()
         {
             var fileUpdate = new VersionManifestFile("arquivo1.txt", "123", 1000);
@@ -85,7 +85,7 @@
             Assert.That(recipe.Files, Has.Count.EqualTo(1));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void UpdateTo_VersionWithEqualFile_SetTheActionAsCopy()
         {
             var fileUpdate = new VersionManifestFile("arquivo1.txt", "123", 1000);
@@ -98,7 +98,7 @@
             Assert.That(recipe.Files.First().Action, Is.EqualTo(FileUpdateAction.Copy));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void UpdateTo_VersionWithoutTheFile_SetTheActionAsDownload()
         {
             var fileUpdate = new VersionManifestFile("arquivo1.txt", "123", 1000);
@@ -111,7 +111,7 @@
             Assert.That(recipe.Files.First().Action, Is.EqualTo(FileUpdateAction.Download));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void UpdateTo_VersionWithTheFileWithIncorrectChecksum_SetTheActionAsDownload()
         {
             var fileOriginal = new VersionManifestFile("arquivo1.txt", "333", 1000);
@@ -125,7 +125,7 @@
             Assert.That(recipe.Files.First().Action, Is.EqualTo(FileUpdateAction.Download));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void UpdateTo_WithAnIncorrectDelta_SetTheActionAsDownload()
         {
             var fileOriginal = new VersionManifestFile("arquivo1.txt", "333", 1000);
@@ -142,7 +142,7 @@
             Assert.That(recipe.Files.First().Action, Is.EqualTo(FileUpdateAction.Download));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void UpdateTo_WithADeltaAvailable_SetTheActionAsDownloadDelta()
         {
             var fileOriginal = new VersionManifestFile("arquivo1.txt", "333", 1000);
@@ -159,7 +159,7 @@
             Assert.That(recipe.Files.First().Action, Is.EqualTo(FileUpdateAction.DownloadDelta));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void GenerateFromDirectory_GeneratesTheManifest()
         {
             var dir = Path.GetTempFileName() + "_";
@@ -181,7 +181,7 @@
             Assert.That(manifest.Files.ElementAt(1).Size, Is.EqualTo(12));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void SaveToFile_CreatesTheFile()
         {
             var path = Path.GetTempFileName();
@@ -193,7 +193,7 @@
             Assert.That(File.Exists(path), Is.True);
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void SaveToFile_SavesAllTheInfoToTheFile()
         {
             var path = Path.GetTempFileName();

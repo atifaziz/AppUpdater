@@ -29,7 +29,7 @@
                 updateManager = new UpdateManager(updateServer, localStructureManager, updaterChef);
             }
 
-            [Test]
+            [Test] // ReSharper disable once InconsistentNaming
             public void Initialize_LoadsTheCurrentVersion()
             {
                 localStructureManager.Stub(x => x.GetCurrentVersion()).Return(new Version("1.3.4"));
@@ -67,7 +67,7 @@
             }
 
 
-            [Test]
+            [Test] // ReSharper disable once InconsistentNaming
             public void CheckForUpdate_WithoutUpdate_HasUpdateIsFalse()
             {
                 updateServer.Stub(x => x.GetCurrentVersionAsync(CancellationToken.None)).Return(TaskHelpers.FromResult(initialVersion));
@@ -77,7 +77,7 @@
                 Assert.That(updateInfo.HasUpdate, Is.False);
             }
 
-            [Test]
+            [Test] // ReSharper disable once InconsistentNaming
             public void CheckForUpdate_WithoutUpdate_ReturnsTheCurrentVersion()
             {
                 updateServer.Stub(x => x.GetCurrentVersionAsync(CancellationToken.None)).Return(TaskHelpers.FromResult(initialVersion));
@@ -87,7 +87,7 @@
                 Assert.That(updateInfo.Version, Is.EqualTo(initialVersion));
             }
 
-            [Test]
+            [Test] // ReSharper disable once InconsistentNaming
             public void CheckForUpdate_WithUpdate_HasUpdateIsTrue()
             {
                 updateServer.Stub(x => x.GetCurrentVersionAsync(CancellationToken.None)).Return(TaskHelpers.FromResult(new Version("2.6.8")));
@@ -97,7 +97,7 @@
                 Assert.That(updateInfo.HasUpdate, Is.True);
             }
 
-            [Test]
+            [Test] // ReSharper disable once InconsistentNaming
             public void CheckForUpdate_WithUpdate_ReturnsTheNewVersionNumber()
             {
                 var newVersion = new Version("2.6.8");
@@ -108,7 +108,7 @@
                 Assert.That(updateInfo.Version, Is.EqualTo(newVersion));
             }
 
-            [Test]
+            [Test] // ReSharper disable once InconsistentNaming
             public void DoUpdate_ChangesTheCurrentVersion()
             {
                 var newVersion = new Version("2.6.8");
@@ -122,7 +122,7 @@
                 Assert.That(updateManager.CurrentVersion, Is.EqualTo(newVersion));
             }
 
-            [Test]
+            [Test] // ReSharper disable once InconsistentNaming
             public void DoUpdate_SavesTheCurrentVersion()
             {
                 var newVersion = new Version("2.6.8");
@@ -136,7 +136,7 @@
                 localStructureManager.AssertWasCalled(x => x.SetCurrentVersion(newVersion));
             }
 
-            [Test]
+            [Test] // ReSharper disable once InconsistentNaming
             public void DoUpdate_SavesTheLastValidVersionAsTheExecutingBeingExecuted()
             {
                 var versionBeingExecuted = initialVersion;
@@ -152,7 +152,7 @@
                 localStructureManager.AssertWasCalled(x => x.SetLastValidVersion(versionBeingExecuted));
             }
 
-            [Test]
+            [Test] // ReSharper disable once InconsistentNaming
             public void DoUpdate_ExecutesTheUpdate()
             {
                 var newVersion = new Version("2.6.8");
@@ -166,7 +166,7 @@
                 updaterChef.AssertWasCalled(x => x.CookAsync(Arg<UpdateRecipe>.Is.Anything, Arg<CancellationToken>.Is.Anything));
             }
 
-            [Test]
+            [Test] // ReSharper disable once InconsistentNaming
             public void DoUpdate_RemovesOldVersions()
             {
                 var updateInfo = SetupUpdateToVersion(new Version("3.1"));
@@ -177,7 +177,7 @@
                 localStructureManager.AssertWasCalled(x => x.DeleteVersionDir(new Version("1.1.1")));
             }
 
-            [Test]
+            [Test] // ReSharper disable once InconsistentNaming
             public void DoUpdate_DoesNotRemoveTheExecutingVersion()
             {
                 var updateInfo = SetupUpdateToVersion(new Version("3.1"));
@@ -187,7 +187,7 @@
                 localStructureManager.AssertWasNotCalled(x => x.DeleteVersionDir(initialVersion));
             }
 
-            [Test]
+            [Test] // ReSharper disable once InconsistentNaming
             public void DoUpdate_DoesNotRemoveTheNewVersion()
             {
                 installedVersions = new[] { "1.0.0", "1.1.1", "1.2.3", "3.1" }.Select(v => new Version(v)).ToArray();
@@ -198,7 +198,7 @@
                 localStructureManager.AssertWasNotCalled(x => x.DeleteVersionDir(new Version("3.1")));
             }
 
-            [Test]
+            [Test] // ReSharper disable once InconsistentNaming
             public void DoUpdate_WithAnErrorWhileDeletingTheOldVersion_IgnoresTheError()
             {
                 localStructureManager.Stub(x => x.DeleteVersionDir(new Version("1.0.0"))).Throw(new Exception("Error deliting version."));

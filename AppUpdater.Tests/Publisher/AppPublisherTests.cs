@@ -34,7 +34,7 @@
             Directory.Delete(destinationDir, true);
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Publish_CreatesADirectoryToTheNewVersion()
         {
             AppPublisher.Publish(sourceDir, destinationDir, new Version("1.0.0"), 0);
@@ -43,7 +43,7 @@
             Assert.That(directoryExists, Is.True);
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Publish_WithValidInfo_CopiesTheFilesToTargetDirWithDeployExtension()
         {
             AppPublisher.Publish(sourceDir, destinationDir, new Version("1.1.0"), 0);
@@ -52,7 +52,7 @@
             Assert.That(File.Exists(Path.Combine(destinationDir, "1.1.0\\another\\test2.txt.deploy")), Is.True);
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Publish_WithValidInfo_CompressTheDeployFiles()
         {
             AppPublisher.Publish(sourceDir, destinationDir, new Version("1.1.0"), 0);
@@ -65,7 +65,7 @@
             Assert.That(decompressedData, Is.EqualTo(originalData));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Publish_WithValidInfo_GeneratesTheManifest()
         {
             var manifestFilename = Path.Combine(destinationDir, "1.1.0\\manifest.xml");
@@ -75,7 +75,7 @@
             Assert.That(File.Exists(manifestFilename), Is.True);
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Publish_WithValidInfo_SetsTheManifestData()
         {
             var manifestFilename = Path.Combine(destinationDir, "1.1.0\\manifest.xml");
@@ -92,7 +92,7 @@
             Assert.That(manifest.Files.ElementAt(1).Size, Is.EqualTo(15));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Publish_ChangesTheCurrentVersion()
         {
             AppPublisher.Publish(sourceDir, destinationDir, new Version("1.1.0"), 0);
@@ -105,7 +105,7 @@
             Assert.That(version, Is.EqualTo("1.1.0"));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Publish_WithTwoDelta_GeneratesTheDeltaForTheLatestTwoVersion()
         {
             CreateVersionFiles(1);
@@ -124,7 +124,7 @@
             Assert.That(File.Exists(Path.Combine(destinationDir, "4.0.0\\deltas\\another\\test2.txt.ACC2A.deploy")), Is.True);
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Publish_WithTwoDelta_SavesTheInfoInTheManifest()
         {
             var manifestFilename = Path.Combine(destinationDir, "4.0.0\\manifest.xml");

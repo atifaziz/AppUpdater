@@ -7,7 +7,7 @@
     [TestFixture]
     public class ChecksumTests
     {
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void Calculate_CreatesTheChecksum()
         {
             var data = Encoding.UTF8.GetBytes("some text");

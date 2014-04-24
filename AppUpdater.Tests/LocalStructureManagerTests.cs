@@ -25,7 +25,7 @@
             structureManager = new LocalStructureManager(baseDir);
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void CreateVersionDir_CreatesADirWithTheVersionName()
         {
             structureManager.CreateVersionDir(new Version("1.0.0"));
@@ -35,7 +35,7 @@
             Assert.That(exists, Is.True);
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void GetInstalledVersions_ReturnsAllInstalledVersions()
         {
             var expectedVersions = new[] { new Version("1.0.0"), new Version("2.0.0"), new Version("3.1.1") };
@@ -47,7 +47,7 @@
             Assert.That(versions, Is.EqualTo(expectedVersions));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void DeleteVersionDir_DeletesTheDirectory()
         {
             var dir = Path.Combine(baseDir, "1.0.0");
@@ -60,7 +60,7 @@
             Assert.That(exists, Is.False);
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void LoadManifest_GeneratesTheManifest()
         {
             var dir = Path.Combine(baseDir, "1.0.0");
@@ -82,7 +82,7 @@
             Assert.That(manifest.Files.ElementAt(1).Size, Is.EqualTo(12));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void GetCurrentVersion_ReturnsTheVersion()
         {
             var data = @"<config><version current='1.2.3' /></config>";
@@ -93,7 +93,7 @@
             Assert.That(currentVersion, Is.EqualTo(new Version("1.2.3")));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void GetCurrentVersion_WithoutCurrentVersionDefined_ReturnsNull()
         {
             var data = @"<config></config>";
@@ -104,7 +104,7 @@
             Assert.That(version, Is.Null);
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void SetCurrentVersion_UpdatesTheConfigFile()
         {
             var data = @"<config><version current='1.2.3' /></config>";
@@ -121,7 +121,7 @@
             Assert.That(version, Is.EqualTo("3.4.5"));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void SetCurrentVersion_KeepsTheLastVersion()
         {
             var data = @"<config><version>1.2.3</version><last_version>3.0.1</last_version></config>";
@@ -138,7 +138,7 @@
             Assert.That(lastVersion, Is.EqualTo("3.0.1"));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void GetLastValidVersion_WithoutLastVersionDefined_ReturnsNull()
         {
             var data = @"<config><version>1.2.3</version></config>";
@@ -149,7 +149,7 @@
             Assert.That(lastVersion, Is.Null);
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void GetLastValidVersion_ReturnsTheVersion()
         {
             var data = @"<config><version current='1.2.3' last='3.1.1' /></config>";
@@ -160,7 +160,7 @@
             Assert.That(lastVersion, Is.EqualTo(new Version("3.1.1")));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void SetLastValidVersion_WithAnUndefinedVersion_UpdatesTheConfigFile()
         {
             var data = @"<config><version current='1.2.3' /></config>";
@@ -178,7 +178,7 @@
             Assert.That(lastVersion, Is.EqualTo("3.3.4"));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void SetLastValidVersion_UpdatesTheConfigFile()
         {
             var data = @"<config><version current='1.2.3' last='1.2.0' /></config>";
@@ -196,7 +196,7 @@
             Assert.That(lastVersion, Is.EqualTo("3.3.4"));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void SetLastValidVersion_KeepsTheVersion()
         {
             var data = @"<config><version>1.2.3</version><last_version>3.0.1</last_version></config>";
@@ -213,7 +213,7 @@
             Assert.That(version, Is.EqualTo("1.2.3"));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void GetExecutingVersion_ReturnsTheVersionThatIsBeingExecuted()
         {
             LocalStructureManager.GetExecutablePath = () => @"C:\Test\AppRoot\1.4.5\app.exe";
@@ -223,7 +223,7 @@
             Assert.That(executingVersion, Is.EqualTo(new Version("1.4.5")));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void HasVersionFolder_WithTheFolder_ReturnsTrue()
         {
             Directory.CreateDirectory(Path.Combine(baseDir, "4.5.6"));
@@ -233,7 +233,7 @@
             Assert.That(hasFolder, Is.True);
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void HasVersionFolder_WithoutTheFolder_ReturnsFalse()
         {
             var hasFolder = structureManager.HasVersionFolder(new Version("9.9.9"));
@@ -241,7 +241,7 @@
             Assert.That(hasFolder, Is.False);
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void CopyFile_CopyTheFileFromTheOriginalVersion()
         {
             Directory.CreateDirectory(Path.Combine(baseDir, "1.2.3"));
@@ -255,7 +255,7 @@
             Assert.That(File.ReadAllText(destinationFile), Is.EqualTo("some value"));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void SaveFile_SavesTheFileInTheVersionDirectory()
         {
             var data = new byte[] { 4, 5, 6 };
@@ -268,7 +268,7 @@
             Assert.That(File.ReadAllBytes(destinationFile), Is.EqualTo(data));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void ApplyDelta_SavesThePatchedFile()
         {
             Directory.CreateDirectory(Path.Combine(baseDir, "1.2.3"));
@@ -291,7 +291,7 @@
             Assert.That(patchedData, Is.EqualTo(newData));
         }
 
-        [Test]
+        [Test] // ReSharper disable once InconsistentNaming
         public void GetUpdateServerUri_ReturnsTheUri()
         {
             var data = @"<config><updateServer url='http://localhost:8080/update/' /></config>";
