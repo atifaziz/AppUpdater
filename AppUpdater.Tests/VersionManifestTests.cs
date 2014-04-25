@@ -15,17 +15,16 @@
         [Test] // ReSharper disable once InconsistentNaming
         public void LoadVersionData_WithValidData_LoadsTheData()
         {
-            var data = @"<manifest>
-                                <files>
-                                    <file name='teste1.txt' checksum='algo111' size='1000'>
-                                        <delta from='AABBCC' size='500' file='teste1.txt.1.deploy' />
-                                        <delta from='CCDDEE' size='400' file='teste1.txt.2.deploy' />
-                                    </file>
-                                    <file name='teste2.txt' checksum='algo222' size='2000' />
-                                </files>
-                            </manifest>";
-
-            var manifest = VersionManifest.LoadVersionData(new Version("1.2.3"), data);
+            var manifest = VersionManifest.LoadVersionData(new Version("1.2.3"), @"
+                <manifest>
+                    <files>
+                        <file name='teste1.txt' checksum='algo111' size='1000'>
+                            <delta from='AABBCC' size='500' file='teste1.txt.1.deploy' />
+                            <delta from='CCDDEE' size='400' file='teste1.txt.2.deploy' />
+                        </file>
+                        <file name='teste2.txt' checksum='algo222' size='2000' />
+                    </files>
+                </manifest>");
 
             Assert.That(manifest, Is.Not.Null);
             Assert.That(manifest.Version, Is.EqualTo(new Version("1.2.3")));
@@ -44,16 +43,16 @@
         public void LoadVersionFile_LoadsTheData()
         {
             var path = Path.GetTempFileName();
-            var data = @"<manifest>
-                                <files>
-                                    <file name='teste1.txt' checksum='algo111' size='1000'>
-                                        <delta from='AABBCC' size='500' file='teste1.txt.1.deploy' />
-                                        <delta from='CCDDEE' size='400' file='teste1.txt.2.deploy' />
-                                    </file>
-                                    <file name='teste2.txt' checksum='algo222' size='2000' />
-                                </files>
-                            </manifest>";
-            File.WriteAllText(path, data);
+            File.WriteAllText(path, @"
+                <manifest>
+                    <files>
+                        <file name='teste1.txt' checksum='algo111' size='1000'>
+                            <delta from='AABBCC' size='500' file='teste1.txt.1.deploy' />
+                            <delta from='CCDDEE' size='400' file='teste1.txt.2.deploy' />
+                        </file>
+                        <file name='teste2.txt' checksum='algo222' size='2000' />
+                    </files>
+                </manifest>");
 
             var manifest = VersionManifest.LoadVersionFile(new Version("1.2.3"), path);
 
@@ -185,9 +184,8 @@
         public void SaveToFile_CreatesTheFile()
         {
             var path = Path.GetTempFileName();
-            var data = @"<manifest></manifest>";
 
-            var manifest = VersionManifest.LoadVersionData(new Version("1.0.0"), data);
+            var manifest = VersionManifest.LoadVersionData(new Version("1.0.0"), @"<manifest/>");
             manifest.SaveToFile(path);
 
             Assert.That(File.Exists(path), Is.True);
@@ -197,17 +195,17 @@
         public void SaveToFile_SavesAllTheInfoToTheFile()
         {
             var path = Path.GetTempFileName();
-            var data = @"<manifest>
-                                <files>
-                                    <file name='test1.txt' checksum='algo111' size='1000' >
-                                        <delta from='AABBCC' size='500' file='teste1.txt.1.deploy' />
-                                        <delta from='CCDDEE' size='400' file='teste1.txt.2.deploy' />
-                                    </file>
-                                    <file name='test2.txt' checksum='algo222' size='2000' />
-                                </files>
-                            </manifest>";
 
-            var originalManifest = VersionManifest.LoadVersionData(new Version("1.0.0"), data);
+            var originalManifest = VersionManifest.LoadVersionData(new Version("1.0.0"), @"
+                <manifest>
+                    <files>
+                        <file name='test1.txt' checksum='algo111' size='1000' >
+                            <delta from='AABBCC' size='500' file='teste1.txt.1.deploy' />
+                            <delta from='CCDDEE' size='400' file='teste1.txt.2.deploy' />
+                        </file>
+                        <file name='test2.txt' checksum='algo222' size='2000' />
+                    </files>
+                </manifest>");
             originalManifest.SaveToFile(path);
 
             var savedManifest = VersionManifest.LoadVersionData(new Version("1.0.0"), File.ReadAllText(path));
